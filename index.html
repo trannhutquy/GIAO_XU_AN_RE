@@ -3677,7 +3677,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           <div id="khancap-hienma-box" class="card" style="padding:18px; text-align:center; display:none;">
             <div style="font-size:13px; color:#7f8c8d; margin-bottom:6px;"><span id="khancap-ten-phien">-</span></div>
             <div style="font-size:34px; font-weight:bold; letter-spacing:6px; color:#d32f2f; margin:14px 0 4px;" id="khancap-maso-text">------</div>
-            <div style="font-size:12px; color:#7f8c8d;">Mã tự đổi sau <span id="khancap-demngugoc" style="font-weight:bold; color:#2c3e50;">15s</span></div>
+            <div style="font-size:12px; color:#7f8c8d;">Mã tự đổi sau <span id="khancap-demngugoc" style="font-weight:bold; color:#2c3e50;">…</span></div>
             <div style="margin-top:14px; background:#f8f9fa; border-radius:10px; padding:10px; font-size:14px; font-weight:bold; color:#2c3e50;">
               Đã điểm danh: <span id="khancap-sodadiemdanh" style="color:#2ecc71;">0 / 0</span>
             </div>
@@ -7853,7 +7853,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
        - Huynh Trưởng thường: CHỈ thấy tab "Điểm danh" (không có thanh tab).
        ============================================================ */
     var khanCapPollTimer = null;      // định kỳ hỏi server mã hiện tại (dành cho tab Hiện mã)
-    var khanCapDemNguocTimer = null;  // mỗi giây tính lại số giây còn lại dựa trên mốc hết hạn, không trừ dần thủ công
+    var khanCapDemNguocTimer = null;  // tính lại số giây còn lại dựa trên mốc hết hạn, không trừ dần thủ công
+    var khanCapHenLamMoiTimer = null; // hẹn đúng lúc mã đổi để lấy mã mới ngay
     var khanCapThoiDiemHetHan = 0;    // mốc thời gian (ms, theo đồng hồ máy người dùng) khi mã hết hạn — nguồn sự thật duy nhất cho số đếm, tránh lệch do setInterval không chính xác tuyệt đối
     var khanCapMaSoDangHien = "";
     var khanCapPhienDangXemId = null; // phiên đang mở trong modal "Danh sách" - dùng khi bấm Xuất file báo cáo
@@ -7901,47 +7902,75 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       if (khanCapPollTimer) clearInterval(khanCapPollTimer);
       khanCapPollTimer = setInterval(khanCapAdminLamMoi, 2000);
       if (khanCapDemNguocTimer) clearInterval(khanCapDemNguocTimer);
-      khanCapDemNguocTimer = setInterval(khanCapVeSoDemNguoc, 1000);
+      // Cập nhật 4 lần/giây: số đếm chuyển đúng thời điểm, không bị trễ nhịp như 1 giây/lần
+      khanCapDemNguocTimer = setInterval(khanCapVeSoDemNguoc, 250);
     }
     function khanCapAdminDungPolling() {
       if (khanCapPollTimer) { clearInterval(khanCapPollTimer); khanCapPollTimer = null; }
       if (khanCapDemNguocTimer) { clearInterval(khanCapDemNguocTimer); khanCapDemNguocTimer = null; }
+      if (khanCapHenLamMoiTimer) { clearTimeout(khanCapHenLamMoiTimer); khanCapHenLamMoiTimer = null; }
     }
     // Vẽ lại số giây còn lại, LUÔN tính từ mốc hết hạn khanCapThoiDiemHetHan so với đồng
     // hồ hiện tại — không trừ dần thủ công (setInterval không đảm bảo đúng chính xác 1000ms
     // mỗi lần, tab chạy nền càng dễ bị trễ nhịp), nên không bao giờ bị lệch/nhảy số dồn lại.
+    // Dùng Math.ceil: còn 0,2 giây vẫn hiện "1s", hết hẳn mới về 0 -> không bị nhảy cóc như Math.round.
     function khanCapVeSoDemNguoc() {
-      if (!khanCapThoiDiemHetHan) return;
       var elDemNguoc = document.getElementById('khancap-demngugoc');
       if (!elDemNguoc) return;
-      var giayConLai = Math.max(0, Math.round((khanCapThoiDiemHetHan - Date.now()) / 1000));
-      elDemNguoc.innerText = giayConLai + 's';
+      if (!khanCapThoiDiemHetHan) { elDemNguoc.innerText = '…'; return; }
+      var giayConLai = Math.ceil((khanCapThoiDiemHetHan - Date.now()) / 1000);
+      if (giayConLai < 0) giayConLai = 0;
+      if (giayConLai > 60) giayConLai = 60; // phòng khi đồng hồ máy bị chỉnh, tránh hiện số vô lý
+      elDemNguoc.innerText = giayConLai > 0 ? (giayConLai + 's') : 'đang đổi…';
     }
     function khanCapAdminLamMoi() {
+      var lucGui = Date.now();
       google.script.run.withSuccessHandler(function (res) {
+        var lucNhan = Date.now();
+        var doTre = Math.max(0, lucNhan - lucGui); // tổng thời gian đi + về của request
         var boxBatDau = document.getElementById('khancap-batdau-box');
         var boxHienMa = document.getElementById('khancap-hienma-box');
-        if (!res.success) {
-          boxHienMa.style.display = 'none';
-          boxBatDau.style.display = 'block';
+        if (!res || !res.success) {
+          if (boxHienMa) boxHienMa.style.display = 'none';
+          if (boxBatDau) boxBatDau.style.display = 'block';
           khanCapMaSoDangHien = "";
           khanCapThoiDiemHetHan = 0;
           return;
         }
-        boxBatDau.style.display = 'none';
-        boxHienMa.style.display = 'block';
+        if (boxBatDau) boxBatDau.style.display = 'none';
+        if (boxHienMa) boxHienMa.style.display = 'block';
         document.getElementById('khancap-ten-phien').innerText = res.tenPhien;
-        if (res.maSo !== khanCapMaSoDangHien) {
+        var maDoi = (res.maSo !== khanCapMaSoDangHien);
+        if (maDoi) {
           khanCapMaSoDangHien = res.maSo;
           document.getElementById('khancap-maso-text').innerText = res.maSo;
         }
-        // Quy đổi "số giây còn lại theo server" thành 1 mốc thời gian tuyệt đối trên đồng hồ
-        // máy người dùng. Có bù trễ mạng (thời gian request đi/về) ngay tại đây, sau đó số đếm
-        // hiển thị luôn được tính lại từ mốc này (xem khanCapVeSoDemNguoc), không phụ thuộc
-        // việc setInterval có chạy đúng nhịp 1000ms hay không nữa.
-        khanCapThoiDiemHetHan = Date.now() + res.giayConLai * 1000;
+        // Quy đổi "còn lại bao lâu" thành 1 mốc tuyệt đối trên đồng hồ máy người dùng:
+        //   lúc gửi request + nửa thời gian đi/về + số giây còn lại server báo.
+        // Nếu server mới có trả hetHanMs/serverNowMs thì dùng mốc tuyệt đối (chính xác nhất),
+        // còn không thì vẫn bù được độ trễ mạng nhờ nửa RTT.
+        var hetHanMoi;
+        if (res.hetHanMs && res.serverNowMs) {
+          hetHanMoi = lucGui + doTre / 2 + (res.hetHanMs - res.serverNowMs);
+        } else {
+          hetHanMoi = lucGui + doTre / 2 + res.giayConLai * 1000;
+        }
+        // Chỉ đồng bộ lại mốc khi mã vừa đổi hoặc lệch quá 1,2 giây; nếu không, mỗi lượt poll
+        // lại nhích mốc một chút (do mạng nhanh/chậm khác nhau) làm số đếm giật lên/xuống.
+        if (maDoi || !khanCapThoiDiemHetHan || Math.abs(hetHanMoi - khanCapThoiDiemHetHan) > 3000) {
+          khanCapThoiDiemHetHan = hetHanMoi;
+        }
         khanCapVeSoDemNguoc();
         document.getElementById('khancap-sodadiemdanh').innerText = res.soDaDiemDanh + ' / ' + res.tongSoHT;
+
+        // Hẹn đúng lúc mã đổi để lấy mã mới ngay, không phải chờ nhịp poll 2 giây
+        // (trước đây mã đổi chậm tới ~2 giây nên đếm về 0 mà mã vẫn cũ).
+        if (khanCapHenLamMoiTimer) { clearTimeout(khanCapHenLamMoiTimer); khanCapHenLamMoiTimer = null; }
+        var msConLai = khanCapThoiDiemHetHan - Date.now();
+        var msHen = msConLai > 0 ? (msConLai + 350) : 600;
+        if (msHen <= 60000) {
+          khanCapHenLamMoiTimer = setTimeout(khanCapAdminLamMoi, msHen);
+        }
       }).withFailureHandler(function () { /* lỗi mạng tạm thời, chờ lượt poll kế tiếp */ })
         .khanCapAdminLayMaHienTai(currentUserToken);
     }
