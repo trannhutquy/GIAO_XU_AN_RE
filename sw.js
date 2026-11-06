@@ -1,6 +1,6 @@
 // Service worker: mở app TỨC THÌ từ bộ nhớ máy, tải bản mới ở nền, báo khi có bản mới,
 // và nhận THÔNG BÁO ĐẨY (Firebase Cloud Messaging) kể cả khi app đang đóng.
-var VERSION = "v8";
+var VERSION = "v10";
 var SHELL = "shell-" + VERSION;
 var STATIC = "static-" + VERSION;
 var SHELL_FILES = ["./", "index.html", "config.js", "gas-shim.js", "push.js", "manifest.webmanifest",
@@ -72,7 +72,7 @@ self.addEventListener("fetch", function (e) {
   if (url.hostname.indexOf("google.com") !== -1 && url.pathname.indexOf("/macros/") === 0) return;
 
   if (url.origin === location.origin) {                   // file của app: trả bản cache NGAY, cập nhật ngầm
-    // Mở app từ thông báo có dạng index.html?mo=chat -> dùng chung 1 bản cache với index.html
+    // Mở app từ thông báo có dạng index.html?mo=don -> dùng chung 1 bản cache với index.html
     var key = (req.mode === "navigate" && url.search) ? new Request(url.origin + url.pathname) : req;
     e.respondWith(caches.open(SHELL).then(function (cache) {
       return cache.match(key).then(function (hit) {

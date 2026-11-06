@@ -44,14 +44,10 @@
     });
   }
 
-  // Tin đến khi app đang mở và đang được nhìn: hiện thông báo trong app + cập nhật chấm đỏ ngay
+  // Thông báo đẩy đến khi app đang mở: hiện thông báo trong app + cập nhật chấm đỏ ngay
   function khiNhanTinDangMo(p) {
     var d = (p && p.data) || {};
-    try {
-      var dangXemDungHoiThoai = typeof chatState !== "undefined" && chatState && d.tag &&
-        d.tag === "chat-" + String(chatState.maDoiTac || "").toUpperCase();
-      if (!dangXemDungHoiThoai) thongBao((d.title ? d.title + ": " : "") + (d.body || ""), "info");
-    } catch (e) {}
+    try { thongBao((d.title ? d.title + ": " : "") + (d.body || ""), "info"); } catch (e) {}
     try { if (typeof pollNen === "function") pollNen(); } catch (e2) {}
   }
 
@@ -150,7 +146,7 @@
     });
   }
 
-  // ----- Mở đúng màn hình khi bấm vào thông báo (mo = "chat" | "don") -----
+  // ----- Mở đúng màn hình khi bấm vào thông báo (mo = "tb" | "don") -----
   var choMo = "";
   function thuMo() {
     if (!choMo) return;
@@ -159,8 +155,7 @@
     if (!san) return;
     var mo = choMo; choMo = "";
     try {
-      if (mo === "chat" && typeof openChatList === "function") openChatList();
-      else if (mo === "tb" && window.XDThongBao) window.XDThongBao.moLichSu();
+      if (mo === "tb" && window.XDThongBao) window.XDThongBao.moLichSu();
       else if (mo === "don" && typeof showPage === "function" && typeof currentUserIsAdmin !== "undefined" && currentUserIsAdmin) showPage("approval-page", null);
     } catch (e) {}
   }

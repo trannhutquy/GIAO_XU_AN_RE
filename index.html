@@ -132,8 +132,8 @@
        yếu. Giờ chỉ áp cho các thành phần thực sự cần chuyển động mượt (đổi dark mode,
        hover nút, thẻ card...) để nhẹ hơn mà trải nghiệm không đổi. */
     body, .card, .login-box, .bottom-nav, .settings-menu, .modal-content, .cttt-card,
-    .history-card, .nav-item, input, textarea, button, .btn-nhan, .online-status-row,
-    .quy-item, a, img, .status-dot {
+    .history-card, .nav-item, input, textarea, button, .btn-nhan,
+    .quy-item, a, img {
       transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
                   color 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
                   border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
@@ -155,46 +155,6 @@
     body.dark-mode input, body.dark-mode textarea { background-color: #26272c; border: 1px solid #3a3b42; color: #ffffff; }
     body.dark-mode input::placeholder, body.dark-mode textarea::placeholder { color: #80848e; }
     body.dark-mode .nav-item.active { color: #2979ff; }
-
-    /* ==========================================
-       TRẠNG THÁI ONLINE / OFFLINE HUYNH TRƯỞNG
-       ========================================== */
-    .status-dot {
-      width: 11px; height: 11px; border-radius: 50%; display: inline-block;
-      flex-shrink: 0; border: 2px solid #fff;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.06);
-    }
-    .status-dot.online { background: #2ecc71; animation: onlinePulse 1.6s ease-in-out infinite; }
-    .status-dot.offline { background: #b2bec3; }
-    @keyframes onlinePulse {
-      0% { box-shadow: 0 0 0 0 rgba(46,204,113,0.55); }
-      70% { box-shadow: 0 0 0 6px rgba(46,204,113,0); }
-      100% { box-shadow: 0 0 0 0 rgba(46,204,113,0); }
-    }
-    .online-status-row {
-      display: flex; align-items: center; gap: 12px;
-      background: white; border-radius: 12px; padding: 10px 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    .online-status-row .avatar-wrap { position: relative; flex-shrink: 0; }
-    .online-status-row img {
-      width: 42px; height: 42px; border-radius: 50%; object-fit: cover;
-      border: 2px solid #eee;
-    }
-    .online-status-row .avatar-wrap .status-dot {
-      position: absolute; bottom: -1px; right: -1px;
-    }
-    .online-status-row .info { flex: 1; min-width: 0; }
-    .online-status-row .info .ten {
-      font-weight: 600; font-size: 14px; color: #2c3e50;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .online-status-row .info .chidoan { font-size: 11.5px; color: #7f8c8d; }
-    .online-status-row .trang-thai { font-size: 11.5px; font-weight: 600; white-space: nowrap; text-align: right; }
-    .online-status-row .trang-thai.online { color: #27ae60; }
-    .online-status-row .trang-thai.offline { color: #95a5a6; font-weight: 500; }
-    body.dark-mode .online-status-row { background-color: #1a1b1f; box-shadow: none; border: 1px solid rgba(255,255,255,0.04); }
-    body.dark-mode .online-status-row .info .ten { color: #e1e3e6; }
 
     /* ==========================================
        THẺ SỔ BỘ HUYNH TRƯỞNG (KIỂU DÁNG SANG TRỌNG)
@@ -1654,53 +1614,9 @@
       20%, 22% { opacity: 0.25; }
     }
 
-    /* ==========================================
-       NHẮN TIN GIỮA CÁC HUYNH TRƯỞNG (TẠM THỜI, TỰ XOÁ SAU 1 NGÀY)
-       ========================================== */
-    .chat-bubble-row { display: flex; flex-direction: column; }
-    .chat-bubble-row.me { align-items: flex-end; }
-    .chat-bubble-row.other { align-items: flex-start; }
-    .chat-bubble-ten-gui { font-size: 11px; font-weight: 600; color: #d32f2f; margin: 0 6px 3px; }
-    body.dark-mode .chat-bubble-ten-gui { color: #ff6659; }
-    .chat-bubble {
-      max-width: 72%;
-      padding: 9px 13px;
-      border-radius: 16px;
-      font-size: 13.5px;
-      line-height: 1.4;
-      word-break: break-word;
-      text-align: left;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-    }
-    .chat-bubble-row.me .chat-bubble { background: #d32f2f; color: white; border-bottom-right-radius: 4px; }
-    .chat-bubble-row.other .chat-bubble { background: white; color: #2c3e50; border-bottom-left-radius: 4px; }
-    .chat-bubble img { max-width: 180px; border-radius: 10px; display: block; cursor: pointer; margin-top: 2px; }
-    .chat-bubble .chat-time { display: block; font-size: 10px; opacity: 0.7; margin-top: 4px; text-align: right; }
-    body.dark-mode .chat-bubble-row.other .chat-bubble { background: #26272c; color: #e1e3e6; }
-    #chat-window-body::-webkit-scrollbar { width: 5px; }
-    #chat-window-body::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 5px; }
-
-    /* DANH SÁCH HỘI THOẠI KIỂU MESSENGER + CHỌN NGƯỜI NHẮN TIN MỚI */
-    .chat-thread-row { display:flex; align-items:center; gap:12px; padding:10px 14px; cursor:pointer; border-bottom:1px solid rgba(0,0,0,0.05); }
-    .chat-thread-row:hover { background: rgba(211,47,47,0.05); }
-    body.dark-mode .chat-thread-row { border-bottom:1px solid rgba(255,255,255,0.05); }
-    body.dark-mode .chat-thread-row:hover { background: rgba(255,255,255,0.04); }
-    .chat-thread-avatar { width:48px; height:48px; border-radius:50%; object-fit:cover; flex-shrink:0; background:#eee; }
-    .chat-thread-info { flex:1; min-width:0; text-align:left; }
-    .chat-thread-ten { font-size:14px; font-weight:600; color:#2c3e50; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .chat-thread-ten.chua-doc { color:#d32f2f; }
-    body.dark-mode .chat-thread-ten { color:#e1e3e6; }
-    body.dark-mode .chat-thread-ten.chua-doc { color:#2979ff; }
-    .chat-thread-preview { font-size:12.5px; color:#7f8c8d; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .chat-thread-preview.chua-doc { color:#2c3e50; font-weight:600; }
-    body.dark-mode .chat-thread-preview.chua-doc { color:#e1e3e6; }
-    .chat-thread-right { display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex-shrink:0; }
-    .chat-thread-time { font-size:10.5px; color:#95a5a6; white-space:nowrap; }
-    .chat-unread-badge { background:#d32f2f; color:white; font-size:10.5px; font-weight:bold; min-width:18px; height:18px; border-radius:9px; display:inline-flex; align-items:center; justify-content:center; padding:0 5px; line-height:1; }
-    .chat-unread-dot { position:absolute; top:2px; right:2px; width:9px; height:9px; border-radius:50%; background:#ff3b30; border:2px solid white; }
-    body.dark-mode .chat-unread-dot { border-color:#1a1b1f; }
-    #chat-new-search, #chat-list-modal input { text-transform:none; }
-    .chat-fab-new { position:absolute; right:14px; top:12px; background:rgba(255,255,255,0.18); color:white; border:none; width:34px; height:34px; border-radius:50%; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; }
+    /* Chấm đỏ báo đơn chờ duyệt (nút Duyệt + menu) */
+    .approval-unread-dot { position:absolute; top:2px; right:2px; width:9px; height:9px; border-radius:50%; background:#ff3b30; border:2px solid white; }
+    body.dark-mode .approval-unread-dot { border-color:#1a1b1f; }
 
     /* DANH SÁCH THIẾU NHI */
     .tn-row { transition: background-color 0.25s, transform 0.25s; }
@@ -2301,7 +2217,7 @@
       /* Biến chiều rộng sidebar trái, dùng chung cho vài chỗ bên dưới để dễ chỉnh 1 lần. */
       :root { --sb-w: 246px; }
 
-      /* Trả lại menu Cài đặt (chứa đủ chức năng: đổi mật khẩu, dark mode, trạng thái, nhắn tin, quản trị, đăng xuất...)
+    /* Trả lại menu Cài đặt (chứa đủ chức năng: đổi mật khẩu, dark mode, quản trị, đăng xuất...)
          Neo ngay cạnh phải của sidebar, gần nút CÀI ĐẶT, thay vì theo vị trí thanh trên cùng cũ. */
       #settingsDropdown {
         visibility: visible !important;
@@ -2734,10 +2650,10 @@ window.chuanHoaAnh = function (u) {
 };
 
 (function () {
-  var SEL = ".profile-img, .chat-thread-avatar, .td-rank-avt, .sobo-avatar, .quy-avatar-modern, .avatar-wrap img, .avatar-frame img, " +
+  var SEL = ".profile-img, .td-rank-avt, .sobo-avatar, .quy-avatar-modern, .avatar-wrap img, .avatar-frame img, " +
             "#head-img, #detail-img, #glv-head-img, #glv-side-img, #glv-hero-img, .glv-hero-img, .desktop-org-avatar";
 
-  // Sửa các <img> đang mang link cũ, kể cả ảnh được sinh sau (chat, bảng xếp hạng, hồ sơ...)
+    // Sửa các <img> đang mang link cũ, kể cả ảnh được sinh sau (bảng xếp hạng, hồ sơ...)
   function suaAnh(img) {
     if (!img || img.tagName !== "IMG") return;
     var s = img.getAttribute("src");
@@ -3224,7 +3140,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         <button class="desktop-footerbar-btn" onclick="showPage('thieunhi-page', null)"><i class="fas fa-users"></i> THIẾU NHI</button>
         <button class="desktop-footerbar-btn" onclick="showPage('report', null)"><i class="fas fa-chart-bar"></i> BÁO CÁO</button>
         <button class="desktop-footerbar-btn" onclick="showPage('quy-page', null); quyKhoiTao();"><i class="fas fa-coins"></i> THU QUỸ</button>
-        <button id="desktop-btn-duyet" class="desktop-footerbar-btn" style="display:none; position:relative;" onclick="showPage('approval-page', null)"><i class="fas fa-clipboard-check"></i> DUYỆT<span id="approval-badge-desktop" class="chat-unread-dot" style="display:none;"></span></button>
+        <button id="desktop-btn-duyet" class="desktop-footerbar-btn" style="display:none; position:relative;" onclick="showPage('approval-page', null)"><i class="fas fa-clipboard-check"></i> DUYỆT<span id="approval-badge-desktop" class="approval-unread-dot" style="display:none;"></span></button>
       </div>
     </div>
     <div class="header">
@@ -3246,16 +3162,13 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 
       <div style="font-size: 22px; cursor: pointer; position:relative; padding: 5px;" onclick="toggleMenu(event)">
         <i class="fas fa-cog"></i>
-        <span id="chat-badge-gear" class="chat-unread-dot" style="display:none;"></span>
         <div id="settingsDropdown" class="settings-menu">
           <div onclick="reloadApp()"><i class="fas fa-sync-alt"></i> Làm mới App</div>
           <div onclick="openPasswordModal()"><i class="fas fa-key"></i> Đổi mật khẩu</div>
           <div onclick="toggleDarkMode()"><i class="fas fa-moon"></i> Giao diện Tối</div>
-          <div onclick="openTrangThaiOnline()"><i class="fas fa-circle"></i> Trạng thái</div>
           <div onclick="window.hienGioiThieuPhienBan && window.hienGioiThieuPhienBan(true)"><i class="fas fa-rocket"></i> Bản cập nhật</div>
           <div onclick="window.XDThongBao && XDThongBao.moLichSu()"><i class="fas fa-bullhorn"></i> Thông báo chung</div>
           <div onclick="window.XDPush && XDPush.bamNut()"><i id="menu-push-icon" class="fas fa-bell"></i> <span id="menu-push-label">Bật thông báo</span></div>
-          <div onclick="openChatList()" class="settings-item-o-func-grid"><i class="fas fa-comment-dots"></i> Nhắn tin</div>
           <div onclick="openThiDua()" class="settings-item-o-func-grid"><i class="fas fa-trophy"></i> Thi Đua Huynh Trưởng</div>
           <div onclick="openKiemTra()" class="settings-item-o-func-grid"><i class="fas fa-file-signature"></i> Bài Kiểm Tra</div>
           <div onclick="openGiaoLy()" class="settings-item-o-func-grid"><i class="fas fa-cross"></i> Giáo Lý</div>
@@ -3351,20 +3264,13 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
             <span class="func-icon" style="background:#e1f5fe; color:#0277bd;"><i class="fas fa-file-signature"></i></span>
             <p>Kiểm tra</p>
           </div>
-          <div class="func-item" onclick="openChatList()">
-            <span class="func-icon" style="background:#e8eaf6; color:#3949ab; position:relative;">
-              <i class="fas fa-comment-dots"></i>
-              <span id="chat-badge-func" class="chat-unread-badge" style="display:none; position:absolute; top:-4px; right:-6px;">0</span>
-            </span>
-            <p>Nhắn tin</p>
-          </div>
           <!-- Nút duyệt phép, mặc định ẩn - GIỮ NGUYÊN id="nav-approval" / "approval-badge-nav" vì
                JS ở nơi khác đang bật/tắt hiển thị mục này bằng đúng 2 id này (chỉ chuyển vị trí,
                không đổi logic). -->
           <div class="func-item" id="nav-approval" onclick="showPage('approval-page', null)" style="display:none;">
             <span class="func-icon" style="background:#e8f5e9; color:#27ae60; position:relative;">
               <i class="fas fa-clipboard-check"></i>
-              <span id="approval-badge-nav" class="chat-unread-dot" style="display:none; top:-2px; right:-2px;"></span>
+              <span id="approval-badge-nav" class="approval-unread-dot" style="display:none; top:-2px; right:-2px;"></span>
             </span>
             <p>Duyệt</p>
           </div>
@@ -4096,65 +4002,6 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     </div>
   </div>
 
-  <!-- DANH SÁCH HỘI THOẠI (KIỂU MESSENGER) - không cần nhập mã HT nữa, chỉ bấm vào 1 dòng -->
-  <div id="chat-list-modal" class="modal-overlay">
-    <div class="modal-content" style="max-width:480px; width:92%; height:82vh; max-height:600px; padding:0; text-align:left; display:flex; flex-direction:column; overflow:hidden; border-radius:20px;">
-      <div style="background:#d32f2f; color:white; padding:14px 16px; display:flex; align-items:center; gap:10px; flex-shrink:0; position:relative;">
-        <i class="fas fa-arrow-left" style="cursor:pointer; font-size:18px;" onclick="closeChatListModal()"></i>
-        <div style="flex:1; font-weight:bold; font-size:16px;">Nhắn Tin</div>
-        <button class="chat-fab-new" onclick="openChatNewModal()" title="Nhắn tin cho người mới"><i class="fas fa-plus"></i></button>
-      </div>
-      <div id="chat-list-body" style="flex:1; overflow-y:auto; background:white;"></div>
-    </div>
-  </div>
-
-  <!-- CHỌN HUYNH TRƯỞNG ĐỂ BẮT ĐẦU HỘI THOẠI MỚI (thay cho việc phải gõ mã số HT) -->
-  <div id="chat-new-modal" class="modal-overlay">
-    <div class="modal-content" style="max-width:480px; width:92%; height:82vh; max-height:600px; padding:0; text-align:left; display:flex; flex-direction:column; overflow:hidden; border-radius:20px;">
-      <div style="background:#d32f2f; color:white; padding:14px 16px; display:flex; align-items:center; gap:10px; flex-shrink:0;">
-        <i class="fas fa-arrow-left" style="cursor:pointer; font-size:18px;" onclick="closeChatNewModal()"></i>
-        <div style="font-weight:bold; font-size:16px;">Chọn người để nhắn tin</div>
-      </div>
-      <div style="padding:10px 14px; background:white; border-bottom:1px solid rgba(0,0,0,0.06);">
-        <input type="text" id="chat-new-search" placeholder="Tìm theo tên hoặc mã số HT..." oninput="chatLocDanhSachHuynhTruong()" style="margin:0;">
-      </div>
-      <div id="chat-new-body" style="flex:1; overflow-y:auto; background:white;"></div>
-    </div>
-  </div>
-
-  <!-- CỬA SỔ CHAT (TIN NHẮN TỰ XOÁ SAU 1 NGÀY, KHÔNG LƯU KHI ĐĂNG XUẤT) -->
-  <div id="chat-window-modal" class="modal-overlay">
-    <div class="modal-content" style="max-width:480px; width:92%; height:82vh; max-height:600px; padding:0; text-align:left; display:flex; flex-direction:column; overflow:hidden; border-radius:20px;">
-      <div style="background:#d32f2f; color:white; padding:14px 16px; display:flex; align-items:center; gap:10px; flex-shrink:0;">
-        <i class="fas fa-arrow-left" style="cursor:pointer; font-size:18px;" onclick="closeChatWindow()"></i>
-        <div style="flex:1; min-width:0;">
-          <div id="chat-window-ten" style="font-weight:bold; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">-</div>
-          <div id="chat-window-ma" style="font-size:11px; opacity:0.85;">-</div>
-        </div>
-        <i class="fas fa-sync-alt" style="cursor:pointer; font-size:15px; opacity:0.9;" onclick="chatLamMoi()"></i>
-      </div>
-
-      <div id="chat-window-body" style="flex:1; overflow-y:auto; padding:14px; background:#f4f6f9; display:flex; flex-direction:column; gap:10px;"></div>
-
-      <div id="chat-input-row" style="padding:10px; background:white; border-top:1px solid #eee; flex-shrink:0; display:flex; align-items:center; gap:8px;">
-        <label for="chat-input-image" style="cursor:pointer; color:#d32f2f; font-size:20px; padding:4px; flex-shrink:0;">
-          <i class="fas fa-image"></i>
-        </label>
-        <input type="file" id="chat-input-image" accept="image/*" style="display:none;" onchange="chatGuiAnh()">
-        <input type="text" id="chat-input-text" placeholder="Nhập tin nhắn..." style="flex:1; width:auto; margin:0; border-radius:20px; padding:10px 14px;" onkeypress="if(event.key==='Enter'){chatGuiVanBan();}">
-        <button onclick="chatGuiVanBan()" style="background:#d32f2f; color:white; border:none; width:40px; height:40px; border-radius:50%; flex-shrink:0; cursor:pointer; font-size:15px;"><i class="fas fa-paper-plane"></i></button>
-      </div>
-      <div id="chat-readonly-msg" style="display:none; text-align:center; font-size:12.5px; color:#7f8c8d; padding:12px 16px; background:white; border-top:1px solid #eee; flex-shrink:0;">
-        <i class="fas fa-lock"></i> Chỉ Admin/Quyền Tối Cao mới được gửi tin trong kênh này.
-      </div>
-      <p id="chat-window-msg" style="text-align:center; font-size:12px; color:#e74c3c; margin:0; padding: 0 10px 6px;"></p>
-    </div>
-  </div>
-
-  <!-- XEM ẢNH CHAT PHÓNG TO -->
-  <div id="chat-image-viewer" class="modal-overlay" style="background:rgba(0,0,0,0.9);" onclick="closeChatImageViewer()">
-    <img id="chat-image-viewer-img" src="" style="max-width:92%; max-height:85vh; border-radius:8px; box-shadow:0 8px 30px rgba(0,0,0,0.5);">
-  </div>
 
   <!-- MODAL THÔNG BÁO TẠM DỪNG HỆ THỐNG -->
   <div id="system-notice-modal" class="modal-overlay" style="display: none; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
@@ -4174,16 +4021,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     var currentUserMa = ""; var currentUserToken = ""; var currentUserUnit = ""; var currentUserIsAdmin = false; var currentUserIsSuperAdmin = false; 
     var globalCTTTData = []; var localAttendanceMap = {};
     var countdownIntervalId = null; var currentCalendarDate = new Date();
-    var heartbeatIntervalId = null;          // Vòng lặp gửi "heartbeat" báo đang online
-    var trangThaiOnlineRefreshId = null;      // Vòng lặp tự làm mới khi đang mở modal Online
-    var trangThaiOnlineDataGoc = [];          // Lưu dữ liệu gốc để lọc tìm kiếm không cần gọi lại server
+    var pollNenIntervalId = null;            // Vòng lặp kiểm tra nền (đơn chờ duyệt + thông báo chung)
 
-    // TRẠNG THÁI CỬA SỔ NHẮN TIN (chỉ tồn tại trong bộ nhớ của phiên làm việc hiện tại — không lưu gì khi đăng xuất)
-    var MA_NHOM_TONG = "NHOM_TONG"; // phải khớp với hằng số phía Apps Script
-    var chatState = { maDoiTac: "", hoTenDoiTac: "", pollInterval: null, tinNhanCu: 0, listPollInterval: null, laNhom: false, coTheGuiNhom: false };
-    var chatDanhSachHTGoc = [];      // Cache toàn bộ Huynh Trưởng để lọc tìm kiếm khi chọn người nhắn tin mới, không cần gọi lại server mỗi lần gõ
-    var chatBadgeIntervalId = null;  // Vòng lặp kiểm tra tin nhắn mới ở NỀN, chạy suốt lúc đang đăng nhập (không cần mở khung chat)
-    var chatSoTinChuaDocTruoc = 0;   // Số tin chưa đọc ở lần kiểm tra gần nhất, để biết khi nào vừa CÓ THÊM tin mới mà báo Toast
     var approvalBadgeIntervalId = null; // Vòng lặp kiểm tra đơn nghỉ phép mới chờ duyệt ở NỀN (chỉ chạy với tài khoản Admin)
 
     // KHAI BÁO BIẾN CHO HỆ THỐNG BANNER SLIDER TỰ ĐỘNG & VUỐT CHẠM
@@ -4524,8 +4363,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           loadCTTTData();
           loadWorkAssignments(res.name);
           loadHeaderDanhHieu(); // Hiện danh hiệu thi đua (VD: Huynh Trưởng Tốt) ngay cạnh tên ở header
-          batDauHeartbeat(); // Bắt đầu báo trạng thái "đang online" định kỳ về server
-          batDauChatBadgePolling(); // Bắt đầu kiểm tra tin nhắn mới định kỳ ở nền, báo huy hiệu + Toast khi có tin mới
+          batDauPollNen(); // Bắt đầu kiểm tra nền: đơn chờ duyệt + thông báo chung
           
           // Kiểm tra chế độ bảo trì (màn hình chặn) từ server. Nếu KHÔNG bảo trì,
           // vào thẳng app như bình thường. Nếu ĐANG bảo trì, hiện màn hình chặn;
@@ -5507,343 +5345,6 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       reader.readAsDataURL(file);
     }
 
-    // ==========================================
-    // NHẮN TIN GIỮA CÁC HUYNH TRƯỞNG
-    // (Tin nhắn chỉ lưu tạm trên server tối đa 1 ngày rồi tự xoá.
-    //  Trên máy người dùng thì KHÔNG lưu gì cả — mọi thứ chỉ tồn tại trong bộ nhớ
-    //  của phiên làm việc hiện tại, đăng xuất hoặc tải lại trang là mất sạch.)
-    // ==========================================
-
-    // ---- DANH SÁCH HỘI THOẠI (kiểu Messenger: mở lên là thấy ngay ai đang nhắn với mình,
-    //      không cần nhớ hay gõ mã số HT của ai cả) ----
-    function openChatList() {
-      document.getElementById("settingsDropdown").style.display = "none";
-      if (!currentUserToken) { showToast("Vui lòng đăng nhập lại!", "error"); return; }
-      document.getElementById("chat-list-body").innerHTML = getLogoLoaderHtml("Đang tải hội thoại...");
-      document.getElementById("chat-list-modal").style.display = "flex";
-      chatTaiDanhSachHoiThoai();
-      if (chatState.listPollInterval) clearInterval(chatState.listPollInterval);
-      chatState.listPollInterval = setInterval(chatTaiDanhSachHoiThoai, 5000); // tự làm mới danh sách mỗi 5 giây trong lúc đang mở
-    }
-
-    function closeChatListModal() {
-      document.getElementById("chat-list-modal").style.display = "none";
-      if (chatState.listPollInterval) { clearInterval(chatState.listPollInterval); chatState.listPollInterval = null; }
-    }
-
-    function chatTaiDanhSachHoiThoai() {
-      if (!currentUserToken) return;
-      google.script.run
-        .withSuccessHandler(function (res) {
-          if (!res || !res.success) return; // đang tự làm mới ngầm -> bỏ qua lỗi lặt vặt
-          chatRenderDanhSachHoiThoai(res.data);
-        })
-        .withFailureHandler(function (err) { console.warn("Lỗi tải danh sách hội thoại:", err); })
-        .chatDanhSachHoiThoai(currentUserToken);
-    }
-
-    function chatRenderDanhSachHoiThoai(danhSach) {
-      var body = document.getElementById("chat-list-body");
-      body.innerHTML = "";
-      if (!danhSach || danhSach.length === 0) {
-        body.innerHTML = '<div style="text-align:center; color:#95a5a6; font-size:13px; margin-top:30px; padding:0 24px; line-height:1.6;">Chưa có cuộc trò chuyện nào.<br>Bấm nút <i class="fas fa-plus-circle"></i> ở góc trên để bắt đầu nhắn tin với một Huynh Trưởng khác.</div>';
-        return;
-      }
-      var avatarMacDinh = ANH_LOGO_MAC_DINH;
-      danhSach.forEach(function (th) {
-        var row = document.createElement("div");
-        row.className = "chat-thread-row";
-        row.onclick = th.laNhom ? function () { chatMoNhomTong(); } : function () { chatMoHoiThoai(th.maDoiTac, th.hoTen); };
-
-        if (th.laNhom) {
-          var icoWrap = document.createElement("div");
-          icoWrap.className = "chat-thread-avatar";
-          icoWrap.style.cssText = "display:flex; align-items:center; justify-content:center; background:#d32f2f; color:white; font-size:20px;";
-          icoWrap.innerHTML = '<i class="fas fa-users"></i>';
-          row.appendChild(icoWrap);
-        } else {
-          var img = document.createElement("img");
-          img.className = "chat-thread-avatar";
-          img.src = th.anh || avatarMacDinh;
-          row.appendChild(img);
-        }
-
-        var info = document.createElement("div");
-        info.className = "chat-thread-info";
-        var ten = document.createElement("div");
-        ten.className = "chat-thread-ten" + (th.soChuaDoc > 0 ? " chua-doc" : "");
-        ten.innerText = th.hoTen;
-        var preview = document.createElement("div");
-        preview.className = "chat-thread-preview" + (th.soChuaDoc > 0 ? " chua-doc" : "");
-        var xemTruoc = th.loaiCuoi === "image" ? "📷 Hình ảnh" : (th.noiDungCuoi || "");
-        var tienTo = th.tinNhanCuaMinh ? "Bạn: " : (th.laNhom && th.tgCuoiMs > 0 ? (th.tenNguoiGuiCuoi || "") + ": " : "");
-        preview.innerText = tienTo + xemTruoc;
-        info.appendChild(ten); info.appendChild(preview);
-
-        var right = document.createElement("div");
-        right.className = "chat-thread-right";
-        var time = document.createElement("div");
-        time.className = "chat-thread-time";
-        time.innerText = th.tgHienThiCuoi || "";
-        right.appendChild(time);
-        if (th.soChuaDoc > 0) {
-          var badge = document.createElement("span");
-          badge.className = "chat-unread-badge";
-          badge.innerText = th.soChuaDoc > 9 ? "9+" : th.soChuaDoc;
-          right.appendChild(badge);
-        }
-
-        row.appendChild(info); row.appendChild(right);
-        body.appendChild(row);
-      });
-    }
-
-    // ---- CHỌN NGƯỜI ĐỂ BẮT ĐẦU HỘI THOẠI MỚI (thay cho việc phải gõ mã số HT) ----
-    function openChatNewModal() {
-      document.getElementById("chat-new-search").value = "";
-      document.getElementById("chat-new-body").innerHTML = getLogoLoaderHtml("Đang tải danh sách...");
-      document.getElementById("chat-new-modal").style.display = "flex";
-      google.script.run
-        .withSuccessHandler(function (res) {
-          if (!res || !res.success) {
-            document.getElementById("chat-new-body").innerHTML = '<div style="text-align:center;color:#e74c3c;font-size:13px;margin-top:20px;">' + (res && res.error ? res.error : "Không tải được danh sách.") + '</div>';
-            return;
-          }
-          chatDanhSachHTGoc = res.data || [];
-          chatRenderDanhSachHuynhTruong(chatDanhSachHTGoc);
-        })
-        .withFailureHandler(function (err) {
-          document.getElementById("chat-new-body").innerHTML = '<div style="text-align:center;color:#e74c3c;font-size:13px;margin-top:20px;">Lỗi kết nối: ' + err + '</div>';
-        })
-        .chatDanhSachHuynhTruong(currentUserToken);
-    }
-
-    function closeChatNewModal() {
-      document.getElementById("chat-new-modal").style.display = "none";
-    }
-
-    function chatLocDanhSachHuynhTruong() {
-      var tu = document.getElementById("chat-new-search").value.trim().toLowerCase();
-      if (!tu) { chatRenderDanhSachHuynhTruong(chatDanhSachHTGoc); return; }
-      var loc = chatDanhSachHTGoc.filter(function (ht) {
-        return String(ht.hoTen).toLowerCase().indexOf(tu) !== -1 || String(ht.ma).toLowerCase().indexOf(tu) !== -1;
-      });
-      chatRenderDanhSachHuynhTruong(loc);
-    }
-
-    function chatRenderDanhSachHuynhTruong(danhSach) {
-      var body = document.getElementById("chat-new-body");
-      body.innerHTML = "";
-      if (!danhSach || danhSach.length === 0) {
-        body.innerHTML = '<div style="text-align:center; color:#95a5a6; font-size:13px; margin-top:20px;">Không tìm thấy Huynh Trưởng nào.</div>';
-        return;
-      }
-      var avatarMacDinh = ANH_LOGO_MAC_DINH;
-      danhSach.forEach(function (ht) {
-        var row = document.createElement("div");
-        row.className = "chat-thread-row";
-        row.onclick = function () {
-          document.getElementById("chat-new-modal").style.display = "none";
-          chatMoHoiThoai(ht.ma, ht.hoTen);
-        };
-        var img = document.createElement("img");
-        img.className = "chat-thread-avatar";
-        img.src = ht.anh || avatarMacDinh;
-        var info = document.createElement("div");
-        info.className = "chat-thread-info";
-        var ten = document.createElement("div");
-        ten.className = "chat-thread-ten";
-        ten.innerText = ht.hoTen;
-        var phu = document.createElement("div");
-        phu.className = "chat-thread-preview";
-        phu.innerText = ht.chiDoan || ht.ma;
-        info.appendChild(ten); info.appendChild(phu);
-        row.appendChild(img); row.appendChild(info);
-        body.appendChild(row);
-      });
-    }
-
-    // ---- KHUNG CHAT 1-1 (giữ nguyên toàn bộ cơ chế cũ, chỉ đổi cách MỞ và cách QUAY LẠI) ----
-    function chatMoHoiThoai(ma, hoTen) {
-      // Ẩn danh sách hội thoại đi (nếu đang mở) và dừng vòng lặp tự làm mới của nó cho nhẹ máy
-      document.getElementById("chat-list-modal").style.display = "none";
-      if (chatState.listPollInterval) { clearInterval(chatState.listPollInterval); chatState.listPollInterval = null; }
-
-      chatState.maDoiTac = ma;
-      chatState.hoTenDoiTac = hoTen;
-      chatState.laNhom = false;
-      chatState.tinNhanCu = 0;
-      document.getElementById("chat-window-ten").innerText = hoTen;
-      document.getElementById("chat-window-ma").innerText = "Mã HT: " + ma;
-      document.getElementById("chat-window-msg").innerText = "";
-      document.getElementById("chat-window-body").innerHTML = getLogoLoaderHtml("Đang tải tin nhắn...");
-      document.getElementById("chat-window-modal").style.display = "flex";
-      chatCapNhatOThongBaoNhap(); // 1-1 luôn cho gõ tin nhắn bình thường
-
-      chatTaiTinNhan(true);
-      if (chatState.pollInterval) clearInterval(chatState.pollInterval);
-      chatState.pollInterval = setInterval(function () { chatTaiTinNhan(false); }, 4000); // tự làm mới mỗi 4 giây trong lúc mở cửa sổ chat
-      setTimeout(chatCapNhatBadge, 900); // mở hội thoại này coi như đã đọc -> cập nhật lại huy hiệu sau khi server đánh dấu xong
-    }
-
-    // ---- NHÓM CHAT TỔNG (kênh chung toàn Xứ đoàn - ai cũng xem được, chỉ Admin/Quyền Tối Cao gửi được) ----
-    function chatMoNhomTong() {
-      document.getElementById("chat-list-modal").style.display = "none";
-      if (chatState.listPollInterval) { clearInterval(chatState.listPollInterval); chatState.listPollInterval = null; }
-
-      chatState.maDoiTac = MA_NHOM_TONG;
-      chatState.hoTenDoiTac = "Nhóm chat tổng";
-      chatState.laNhom = true;
-      chatState.coTheGuiNhom = false; // mặc định ẩn ô nhập cho tới khi server xác nhận quyền, tránh chớp giao diện
-      chatState.tinNhanCu = 0;
-      document.getElementById("chat-window-ten").innerText = "Nhóm chat tổng";
-      document.getElementById("chat-window-ma").innerText = "Toàn Xứ đoàn";
-      document.getElementById("chat-window-msg").innerText = "";
-      document.getElementById("chat-window-body").innerHTML = getLogoLoaderHtml("Đang tải tin nhắn...");
-      document.getElementById("chat-window-modal").style.display = "flex";
-      chatCapNhatOThongBaoNhap();
-
-      chatTaiTinNhan(true);
-      if (chatState.pollInterval) clearInterval(chatState.pollInterval);
-      chatState.pollInterval = setInterval(function () { chatTaiTinNhan(false); }, 4000);
-      setTimeout(chatCapNhatBadge, 900);
-    }
-
-    // Ẩn/hiện ô nhập tin nhắn: chỉ ẩn khi đang ở Nhóm chat tổng mà KHÔNG có quyền gửi (chỉ xem)
-    function chatCapNhatOThongBaoNhap() {
-      var chiXem = chatState.laNhom && !chatState.coTheGuiNhom;
-      document.getElementById("chat-input-row").style.display = chiXem ? "none" : "flex";
-      document.getElementById("chat-readonly-msg").style.display = chiXem ? "block" : "none";
-    }
-
-    // Bấm mũi tên quay lại (hoặc gọi mặc định) sẽ trở về Danh Sách Hội Thoại, giống Messenger.
-    // Truyền false khi cần đóng hẳn không quay lại (ví dụ lúc đăng xuất).
-    function closeChatWindow(quayLaiDanhSach) {
-      document.getElementById("chat-window-modal").style.display = "none";
-      if (chatState.pollInterval) { clearInterval(chatState.pollInterval); chatState.pollInterval = null; }
-      chatState.maDoiTac = ""; chatState.hoTenDoiTac = ""; chatState.tinNhanCu = 0; chatState.laNhom = false;
-      document.getElementById("chat-window-body").innerHTML = ""; // xoá sạch nội dung khỏi bộ nhớ trình duyệt
-      chatCapNhatBadge();
-      if (quayLaiDanhSach !== false && currentUserToken) {
-        openChatList();
-      }
-    }
-
-    function chatLamMoi() { chatTaiTinNhan(true); }
-
-    function chatTaiTinNhan(cuonXuong) {
-      if (!chatState.maDoiTac || !currentUserToken) return;
-      if (chatState.laNhom) {
-        google.script.run
-          .withSuccessHandler(function (res) {
-            if (!res || !res.success) return; // đang tự làm mới ngầm -> bỏ qua lỗi lặt vặt
-            chatState.coTheGuiNhom = !!res.coTheGui;
-            chatCapNhatOThongBaoNhap();
-            chatRenderTinNhan(res.tinNhan, cuonXuong);
-          })
-          .withFailureHandler(function (err) { console.warn("Lỗi tải tin nhắn Nhóm chat tổng:", err); })
-          .nhomTongLayTinNhan(currentUserToken);
-      } else {
-        google.script.run
-          .withSuccessHandler(function (res) {
-            if (!res || !res.success) return; // đang tự làm mới ngầm -> bỏ qua lỗi lặt vặt, không làm phiền người dùng
-            chatRenderTinNhan(res.tinNhan, cuonXuong);
-          })
-          .withFailureHandler(function (err) { console.warn("Lỗi tải tin nhắn:", err); })
-          .chatLayTinNhan(currentUserToken, chatState.maDoiTac);
-      }
-    }
-
-    function chatRenderTinNhan(danhSach, cuonXuong) {
-      var body = document.getElementById("chat-window-body");
-      if (!danhSach || danhSach.length === 0) {
-        body.innerHTML = '<div style="text-align:center; color:#95a5a6; font-size:13px; margin-top:20px;">' + (chatState.laNhom ? "Chưa có thông báo nào trong Nhóm chat tổng." : "Chưa có tin nhắn nào. Hãy gửi lời chào!") + '</div>';
-        chatState.tinNhanCu = 0;
-        return;
-      }
-      if (danhSach.length === chatState.tinNhanCu) return; // không có tin nhắn mới -> khỏi vẽ lại cho đỡ giật khi đang cuộn
-      chatState.tinNhanCu = danhSach.length;
-
-      var html = danhSach.map(function (tn) {
-        var laMinh = String(tn.maGui).trim().toUpperCase() === String(currentUserMa).trim().toUpperCase();
-        var noiDungHtml = tn.loai === "image"
-          ? '<img src="' + tn.url + '" onclick="openChatImageViewer(\'' + tn.url + '\')">'
-          : chatEscHtml(tn.noiDung);
-        var tenGuiHtml = (chatState.laNhom && !laMinh) ? '<div class="chat-bubble-ten-gui">' + chatEscHtml(tn.tenGui || tn.maGui) + '</div>' : '';
-        return '<div class="chat-bubble-row ' + (laMinh ? 'me' : 'other') + '">' +
-          tenGuiHtml +
-          '<div class="chat-bubble">' + noiDungHtml + '<span class="chat-time">' + (tn.tgHienThi || '') + '</span></div>' +
-          '</div>';
-      }).join('');
-      body.innerHTML = html;
-      if (cuonXuong !== false) body.scrollTop = body.scrollHeight;
-    }
-
-    function chatEscHtml(v) {
-      if (v === null || v === undefined) return '';
-      return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
-
-    function chatGuiVanBan() {
-      var input = document.getElementById("chat-input-text");
-      var noiDung = input.value.trim();
-      if (!noiDung || !chatState.maDoiTac) return;
-      input.value = "";
-      if (chatState.laNhom) {
-        google.script.run
-          .withSuccessHandler(function (res) {
-            if (!res || !res.success) { showToast(res && res.error ? res.error : "Gửi tin nhắn thất bại!", "error"); return; }
-            chatTaiTinNhan(true);
-          })
-          .withFailureHandler(function (err) { showToast("Lỗi kết nối: " + err, "error"); })
-          .nhomTongGuiTinNhan(currentUserToken, noiDung, "text", "", "");
-      } else {
-        google.script.run
-          .withSuccessHandler(function (res) {
-            if (!res || !res.success) { showToast(res && res.error ? res.error : "Gửi tin nhắn thất bại!", "error"); return; }
-            chatTaiTinNhan(true);
-          })
-          .withFailureHandler(function (err) { showToast("Lỗi kết nối: " + err, "error"); })
-          .chatGuiTinNhan(currentUserToken, chatState.maDoiTac, noiDung, "text", "", "");
-      }
-    }
-
-    function chatGuiAnh() {
-      var fileInput = document.getElementById("chat-input-image");
-      if (fileInput.files.length === 0 || !chatState.maDoiTac) return;
-      var file = fileInput.files[0];
-      var msg = document.getElementById("chat-window-msg");
-      msg.style.color = "#333"; msg.innerText = "Đang gửi ảnh...";
-
-      var reader = new FileReader();
-      reader.onload = function (e) {
-        var xuLyKetQua = function (res) {
-          fileInput.value = "";
-          if (!res || !res.success) { msg.style.color = "red"; msg.innerText = res && res.error ? res.error : "Gửi ảnh thất bại!"; return; }
-          msg.innerText = "";
-          chatTaiTinNhan(true);
-        };
-        var xuLyLoi = function (err) {
-          fileInput.value = "";
-          msg.style.color = "red"; msg.innerText = "Lỗi kết nối: " + err;
-        };
-        if (chatState.laNhom) {
-          google.script.run.withSuccessHandler(xuLyKetQua).withFailureHandler(xuLyLoi)
-            .nhomTongGuiTinNhan(currentUserToken, "", "image", e.target.result, file.name);
-        } else {
-          google.script.run.withSuccessHandler(xuLyKetQua).withFailureHandler(xuLyLoi)
-            .chatGuiTinNhan(currentUserToken, chatState.maDoiTac, "", "image", e.target.result, file.name);
-        }
-      };
-      reader.onerror = function () { msg.style.color = "red"; msg.innerText = "Lỗi đọc file ảnh!"; };
-      reader.readAsDataURL(file);
-    }
-
-    function openChatImageViewer(url) {
-      document.getElementById("chat-image-viewer-img").src = url;
-      document.getElementById("chat-image-viewer").style.display = "flex";
-    }
-    function closeChatImageViewer() { document.getElementById("chat-image-viewer").style.display = "none"; }
 
     // 6. GỬI BÁO CÁO
     function submitReportForm() {
@@ -6041,15 +5542,12 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     
     function logout() { 
       xoaPhienLuu();
-      // Báo ngay cho server biết HT này đã thoát -> hiện Offline tức thì cho người khác thấy,
-      // đồng thời huỷ token phiên trên server để không ai dùng lại được nữa.
+      // Huỷ token phiên trên server để không ai dùng lại được nữa.
       if (currentUserToken) {
-        google.script.run.danhDauOfflineHT(currentUserToken);
         google.script.run.huyPhienDangNhap(currentUserToken, (window.XDPush ? XDPush.tokenThietBi() : ""));
         if (window.XDPush) XDPush.khiDangXuat();
       }
-      dungHeartbeat();
-      dungChatBadgePolling();
+      dungPollNen();
       dungApprovalBadgePolling();
       khanCapDonDep();
       var elApprovalNav = document.getElementById("approval-badge-nav");
@@ -6066,19 +5564,6 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       document.getElementById("settingsDropdown").style.display = "none";
       closePasswordModal();
 
-      // Đóng hết mọi cửa sổ liên quan tới Nhắn Tin và dừng mọi vòng lặp tự làm mới của chúng
-      document.getElementById("chat-window-modal").style.display = "none";
-      document.getElementById("chat-list-modal").style.display = "none";
-      document.getElementById("chat-new-modal").style.display = "none";
-      if (chatState.pollInterval) { clearInterval(chatState.pollInterval); chatState.pollInterval = null; }
-      if (chatState.listPollInterval) { clearInterval(chatState.listPollInterval); chatState.listPollInterval = null; }
-      chatState.maDoiTac = ""; chatState.hoTenDoiTac = ""; chatState.tinNhanCu = 0; chatState.laNhom = false; chatState.coTheGuiNhom = false;
-      document.getElementById("chat-window-body").innerHTML = "";
-      chatSoTinChuaDocTruoc = 0;
-      document.getElementById("chat-badge-gear").style.display = "none";
-      var elFuncBadgeReset = document.getElementById("chat-badge-func");
-      if (elFuncBadgeReset) elFuncBadgeReset.style.display = "none";
-      closeChatImageViewer();
 
       if (promoSliderInterval) {
         clearInterval(promoSliderInterval);
@@ -6090,18 +5575,18 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     }
 
     // ==========================================
-    // 7. TRẠNG THÁI ONLINE / OFFLINE HUYNH TRƯỞNG
+    // 7. KIỂM TRA NỀN (ĐƠN CHỜ DUYỆT + THÔNG BÁO CHUNG)
     // ==========================================
 
-    // Gửi heartbeat ngay lập tức, sau đó lặp lại mỗi 60 giây trong lúc app đang mở
-    function batDauHeartbeat() {
-      dungHeartbeat(); // Tránh tạo trùng nhiều vòng lặp nếu gọi lại nhiều lần
+    // Gọi ngay lập tức, sau đó lặp lại mỗi 30 giây trong lúc app đang mở
+    function batDauPollNen() {
+      dungPollNen(); // Tránh tạo trùng nhiều vòng lặp nếu gọi lại nhiều lần
       pollNen();
-      heartbeatIntervalId = setInterval(pollNen, 30000);
+      pollNenIntervalId = setInterval(pollNen, 30000);
     }
 
-    // TỐI ƯU: 1 lần gọi server duy nhất cho cả 3 việc nền (heartbeat + tin chưa đọc + đơn chờ duyệt)
-    // thay vì 3 lần gọi riêng như trước. Tự tạm dừng khi app chạy ngầm (xem gas-shim.js).
+    // TỐI ƯU: 1 lần gọi server duy nhất cho 2 việc nền (đơn chờ duyệt + thông báo chung).
+    // Tự tạm dừng khi app chạy ngầm (xem gas-shim.js).
     var pollNenDangChay = false;
     function pollNen() {
       if (!currentUserToken || pollNenDangChay) return;
@@ -6110,7 +5595,6 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         .withSuccessHandler(function (res) {
           pollNenDangChay = false;
           if (!res || !res.success) return;
-          if (res.chat) chatXuLyBadge(res.chat);
           if (res.approval) approvalXuLyBadge(res.approval);
           if (res.tb && window.XDThongBao) XDThongBao.khiCoMoi(res.tb);
         })
@@ -6118,63 +5602,13 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         .pollTongHop(currentUserToken, !!currentUserIsAdmin);
     }
 
-    function dungHeartbeat() {
-      if (heartbeatIntervalId) {
-        clearInterval(heartbeatIntervalId);
-        heartbeatIntervalId = null;
+    function dungPollNen() {
+      if (pollNenIntervalId) {
+        clearInterval(pollNenIntervalId);
+        pollNenIntervalId = null;
       }
     }
 
-    function guiHeartbeat() {
-      if (!currentUserToken) return;
-      // Gửi ngầm, không cần xử lý phản hồi (không làm phiền người dùng nếu lỗi mạng tạm thời)
-      google.script.run
-        .withFailureHandler(function(err) { console.warn("Heartbeat lỗi:", err); })
-        .capNhatHeartbeat(currentUserToken);
-    }
-
-    // ==========================================
-    // BÁO TIN NHẮN MỚI Ở NỀN (không cần mở khung chat vẫn biết có tin mới cần vào xem)
-    // ==========================================
-    function batDauChatBadgePolling() {
-      dungChatBadgePolling(); // tránh tạo trùng nhiều vòng lặp nếu gọi lại nhiều lần
-      // (đã gộp vào pollNen)
-    }
-
-    function dungChatBadgePolling() {
-      if (chatBadgeIntervalId) {
-        clearInterval(chatBadgeIntervalId);
-        chatBadgeIntervalId = null;
-      }
-    }
-
-    function chatCapNhatBadge() {
-      if (!currentUserToken) return;
-      google.script.run
-        .withSuccessHandler(chatXuLyBadge)
-        .withFailureHandler(function (err) { console.warn("Lỗi kiểm tra tin nhắn mới:", err); })
-        .chatSoTinChuaDoc(currentUserToken);
-    }
-    function chatXuLyBadge(res) {
-          if (!res || !res.success) return;
-          var soLuong = res.soChuaDoc || 0;
-          var elGear = document.getElementById("chat-badge-gear");
-          var elFunc = document.getElementById("chat-badge-func");
-          if (soLuong > 0) {
-            elGear.style.display = "block";
-            if (elFunc) { elFunc.style.display = "inline-flex"; elFunc.innerText = soLuong > 9 ? "9+" : soLuong; }
-          } else {
-            elGear.style.display = "none";
-            if (elFunc) elFunc.style.display = "none";
-          }
-          // Chỉ báo Toast khi số tin chưa đọc TĂNG so với lần kiểm tra trước (có tin mới thật sự)
-          // và Trưởng không đang mở sẵn đúng khung chat đó.
-          if (soLuong > chatSoTinChuaDocTruoc) {
-            var dangMoKhungChat = document.getElementById("chat-window-modal").style.display === "flex";
-            if (!dangMoKhungChat) showToast("Bạn có tin nhắn mới! Bấm vào biểu tượng Nhắn Tin để xem.", "info");
-          }
-          chatSoTinChuaDocTruoc = soLuong;
-    }
 
     // ==========================================
     // BÁO CÓ ĐƠN NGHỈ PHÉP MỚI CHỜ DUYỆT (chấm đỏ ở nút "Duyệt", chỉ dành cho Admin)
@@ -6205,19 +5639,6 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         .withSuccessHandler(approvalXuLyBadge)
         .withFailureHandler(function (err) { console.warn("Lỗi kiểm tra đơn nghỉ phép mới:", err); })
         .countPendingLeaveRequests(currentUserToken);
-    }
-
-    // Chuyển mili-giây thành chuỗi "X phút trước" / "X giờ trước" dễ đọc
-    function tinhThoiGianTruoc(ms) {
-      if (!ms) return "Chưa từng online";
-      var diff = Date.now() - ms;
-      if (diff < 60000) return "Vừa xong";
-      var phut = Math.floor(diff / 60000);
-      if (phut < 60) return phut + " phút trước";
-      var gio = Math.floor(phut / 60);
-      if (gio < 24) return gio + " giờ trước";
-      var ngay = Math.floor(gio / 24);
-      return ngay + " ngày trước";
     }
 
     // ==========================================
@@ -7398,163 +6819,17 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         .thiDuaDiemDanhHomNay(currentUserToken);
     }
 
-    function openTrangThaiOnline() {
-      document.getElementById("settingsDropdown").style.display = "none";
-      var modal = document.getElementById("trangThaiOnlineModal");
-      var body = document.getElementById("trangThaiOnlineBody");
-      modal.style.display = "flex";
-      body.innerHTML = getLogoLoaderHtml("Đang tải trạng thái hoạt động...");
-
-      var daXongChua = false;
-      setTimeout(function() {
-        if (!daXongChua) {
-          body.innerHTML = '<div style="color:#e74c3c; text-align:center; padding:20px; font-weight:500;">'
-            + '<i class="fas fa-clock"></i> Quá thời gian chờ phản hồi từ máy chủ.<br>'
-            + '<button onclick="openTrangThaiOnline()" style="margin-top:10px; padding:6px 14px; border:none; border-radius:6px; background:#d32f2f; color:white; cursor:pointer;">Thử lại</button>'
-            + '</div>';
-        }
-      }, 15000);
-
-      google.script.run
-        .withSuccessHandler(function(res) {
-          daXongChua = true;
-          if (res && res.success) {
-            trangThaiOnlineDataGoc = res.data;
-            renderTrangThaiOnline(trangThaiOnlineDataGoc);
-            // Tự động làm mới danh sách mỗi 30 giây trong lúc modal đang mở
-            if (trangThaiOnlineRefreshId) clearInterval(trangThaiOnlineRefreshId);
-            trangThaiOnlineRefreshId = setInterval(function() {
-              if (document.getElementById("trangThaiOnlineModal").style.display === "flex") {
-                google.script.run.withSuccessHandler(function(r2) {
-                  if (r2 && r2.success) {
-                    trangThaiOnlineDataGoc = r2.data;
-                    var searchVal = document.getElementById("search-trangthai-online").value;
-                    if (searchVal) filterTrangThaiOnline(); else renderTrangThaiOnline(trangThaiOnlineDataGoc);
-                  }
-                }).layDanhSachTrangThaiHoatDong();
-              } else {
-                clearInterval(trangThaiOnlineRefreshId);
-                trangThaiOnlineRefreshId = null;
-              }
-            }, 30000);
-          } else {
-            body.innerHTML = `<div style="color:#e74c3c; text-align:center; padding:20px; font-weight:500;"><i class="fas fa-exclamation-triangle"></i> ${res && res.error ? res.error : "Không rõ lỗi"}</div>`;
-          }
-        })
-        .withFailureHandler(function(err) {
-          daXongChua = true;
-          body.innerHTML = '<div style="color:#e74c3c; text-align:center; padding:20px; font-weight:500;"><i class="fas fa-wifi"></i> Lỗi kết nối: ' + (err && err.message ? err.message : err) + '</div>';
-        })
-        .layDanhSachTrangThaiHoatDong();
-    }
-
-    function renderTrangThaiOnline(list) {
-      var body = document.getElementById("trangThaiOnlineBody");
-      var summary = document.getElementById("trangThaiOnlineSummary");
-
-      if (!list || list.length === 0) {
-        body.innerHTML = `<div style="text-align:center; color:#7f8c8d; padding:30px 10px;"><i class="fas fa-inbox" style="font-size:28px; margin-bottom:10px; display:block;"></i>Không có dữ liệu.</div>`;
-        summary.innerHTML = "";
-        return;
-      }
-
-      var soOnline = list.filter(function(x) { return x.isOnline; }).length;
-      summary.innerHTML = `<i class="fas fa-circle" style="color:#2ecc71; font-size:8px;"></i> ${soOnline} đang online &nbsp;|&nbsp; <i class="fas fa-circle" style="color:#b2bec3; font-size:8px;"></i> ${list.length - soOnline} offline`;
-
-      var html = "";
-      list.forEach(function(item) {
-        var trangThaiText = item.isOnline
-          ? "Đang online"
-          : (item.lastActiveMs ? tinhThoiGianTruoc(item.lastActiveMs) : "Chưa từng online");
-
-        html += `
-          <div class="online-status-row">
-            <div class="avatar-wrap">
-              <img src="${item.image}" onerror="this.src='icons/logo-dai-dien.jpg'">
-              <span class="status-dot ${item.isOnline ? 'online' : 'offline'}"></span>
-            </div>
-            <div class="info">
-              <div class="ten">${item.hoTen}</div>
-              <div class="chidoan">${item.chiDoan}</div>
-            </div>
-            <div class="trang-thai ${item.isOnline ? 'online' : 'offline'}">${trangThaiText}</div>
-          </div>`;
-      });
-      body.innerHTML = html;
-    }
-
-    function filterTrangThaiOnline() {
-      var input = document.getElementById("search-trangthai-online").value.toLowerCase().trim();
-      if (!input) { renderTrangThaiOnline(trangThaiOnlineDataGoc); return; }
-
-      var filtered = trangThaiOnlineDataGoc.filter(function(item) {
-        return (item.hoTen && item.hoTen.toLowerCase().includes(input)) ||
-               (item.chiDoan && item.chiDoan.toLowerCase().includes(input)) ||
-               (item.maHT && String(item.maHT).toLowerCase().includes(input));
-      });
-      renderTrangThaiOnline(filtered);
-    }
-
-    function closeTrangThaiOnline() {
-      document.getElementById("trangThaiOnlineModal").style.display = "none";
-      if (trangThaiOnlineRefreshId) {
-        clearInterval(trangThaiOnlineRefreshId);
-        trangThaiOnlineRefreshId = null;
-      }
-    }
-
     // ==========================================
-    // VỀ CHÚNG TÔI (THÔNG TIN NHÀ PHÁT TRIỂN + NHẮN TIN CHO ADMIN TỐI CAO)
+    // VỀ CHÚNG TÔI (THÔNG TIN NHÀ PHÁT TRIỂN + LIÊN HỆ)
     // ==========================================
     function openAboutUs() {
       document.getElementById("settingsDropdown").style.display = "none";
-      document.getElementById("aboutUsAdminMsg").innerText = "";
       document.getElementById("aboutUsModal").style.display = "flex";
     }
     function closeAboutUs() {
       document.getElementById("aboutUsModal").style.display = "none";
     }
 
-    // Tìm Huynh Trưởng đang giữ Quyền Tối Cao rồi mở thẳng cửa sổ nhắn tin nội bộ
-    // (dùng lại toàn bộ hệ thống Nhắn Tin sẵn có), không cần người dùng phải biết
-    // trước mã số của Admin.
-    function aboutUsNhanAdmin() {
-      if (!currentUserToken) { showToast("Vui lòng đăng nhập lại!", "error"); return; }
-      var btn = document.getElementById("aboutUsBtnNhanAdmin");
-      var msgEl = document.getElementById("aboutUsAdminMsg");
-      var originalHtml = btn.innerHTML;
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tìm Admin...';
-      msgEl.style.color = "#333";
-      msgEl.innerText = "";
-
-      google.script.run
-        .withSuccessHandler(function (res) {
-          btn.disabled = false;
-          btn.innerHTML = originalHtml;
-          if (!res || !res.success) {
-            msgEl.style.color = "#e74c3c";
-            msgEl.innerText = res && res.error ? res.error : "Không thể tải danh sách Admin.";
-            return;
-          }
-          if (!res.danhSach || res.danhSach.length === 0) {
-            msgEl.style.color = "#e74c3c";
-            msgEl.innerText = "Hiện chưa có Admin nào khác trong hệ thống. Vui lòng liên hệ qua Email/Zalo bên trên.";
-            return;
-          }
-          closeAboutUs();
-          // Nếu có nhiều hơn 1 Admin Tối Cao thì mặc định mở chat với người đầu tiên
-          var adm = res.danhSach[0];
-          chatMoHoiThoai(adm.ma, adm.hoTen);
-        })
-        .withFailureHandler(function (err) {
-          btn.disabled = false;
-          btn.innerHTML = originalHtml;
-          msgEl.style.color = "#e74c3c";
-          msgEl.innerText = "Lỗi kết nối: " + err;
-        })
-        .layDanhSachAdminToiCao(currentUserToken);
-    }
 
     // ==========================================
     // SỔ BỘ HUYNH TRƯỞNG - danh sách Huynh Trưởng lấy từ Google Sheet, hiển thị dạng thẻ
@@ -8668,28 +7943,6 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   </div>
 
   <!-- ==========================================
-       MODAL TRẠNG THÁI ONLINE / OFFLINE HUYNH TRƯỞNG
-       ========================================== -->
-  <div id="trangThaiOnlineModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:10000; justify-content:center; align-items:center; padding:12px; box-sizing:border-box;">
-    <div style="background:white; width:100%; max-width:480px; border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,0.2); display:flex; flex-direction:column; max-height:85vh; animation: modalContentPop 0.25s ease-out;">
-      <div style="background:#d32f2f; color:white; padding:15px; border-top-left-radius:12px; border-top-right-radius:12px; display:flex; justify-content:space-between; align-items:center;">
-        <h3 style="margin:0; font-size:16px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">Trạng thái hoạt động</h3>
-        <span onclick="closeTrangThaiOnline()" style="cursor:pointer; font-size:24px; font-weight:bold; line-height:1; padding:0 5px;">&times;</span>
-      </div>
-      <div style="padding:12px 15px 0 15px; background:#fafafa; display:flex; gap:8px; align-items:center;">
-        <input type="text" id="search-trangthai-online" placeholder="Tìm theo tên hoặc chi đoàn..." onkeyup="filterTrangThaiOnline()" style="flex:1; padding:10px 12px; border:1px solid #ddd; border-radius:10px; box-sizing:border-box; outline:none; font-size:13px;">
-        <span onclick="openTrangThaiOnline()" title="Làm mới" style="cursor:pointer; color:#d32f2f; font-size:16px; padding:8px;"><i class="fas fa-rotate"></i></span>
-      </div>
-      <div style="padding:8px 15px 0 15px; background:#fafafa; font-size:11.5px; color:#95a5a6;" id="trangThaiOnlineSummary"></div>
-      <div id="trangThaiOnlineBody" style="padding:10px 15px 15px 15px; overflow-y:auto; flex:1; background:#fafafa; display:flex; flex-direction:column; gap:8px;">
-      </div>
-      <div style="padding:10px 15px; border-top:1px solid #eee; display:flex; justify-content:flex-end; background:white; border-bottom-left-radius:12px; border-bottom-right-radius:12px;">
-        <button onclick="closeTrangThaiOnline()" style="background:#7f8c8d; color:white; border:none; padding:8px 18px; border-radius:6px; cursor:pointer; font-weight:600; font-size:14px;">Đóng lại</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==========================================
        MODAL VỀ CHÚNG TÔI (THÔNG TIN NHÀ PHÁT TRIỂN + LIÊN HỆ LỖI)
        ========================================== -->
   <div id="aboutUsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:10000; justify-content:center; align-items:center; padding:12px; box-sizing:border-box;">
@@ -8723,11 +7976,6 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           </div>
         </div>
 
-        <button id="aboutUsBtnNhanAdmin" class="btn-action" style="padding:12px; font-size:14px; margin-top:4px;" onclick="aboutUsNhanAdmin()">
-          <i class="fas fa-paper-plane"></i> Nhắn tin ngay cho Admin
-        </button>
-        <p style="font-size:11px; color:#95a5a6; text-align:center; margin:8px 0 4px 0;">Tin nhắn được gửi trực tiếp cho Admin. hoàn toàn bảo mật tuyệt đối</p>
-        <p id="aboutUsAdminMsg" style="font-size:12.5px; font-weight:600; text-align:center; margin:4px 0 0 0;"></p>
       </div>
 
       <div style="padding:10px 15px; border-top:1px solid #eee; display:flex; justify-content:flex-end; background:white;">
@@ -11426,7 +10674,6 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         var cards = [
           { icon: "fa-user-tie", val: d.tongHT, label: "Huynh Trưởng" },
           { icon: "fa-user-shield", val: d.tongAdmin, label: "Tài khoản Admin" },
-          { icon: "fa-signal", val: d.tongOnline, label: "Đang Online" },
           { icon: "fa-children", val: d.tongThieuNhi, label: "Thiếu Nhi" },
           { icon: "fa-file-circle-exclamation", val: d.tongDonNghi, label: "Đơn Xin Nghỉ" }
         ];
