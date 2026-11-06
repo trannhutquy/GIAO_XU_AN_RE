@@ -1,10 +1,10 @@
 // Service worker: mở app TỨC THÌ từ bộ nhớ máy, tải bản mới ở nền, báo khi có bản mới,
 // và nhận THÔNG BÁO ĐẨY (Firebase Cloud Messaging) kể cả khi app đang đóng.
-var VERSION = "v11";
+var VERSION = "v12";
 var SHELL = "shell-" + VERSION;
 var STATIC = "static-" + VERSION;
 var SHELL_FILES = ["./", "index.html", "config.js", "gas-shim.js", "push.js", "manifest.webmanifest",
-  "icons/icon-192.png", "icons/icon-512.png", "icons/logo-dai-dien.jpg", "icons/HILL.png"];
+  "icons/icon-192.png", "icons/icon-512.png", "icons/logo-dai-dien.jpg", "icons/hill-logo.png"];
 var CDN_HOSTS = ["cdnjs.cloudflare.com", "cdn.jsdelivr.net", "fonts.googleapis.com", "fonts.gstatic.com"];
 var daBao = false;
 
