@@ -2715,17 +2715,62 @@
   </style>
 <script id="xd-avatar">
 // ===== ẢNH ĐẠI DIỆN: dùng ảnh của chính người đó; chưa có hoặc tải lỗi thì dùng logo Giáo xứ =====
-var ANH_LOGO_MAC_DINH = "https://drive.google.com/uc?export=view&id=1Lctm3IiLxl2XJ2eDPHD4esF9PX6vQQun";
+// Logo mặc định để NGAY TRONG thư mục web (không phụ thuộc Drive/ibb) nên luôn hiện,
+// kể cả khi mất mạng hoặc Drive hết lượt tải.
+var ANH_LOGO_MAC_DINH = "icons/logo-dai-dien.jpg";
+
+// Chuẩn hoá mọi link ảnh lấy từ máy chủ / sheet / localStorage:
+//  - link ibb cũ (đã 404)  -> logo mặc định
+//  - link Drive dạng xem   -> link ảnh trực tiếp
+window.chuanHoaAnh = function (u) {
+  u = String(u == null ? "" : u).trim();
+  if (!u) return ANH_LOGO_MAC_DINH;
+  if (u.indexOf("nN1tKYRh") !== -1) return ANH_LOGO_MAC_DINH; // ảnh ibb cũ đã bị xoá (404)
+  var m = u.match(/drive\.google\.com\/file\/d\/([^\/?#]+)/i) ||
+          u.match(/drive\.google\.com\/open\?id=([^&]+)/i) ||
+          u.match(/drive\.google\.com\/uc\?[^#]*[?&]id=([^&]+)/i);
+  if (m && m[1]) return "https://drive.google.com/uc?export=view&id=" + m[1];
+  return u;
+};
+
 (function () {
   var SEL = ".profile-img, .chat-thread-avatar, .td-rank-avt, .sobo-avatar, .quy-avatar-modern, .avatar-wrap img, .avatar-frame img, " +
             "#head-img, #detail-img, #glv-head-img, #glv-side-img, #glv-hero-img, .glv-hero-img, .desktop-org-avatar";
+
+  // Sửa các <img> đang mang link cũ, kể cả ảnh được sinh sau (chat, bảng xếp hạng, hồ sơ...)
+  function suaAnh(img) {
+    if (!img || img.tagName !== "IMG") return;
+    var s = img.getAttribute("src");
+    if (!s) return;
+    var n = window.chuanHoaAnh(s);
+    if (n !== s) { img.setAttribute("data-src-goc", s); img.setAttribute("src", n); }
+  }
+  window.chuanHoaAnhTrongTrang = function () {
+    try { document.querySelectorAll("img").forEach(suaAnh); } catch (e) {}
+  };
+  new MutationObserver(function (ms) {
+    for (var i = 0; i < ms.length; i++) {
+      var m = ms[i];
+      if (m.type === "attributes") { suaAnh(m.target); continue; }
+      var ds = m.addedNodes || [];
+      for (var j = 0; j < ds.length; j++) {
+        var n = ds[j];
+        if (n.nodeType !== 1) continue;
+        if (n.tagName === "IMG") suaAnh(n);
+        else if (n.querySelectorAll) n.querySelectorAll("img").forEach(suaAnh);
+      }
+    }
+  }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ["src"] });
+  window.chuanHoaAnhTrongTrang();
+
   // Sự kiện "error" của ảnh không nổi bọt lên, nên phải bắt ở pha capture
   document.addEventListener("error", function (e) {
     var t = e.target;
-    if (!t || t.tagName !== "IMG" || t.getAttribute("data-fb") === "1") return;
+    if (!t || t.tagName !== "IMG") return;
     try { if (!t.matches(SEL)) return; } catch (x) { return; }
-    t.setAttribute("data-fb", "1");
-    t.src = ANH_LOGO_MAC_DINH;
+    var hienTai = window.chuanHoaAnh(t.getAttribute("src"));
+    if (hienTai !== ANH_LOGO_MAC_DINH) { t.setAttribute("src", ANH_LOGO_MAC_DINH); return; }
+    t.setAttribute("data-fb", "1"); // logo mặc định cũng lỗi -> dừng, tránh lặp vô hạn
   }, true);
 })();
 </script>
@@ -4682,7 +4727,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 
     // Đổ thông tin Giáo Lý Viên lên thanh trên, sidebar và thẻ chào
     function glvHienThongTin(res) {
-      var logo = "https://drive.google.com/uc?export=view&id=1Lctm3IiLxl2XJ2eDPHD4esF9PX6vQQun";
+      var logo = ANH_LOGO_MAC_DINH;
       var ten = res.name || "Giáo Lý Viên";
       var lop = res.lopGiaoLy ? ("Lớp " + res.lopGiaoLy) : "Chưa phân lớp";
       var anh = res.image || logo;
