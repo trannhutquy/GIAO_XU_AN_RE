@@ -12,7 +12,7 @@
 
   // ---------- phân loại hàm ----------
   // Hàm ĐỌC: an toàn để thử lại / gộp. Mọi hàm khác coi là hàm GHI.
-  var READ_RE = /^(get|poll|count|chatLay|chatSo|chatDanh|nhomTongLay|capNhatHeartbeat|admLay|quyLay|thiDuaLay|vanBanLay|soBoHTLay|htLay|layDanh|layThongTin|layTrangThai|layDiem|kiemTraDanhSach|kiemTraLich|admKiemTraDanhSach|admKiemTraChiTiet|admKiemTraThongKe|admThiDuaLichSu|admThiDuaDanhSach|admChucVuDanhSach|adminLay)/;
+  var READ_RE = /^(get|poll|count|admLay|quyLay|thiDuaLay|vanBanLay|soBoHTLay|htLay|layDanh|layThongTin|layTrangThai|layDiem|kiemTraDanhSach|kiemTraLich|admKiemTraDanhSach|admKiemTraChiTiet|admKiemTraThongKe|admThiDuaLichSu|admThiDuaDanhSach|admChucVuDanhSach|adminLay)/;
   // Màn hình hiện ngay dữ liệu cũ rồi cập nhật dữ liệu mới (tối đa 24 giờ tuổi)
   var SWR = { getHanhTrinhData: 1, getCTTTData: 1, vanBanLayDanhSach: 1, soBoHTLayDanhSach: 1,
               thiDuaLayBangXepHang: 1, getDanhSachThieuNhi: 1, getToanBoDanhSach: 1 };
