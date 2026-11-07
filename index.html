@@ -357,6 +357,11 @@
       top: 0;
       left: 0;
       opacity: 0;
+      /* Căn giữa ngay từ trạng thái gốc. Nếu thiếu dòng này, trước khi
+         .intro-run được bật logo nằm lệch xuống phải rồi mới "nhảy" vào giữa. */
+      transform: translate(-50%, -50%);
+      transform-origin: 50% 50%;
+      will-change: transform, opacity;
     }
     .intro-logo-1 {
       width: clamp(124px, 34vw, 168px);
@@ -371,6 +376,9 @@
     .intro-logo-2 {
       width: min(88vw, 420px);
       height: auto;
+      /* Giữ sẵn tỉ lệ 1437×351: ảnh chưa tải xong cũng không đổi chiều cao
+         (đổi chiều cao sẽ làm tâm logo dịch lên/xuống giữa hiệu ứng). */
+      aspect-ratio: 1437 / 351;
       object-fit: contain;
     }
     /* Lưu ý: animation tắt chỉ dùng "forwards" (không "both"), nếu không
@@ -10699,13 +10707,11 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 // Hiện ĐÚNG 1 LẦN ngay sau khi đăng nhập (kể cả tự đăng nhập lại) cho mỗi phiên bản, trên mỗi thiết bị.
 // Muốn giới thiệu bản mới: đổi "so" (ví dụ "2.1.0") + sửa nội dung "muc" -> mọi người sẽ thấy lại 1 lần.
 var APP_PHIEN_BAN = {
-  so: "2.7.1",
+  so: "2.7.2",
   ngay: "07/11/2026",
-  tieuDe: "Cập nhật ngay khi mở app",
+  tieuDe: "Sửa lỗi màn hình chờ",
   muc: [
-    { icon: "fa-palette", tieuDe: "Giao diện Giáo Lý Viên dễ đọc hơn", moTa: "Danh sách Thiếu Nhi và danh sách điểm danh hiển thị rõ ở cả nền sáng lẫn Giao diện Tối." },
-    { icon: "fa-magnifying-glass", tieuDe: "Báo rõ khi tải dữ liệu lỗi", moTa: "Tab Điểm danh hiện “Đang tải…”, tự xoá danh sách cũ và báo lỗi kết nối thay vì để số liệu cũ nằm lại." },
-    { icon: "fa-qrcode", tieuDe: "Mở App Điểm Danh QR ổn định hơn", moTa: "Nếu trình duyệt chặn tab mới, ứng dụng nhắc rõ để Giáo Lý Viên cho phép mở tab rồi thử lại." }
+    { icon: "fa-wand-magic-sparkles", tieuDe: "Logo Xứ Đoàn đứng yên khi mở app", moTa: "Logo không còn bị lệch rồi “nhảy” vào giữa lúc màn hình chờ bắt đầu. Hiệu ứng hiện ra mượt hơn trên cả điện thoại và máy tính." }
   ]
 };
 
