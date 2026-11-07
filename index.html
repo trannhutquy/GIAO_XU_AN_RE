@@ -11965,7 +11965,8 @@ var APP_PHIEN_BAN = {
   window.addEventListener("load", function () {
     choHetSplash(function () { daQuaSplash = true; thuHien(); });
 
-    navigator.serviceWorker.register("sw.js").then(function (r) {
+    // updateViaCache: "none" -> luôn hỏi thẳng máy chủ, không bị bản sw.js cũ trong cache trình duyệt/CDN chặn
+    navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (r) {
       reg = r;
       xetDangCho();
       kiemTraBanMoi();
@@ -11982,9 +11983,12 @@ var APP_PHIEN_BAN = {
     }).catch(function (e) { console.warn("SW lỗi:", e); });
   });
 
-  // Quay lại app sau một thời gian dài: kiểm tra bản mới
+  // Quay lại app (kể cả chỉ thu nhỏ rồi mở lại, trang không tải lại):
+  // bản mới đã chờ sẵn thì hiện thẻ ngay; nếu không thì thỉnh thoảng kiểm tra lại.
   document.addEventListener("visibilitychange", function () {
-    if (document.visibilityState === "visible" && Date.now() - lanKiemTra > 30 * 60 * 1000) kiemTraBanMoi();
+    if (document.visibilityState !== "visible") return;
+    if (reg && reg.waiting) { coBanMoi = true; thuHien(); }
+    else if (Date.now() - lanKiemTra > 60 * 1000) kiemTraBanMoi();
   });
 })();
 </script>
