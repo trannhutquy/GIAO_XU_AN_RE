@@ -322,12 +322,12 @@
        4) giữ nền trắng rồi mờ dần để vào app
        ========================================== */
     @keyframes introLogoIn {
-      from { opacity: 0; transform: scale(0.82); }
-      to   { opacity: 1; transform: scale(1); }
+      from { opacity: 0; transform: translate(-50%, -50%) scale(0.86); }
+      to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     }
     @keyframes introLogoOut {
-      from { opacity: 1; transform: scale(1); }
-      to   { opacity: 0; transform: scale(1.07); }
+      from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      to   { opacity: 0; transform: translate(-50%, -50%) scale(1.06); }
     }
     @keyframes introSplashFade {
       from { opacity: 1; }
@@ -349,19 +349,29 @@
     #splash-screen.intro-done { display: none; }
     .intro-stage {
       position: relative;
-      width: clamp(124px, 34vw, 168px);
-      height: clamp(124px, 34vw, 168px);
+      width: 0;
+      height: 0;
     }
     .intro-stage .intro-logo {
       position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
+      top: 0;
+      left: 0;
+      opacity: 0;
+    }
+    .intro-logo-1 {
+      width: clamp(124px, 34vw, 168px);
+      height: clamp(124px, 34vw, 168px);
       border-radius: 50%;
       object-fit: cover;
       background: #ffffff;
       box-shadow: 0 14px 44px rgba(0, 0, 0, 0.16);
-      opacity: 0;
+    }
+    /* Logo Hill kèm chữ COMMUNITY: ảnh ngang, không cắt tròn.
+       Ảnh đã được cắt sát viền trắng nên chỉ cần thu theo bề rộng màn hình. */
+    .intro-logo-2 {
+      width: min(88vw, 420px);
+      height: auto;
+      object-fit: contain;
     }
     /* Lưu ý: animation tắt chỉ dùng "forwards" (không "both"), nếu không
        trạng thái opacity:1 của nó sẽ đè lên animation hiện từ lúc trang vừa mở. */
@@ -2215,7 +2225,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   <div id="splash-screen">
     <div class="intro-stage">
       <img src="icons/logo-dai-dien.jpg" class="intro-logo intro-logo-1" alt="Xứ Đoàn Lòng Chúa Thương Xót">
-      <img src="icons/hill-v2.png" class="intro-logo intro-logo-2" alt="Hill">
+      <img src="icons/hill-community.png" class="intro-logo intro-logo-2" alt="Hill Community">
     </div>
   </div>
 
@@ -3501,8 +3511,18 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         if (daBatDau) return;
         daBatDau = true;
         splash.classList.add("intro-run");
-        // Logo 2 tắt lúc 3,45s; nền trắng giữ tới 3,95s rồi mờ dần 0,45s.
-        setTimeout(function() { splash.classList.add("intro-done"); }, 4420);
+        // Ẩn splash khi hiệu ứng mờ nền trắng kết thúc (không dựa vào đồng hồ
+        // tuyệt đối, phòng khi trình duyệt tạm dừng animation lúc vừa mở app).
+        var daAn = false;
+        function anSplash() {
+          if (daAn) return;
+          daAn = true;
+          splash.classList.add("intro-done");
+        }
+        splash.addEventListener("animationend", function (e) {
+          if (e.animationName === "introSplashFade") anSplash();
+        });
+        setTimeout(anSplash, 6500); // dự phòng: luôn vào app sau tối đa 6,5 giây
       }
       var logoDau = splash.querySelector(".intro-logo-1");
       if (logoDau && !logoDau.complete) {
