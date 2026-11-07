@@ -315,695 +315,63 @@
     }
 
     /* ==========================================
-       MÀN HÌNH CHỜ (SPLASH SCREEN) — PHIÊN BẢN NGHỆ THUẬT / CHUYÊN NGHIỆP
+       MÀN HÌNH CHỜ (INTRO) — dùng chung cho điện thoại và máy tính
+       1) nền trắng hiện ngay
+       2) logo Xứ Đoàn hiện rồi tắt
+       3) logo Hill hiện rồi tắt
+       4) giữ nền trắng rồi mờ dần để vào app
        ========================================== */
-    @keyframes splashGradientFlow {
-      0%   { background-position: 0% 50%; }
-      50%  { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    @keyframes introLogoIn {
+      from { opacity: 0; transform: scale(0.82); }
+      to   { opacity: 1; transform: scale(1); }
     }
-    @keyframes splashOrbFloat {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(-14px, 18px) scale(1.08); }
+    @keyframes introLogoOut {
+      from { opacity: 1; transform: scale(1); }
+      to   { opacity: 0; transform: scale(1.07); }
     }
-    @keyframes splashOrbFloat2 {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(16px, -14px) scale(1.05); }
+    @keyframes introSplashFade {
+      from { opacity: 1; }
+      to   { opacity: 0; }
     }
-    @keyframes splashParticleRise {
-      0% { transform: translateY(0) translateX(0); opacity: 0; }
-      10% { opacity: 0.9; }
-      90% { opacity: 0.4; }
-      100% { transform: translateY(-380px) translateX(20px); opacity: 0; }
-    }
-    @keyframes splashRingSpin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    @keyframes splashRingSpinReverse {
-      from { transform: rotate(360deg); }
-      to { transform: rotate(0deg); }
-    }
-    @keyframes splashLogoReveal {
-      0% { opacity: 0; transform: scale(0.55); filter: blur(6px); }
-      60% { opacity: 1; transform: scale(1.06); filter: blur(0); }
-      100% { opacity: 1; transform: scale(1); filter: blur(0); }
-    }
-    @keyframes splashLogoBreathe {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.35), 0 10px 40px rgba(0,0,0,0.35); }
-      50% { box-shadow: 0 0 0 14px rgba(255,255,255,0), 0 10px 55px rgba(0,0,0,0.4); }
-    }
-    @keyframes splashWordUp {
-      0% { opacity: 0; transform: translateY(16px); filter: blur(3px); }
-      100% { opacity: 1; transform: translateY(0); filter: blur(0); }
-    }
-    @keyframes splashLineExpand {
-      0% { width: 0; opacity: 0; }
-      100% { width: 64px; opacity: 1; }
-    }
-    @keyframes splashSubtitleFade {
-      0% { opacity: 0; transform: translateY(6px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes splashBarFill {
-      0% { width: 0%; }
-      100% { width: 100%; }
-    }
-    @keyframes splashShimmer {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(220%); }
-    }
-    @keyframes splashFadeOutUp {
-      0% { opacity: 1; transform: translateY(0); }
-      100% { opacity: 0; transform: translateY(-24px); }
-    }
-
     #splash-screen {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100vh;
+      inset: 0;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       overflow: hidden;
-      background: linear-gradient(120deg, #8e1c1c 0%, #c62828 28%, #d32f2f 55%, #b71c1c 78%, #6a1414 100%);
-      background-size: 260% 260%;
-      animation: splashGradientFlow 9s ease-in-out infinite;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
       z-index: 9999;
-      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.7s;
     }
-    #splash-screen::before, #splash-screen::after {
-      content: "";
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(2px);
-      pointer-events: none;
+    #splash-screen.intro-run {
+      animation: introSplashFade 0.45s ease-in 3.95s forwards;
     }
-    #splash-screen::before {
-      width: 340px; height: 340px;
-      top: -90px; left: -90px;
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.16), rgba(255,255,255,0) 70%);
-      animation: splashOrbFloat 7s ease-in-out infinite;
+    #splash-screen.intro-done { display: none; }
+    .intro-stage {
+      position: relative;
+      width: clamp(124px, 34vw, 168px);
+      height: clamp(124px, 34vw, 168px);
     }
-    #splash-screen::after {
-      width: 420px; height: 420px;
-      bottom: -140px; right: -120px;
-      background: radial-gradient(circle at 60% 60%, rgba(255,255,255,0.12), rgba(255,255,255,0) 70%);
-      animation: splashOrbFloat2 8.5s ease-in-out infinite;
-    }
-    .splash-particles {
+    .intro-stage .intro-logo {
       position: absolute;
       inset: 0;
-      pointer-events: none;
-      z-index: 1;
-    }
-    .splash-particles span {
-      position: absolute;
-      bottom: -20px;
-      width: 4px; height: 4px;
-      background: rgba(255,255,255,0.65);
-      border-radius: 50%;
-      box-shadow: 0 0 6px rgba(255,255,255,0.6);
-      animation: splashParticleRise linear infinite;
-    }
-    .splash-content {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .splash-logo-ring {
-      position: relative;
-      width: 150px;
-      height: 150px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 26px;
-    }
-    .splash-logo-ring::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      border: 1.5px dashed rgba(255,255,255,0.55);
-      animation: splashRingSpin 14s linear infinite;
-    }
-    .splash-logo-ring::after {
-      content: "";
-      position: absolute;
-      inset: 12px;
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.3);
-      animation: splashRingSpinReverse 18s linear infinite;
-    }
-    .splash-logo {
-      position: relative;
-      z-index: 2;
-      width: 112px;
-      height: 112px;
+      width: 100%;
+      height: 100%;
       border-radius: 50%;
       object-fit: cover;
-      border: 4px solid rgba(255,255,255,0.95);
-      background: white;
-      animation: splashLogoReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) both,
-                 splashLogoBreathe 2.6s ease-in-out 0.9s infinite;
-    }
-    .splash-title {
-      color: white;
-      font-size: 24px;
-      font-weight: 800;
-      margin: 0;
-      text-transform: uppercase;
-      letter-spacing: 2.2px;
-      text-align: center;
-      text-shadow: 0 4px 18px rgba(0,0,0,0.28);
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0.4em;
-    }
-    .splash-title span {
-      display: inline-block;
+      background: #ffffff;
+      box-shadow: 0 14px 44px rgba(0, 0, 0, 0.16);
       opacity: 0;
-      animation: splashWordUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-    .splash-divider {
-      height: 2px;
-      width: 0;
-      margin: 14px 0;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
-      animation: splashLineExpand 0.7s ease-out 0.65s forwards;
-    }
-    .splash-subtitle {
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      text-align: center;
-      opacity: 0;
-      animation: splashSubtitleFade 0.8s ease-out 0.85s forwards;
-    }
-    .splash-progress {
-      position: relative;
-      margin-top: 34px;
-      width: 160px;
-      height: 3px;
-      border-radius: 3px;
-      background: rgba(255,255,255,0.22);
-      overflow: hidden;
-      opacity: 0;
-      animation: splashSubtitleFade 0.6s ease-out 1.05s forwards;
-    }
-    .splash-progress-fill {
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 0%;
-      border-radius: 3px;
-      background: linear-gradient(90deg, #ffffff, #ffd9d9, #ffffff);
-      animation: splashBarFill 4.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    }
-    .splash-progress-fill::after {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; height: 100%; width: 40%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.85), transparent);
-      animation: splashShimmer 1.3s ease-in-out infinite;
-    }
-    #splash-screen.splash-exit .splash-content {
-      animation: splashFadeOutUp 0.5s ease-in forwards;
-    }
-
-    /* ==========================================
-       MÀN HÌNH CHỜ DÀNH RIÊNG CHO MÁY TÍNH (DESKTOP)
-       Phiên bản điện ảnh — thánh giá ánh sáng mở màn, chớp sáng bung huy hiệu,
-       tia sáng quét ngang, chữ khắc nổi, gõ chữ, khép ống kính khi kết thúc.
-       Thời lượng hiển thị ~8 giây.
-       ========================================== */
-    @keyframes dsGridDrift {
-      0%   { background-position: 0 0, 0 0; }
-      100% { background-position: 120px 120px, -120px 80px; }
-    }
-    @keyframes dsAuroraMove {
-      0%, 100% { transform: translate(-6%, -4%) rotate(0deg) scale(1); opacity: 0.5; }
-      50%      { transform: translate(6%, 5%) rotate(8deg) scale(1.15); opacity: 0.8; }
-    }
-    @keyframes dsAuroraMove2 {
-      0%, 100% { transform: translate(5%, 4%) rotate(0deg) scale(1); opacity: 0.35; }
-      50%      { transform: translate(-6%, -6%) rotate(-10deg) scale(1.12); opacity: 0.65; }
-    }
-    @keyframes dsVignettePulse {
-      0%, 100% { opacity: 0.5; }
-      50% { opacity: 0.78; }
-    }
-    @keyframes dsParticleDrift {
-      0%   { transform: translateY(0) translateX(0); opacity: 0; }
-      8%   { opacity: 0.85; }
-      92%  { opacity: 0.25; }
-      100% { transform: translateY(-520px) translateX(24px); opacity: 0; }
-    }
-    @keyframes dsCornerDraw {
-      0%   { clip-path: inset(0 100% 100% 0); opacity: 0; }
-      100% { clip-path: inset(0 0 0 0); opacity: 1; }
-    }
-    @keyframes dsFrameFadeIn {
-      0% { opacity: 0; } 100% { opacity: 1; }
-    }
-    @keyframes dsDrawV { to { stroke-dashoffset: 0; } }
-    @keyframes dsDrawH { to { stroke-dashoffset: 0; } }
-    @keyframes dsNodePop {
-      0%   { opacity: 0; transform: scale(0); }
-      60%  { opacity: 1; transform: scale(1.8); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-    @keyframes dsCrossFadeOut {
-      to { opacity: 0; transform: scale(1.15); filter: blur(3px); }
-    }
-    @keyframes dsFlashBurst {
-      0%   { transform: scale(0); opacity: 0; }
-      28%  { opacity: 1; }
-      100% { transform: scale(2.4); opacity: 0; }
-    }
-    @keyframes dsSweepMove {
-      0%   { transform: translateX(-60vw) rotate(8deg); opacity: 0; }
-      12%  { opacity: 1; }
-      88%  { opacity: 1; }
-      100% { transform: translateX(160vw) rotate(8deg); opacity: 0; }
-    }
-    @keyframes dsRingSpinSlow {
-      from { transform: rotate(0deg); } to { transform: rotate(360deg); }
-    }
-    @keyframes dsRingSpinSlowRev {
-      from { transform: rotate(0deg); } to { transform: rotate(-360deg); }
-    }
-    @keyframes dsCrestReveal {
-      0%   { opacity: 0; transform: scale(0.3) rotate(-10deg); filter: blur(14px); }
-      55%  { opacity: 1; transform: scale(1.1) rotate(2deg); filter: blur(0); }
-      75%  { transform: scale(0.96) rotate(-1deg); }
-      100% { opacity: 1; transform: scale(1) rotate(0deg); }
-    }
-    @keyframes dsCrestSheen {
-      0%   { transform: translateX(-130%) rotate(20deg); }
-      100% { transform: translateX(230%) rotate(20deg); }
-    }
-    @keyframes dsCrestGlow {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(255,215,150,0.0), 0 20px 60px rgba(0,0,0,0.45); }
-      50%      { box-shadow: 0 0 0 18px rgba(255,215,150,0.14), 0 20px 70px rgba(0,0,0,0.5); }
-    }
-    @keyframes dsLetterCarve {
-      0%   { opacity: 0; transform: translateY(46px) rotateX(70deg) scale(0.85); filter: blur(8px); text-shadow: 0 0 0 rgba(211,47,47,0); }
-      60%  { filter: blur(0); }
-      100% { opacity: 1; transform: translateY(0) rotateX(0deg) scale(1); filter: blur(0); text-shadow: 0 6px 26px rgba(0,0,0,0.35); }
-    }
-    @keyframes dsKickerFade {
-      0% { opacity: 0; letter-spacing: 9px; } 100% { opacity: 0.9; letter-spacing: 4.5px; }
-    }
-    @keyframes dsDividerExpand {
-      0% { width: 0; opacity: 0; } 100% { width: 130px; opacity: 1; }
-    }
-    @keyframes dsDividerGemPulse {
-      0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.9; }
-      50%      { transform: translateX(-50%) scale(1.6); opacity: 1; }
-    }
-    @keyframes dsTaglineReveal {
-      0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes dsTypeReveal {
-      to { width: 305px; }
-    }
-    @keyframes dsCaretBlink {
-      0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; }
-    }
-    @keyframes dsBottomBarFade {
-      0% { opacity: 0; transform: translate(-50%, 10px); } 100% { opacity: 1; transform: translate(-50%, 0); }
-    }
-    @keyframes dsStatusDotBlink {
-      0%, 100% { opacity: 0.35; transform: scale(1); } 50% { opacity: 1; transform: scale(1.3); }
-    }
-    @keyframes dsBarFillLong {
-      0% { width: 0%; } 100% { width: 100%; }
-    }
-    @keyframes dsBarShimmer {
-      0% { transform: translateX(-100%); } 100% { transform: translateX(320%); }
-    }
-    @keyframes dsIrisClose {
-      0%   { clip-path: circle(150% at 50% 50%); }
-      100% { clip-path: circle(0% at 50% 50%); }
-    }
-    @keyframes dsContentFadeExit {
-      0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.06); }
-    }
-
-    /* ===== HIỆU ỨNG LOGO CAO CẤP: HÀO QUANG + VIỀN VÀNG XOAY + LẤP LÁNH ===== */
-    @keyframes dsHaloPulse {
-      0%   { opacity: 0; transform: scale(0.6); }
-      45%  { opacity: 0.9; }
-      100% { opacity: 0.55; transform: scale(1.35); }
-    }
-    @keyframes dsHaloBreathe {
-      0%, 100% { opacity: 0.45; transform: scale(1.3); }
-      50%      { opacity: 0.75; transform: scale(1.45); }
-    }
-    @keyframes dsConicSpin {
-      from { transform: rotate(0deg); }
-      to   { transform: rotate(360deg); }
-    }
-    @keyframes dsConicSpinRev {
-      from { transform: rotate(360deg); }
-      to   { transform: rotate(0deg); }
-    }
-    @keyframes dsGoldRingReveal {
-      0%   { opacity: 0; transform: scale(0.7); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-    @keyframes dsSparkleTwinkle {
-      0%   { opacity: 0; transform: scale(0) rotate(0deg); }
-      35%  { opacity: 1; transform: scale(1.15) rotate(45deg); }
-      55%  { opacity: 0.7; transform: scale(0.85) rotate(70deg); }
-      100% { opacity: 0; transform: scale(0.2) rotate(120deg); }
-    }
-    @keyframes dsSparkleDrift {
-      0%   { opacity: 0; }
-      15%  { opacity: 1; }
-      100% { opacity: 0.85; transform: translateY(-6px); }
-    }
-    @keyframes dsRayRotate {
-      0%   { opacity: 0; transform: rotate(0deg) scale(0.85); }
-      20%  { opacity: 0.55; }
-      100% { opacity: 0; transform: rotate(160deg) scale(1.1); }
-    }
-    /* ===== LOGO BAY 3D TỪ XA VÀO RỒI LƠ LỬNG BỒNG BỀNH (CÔNG NGHỆ, SANG TRỌNG) ===== */
-    @keyframes dsCrestFlyIn {
-      0%   { opacity: 0; transform: translate3d(80px, -190px, -760px) rotateY(-135deg) rotateX(42deg) rotateZ(20deg) scale(0.16); filter: blur(22px) brightness(2); }
-      28%  { opacity: 1; }
-      50%  { transform: translate3d(-16px, 20px, 34px) rotateY(32deg) rotateX(-11deg) rotateZ(-7deg) scale(1.16); filter: blur(3px) brightness(1.2); }
-      74%  { transform: translate3d(6px, -6px, 0px) rotateY(-11deg) rotateX(4deg) rotateZ(2deg) scale(0.97); filter: blur(0) brightness(1.06); }
-      100% { opacity: 1; transform: translate3d(0,0,0) rotateY(0deg) rotateX(0deg) rotateZ(0deg) scale(1); filter: blur(0) brightness(1); }
-    }
-    @keyframes dsTrailFly {
-      0%   { opacity: 0; transform: translate3d(80px, -190px, -760px) scale(0.16); filter: blur(32px); }
-      25%  { opacity: 0.55; }
-      55%  { opacity: 0.32; transform: translate3d(-16px, 20px, 34px) scale(1.12); filter: blur(26px); }
-      100% { opacity: 0; transform: translate3d(0,0,0) scale(1); filter: blur(22px); }
-    }
-    @keyframes dsCrestLevitate {
-      0%, 100% { transform: translateY(0px) rotateY(0deg) rotateX(0deg); }
-      25%      { transform: translateY(-8px) rotateY(7deg) rotateX(-2deg); }
-      50%      { transform: translateY(-2px) rotateY(0deg) rotateX(1.5deg); }
-      75%      { transform: translateY(-10px) rotateY(-7deg) rotateX(-1.5deg); }
-    }
-    @keyframes dsImpactRing {
-      0%   { opacity: 0.75; transform: scale(0.5); border-width: 3px; }
-      100% { opacity: 0; transform: scale(2.3); border-width: 0.5px; }
-    }
-    @keyframes dsScanSweep {
-      0%   { transform: translateY(-120%); opacity: 0; }
-      10%  { opacity: 0.85; }
-      90%  { opacity: 0.55; }
-      100% { transform: translateY(120%); opacity: 0; }
-    }
-    @keyframes dsTitleShine {
-      0%   { background-position: -200% center; }
-      100% { background-position: 200% center; }
-    }
-
-    #splash-screen-desktop {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100vh;
-      overflow: hidden;
-      background:
-        radial-gradient(ellipse at 20% 15%, rgba(255,255,255,0.05), transparent 55%),
-        radial-gradient(ellipse at 80% 85%, rgba(255,255,255,0.04), transparent 55%),
-        linear-gradient(150deg, #4a0e0e 0%, #6a1414 22%, #d32f2f 46%, #1565c0 68%, #0d3b7a 100%);
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 10000;
-      transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), visibility 0.9s;
-    }
-    #splash-screen-desktop.ds-active { display: flex; }
-    .ds-gridlines {
-      position: absolute; inset: -10%;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-      background-size: 60px 60px, 60px 60px;
-      animation: dsGridDrift 16s linear infinite;
-      opacity: 0.5;
-      mask-image: radial-gradient(ellipse at center, black 0%, transparent 72%);
-      -webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 72%);
-    }
-    .ds-aurora { position: absolute; border-radius: 50%; filter: blur(60px); pointer-events: none; }
-    .ds-aurora.a1 {
-      width: 46vw; height: 46vw; top: -12%; left: -10%;
-      background: radial-gradient(circle, rgba(211,47,47,0.32), transparent 65%);
-      animation: dsAuroraMove 11s ease-in-out infinite;
-    }
-    .ds-aurora.a2 {
-      width: 40vw; height: 40vw; bottom: -14%; right: -8%;
-      background: radial-gradient(circle, rgba(41,121,255,0.2), transparent 65%);
-      animation: dsAuroraMove2 13s ease-in-out infinite;
-    }
-    .ds-vignette {
-      position: absolute; inset: 0;
-      box-shadow: inset 0 0 240px rgba(0,0,0,0.68);
-      animation: dsVignettePulse 6s ease-in-out infinite;
-      pointer-events: none;
-    }
-    .ds-particles { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
-    .ds-particles span {
-      position: absolute; bottom: -20px; border-radius: 50%;
-      background: rgba(255,255,255,0.75);
-      box-shadow: 0 0 8px rgba(41,121,255,0.7);
-      animation: dsParticleDrift linear infinite;
-    }
-    .ds-sweep {
-      position: absolute; top: -25%; left: -35%;
-      width: 55%; height: 150%;
-      background: linear-gradient(100deg, transparent, rgba(255,255,255,0.14) 45%, rgba(255,255,255,0.38) 50%, rgba(255,255,255,0.14) 55%, transparent);
-      animation: dsSweepMove 1.3s cubic-bezier(0.65,0,0.35,1) 2.6s both;
-      pointer-events: none;
-      z-index: 1;
-    }
-    .ds-frame { position: absolute; inset: 26px; pointer-events: none; opacity: 0; animation: dsFrameFadeIn 1s ease-out 0.15s forwards; }
-    .ds-frame span { position: absolute; width: 46px; height: 46px; border: 1px solid rgba(255,255,255,0.5); }
-    .ds-frame span.tl { top: 0; left: 0; border-right: none; border-bottom: none; animation: dsCornerDraw 0.9s ease-out 0.35s both; }
-    .ds-frame span.tr { top: 0; right: 0; border-left: none; border-bottom: none; animation: dsCornerDraw 0.9s ease-out 0.55s both; }
-    .ds-frame span.bl { bottom: 0; left: 0; border-right: none; border-top: none; animation: dsCornerDraw 0.9s ease-out 0.75s both; }
-    .ds-frame span.br { bottom: 0; right: 0; border-left: none; border-top: none; animation: dsCornerDraw 0.9s ease-out 0.95s both; }
-
-    .ds-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; padding: 0 24px; }
-
-    /* SÂN KHẤU HUY HIỆU: thánh giá ánh sáng vẽ tay -> chớp bung -> huy hiệu hiện ra */
-    .ds-emblem-stage {
-      position: relative;
-      width: 210px; height: 210px;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 30px;
-      perspective: 1300px;
-    }
-    /* Vệt sáng comet theo sau logo lúc bay vào */
-    .ds-crest-trail {
-      position: absolute; z-index: 1;
-      width: 126px; height: 126px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(211,47,47,0.85), rgba(211,47,47,0.32) 55%, transparent 75%);
-      opacity: 0;
-      animation: dsTrailFly 1.6s cubic-bezier(0.19,1,0.22,1) 1.65s forwards;
-      pointer-events: none;
-    }
-    /* Vòng sóng va chạm khi logo "đáp" xuống */
-    .ds-impact-ring {
-      position: absolute; z-index: 1;
-      width: 140px; height: 140px; border-radius: 50%;
-      border: 3px solid rgba(255,255,255,0.85);
-      opacity: 0;
-      animation: dsImpactRing 0.85s ease-out 3.45s forwards;
-      pointer-events: none;
-    }
-    /* Hào quang phát sáng phía sau logo */
-    .ds-crest-halo {
-      position: absolute; z-index: 0;
-      width: 172px; height: 172px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(211,47,47,0.55), rgba(211,47,47,0.22) 45%, transparent 72%);
-      filter: blur(6px);
-      opacity: 0;
-      animation: dsHaloPulse 1s ease-out 3.4s forwards, dsHaloBreathe 3.4s ease-in-out 4.4s infinite;
-    }
-    /* Tia sáng xoay tỏa ra từ logo */
-    .ds-crest-rays {
-      position: absolute; z-index: 0;
-      width: 210px; height: 210px;
-      background: repeating-conic-gradient(from 0deg, rgba(255,255,255,0.4) 0deg 2deg, transparent 2deg 18deg);
-      border-radius: 50%;
-      opacity: 0;
-      animation: dsRayRotate 2.2s ease-out 3.45s forwards;
-      pointer-events: none;
-    }
-    /* Viền vàng xoay quanh khung logo — cảm giác cao cấp, thời thượng */
-    .ds-gold-ring {
-      position: absolute; z-index: 1;
-      width: 190px; height: 190px; border-radius: 50%;
-      opacity: 0;
-      animation: dsGoldRingReveal 0.6s ease-out 3.6s forwards;
-    }
-    .ds-gold-ring::before {
-      content: ""; position: absolute; inset: 0; border-radius: 50%;
-      background: conic-gradient(from 0deg, transparent 0%, #ef5350 8%, #ffffff 14%, #ef5350 20%, transparent 32%, transparent 68%, #ef5350 80%, #ffffff 86%, #ef5350 92%, transparent 100%);
-      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), #000 calc(100% - 2.5px));
-      mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), #000 calc(100% - 2.5px));
-      animation: dsConicSpin 6s linear infinite;
-    }
-    .ds-gold-ring::after {
-      content: ""; position: absolute; inset: 10px; border-radius: 50%;
-      border: 1px dotted rgba(255,255,255,0.5);
-      animation: dsConicSpinRev 16s linear infinite;
-    }
-    /* Hạt lấp lánh (sparkle) quanh logo */
-    .ds-sparkle {
-      position: absolute; z-index: 3;
-      color: #90caf9;
-      font-size: 14px;
-      text-shadow: 0 0 8px rgba(211,47,47,0.95), 0 0 16px rgba(211,47,47,0.6);
-      opacity: 0;
-      animation: dsSparkleTwinkle 1.7s ease-in-out infinite;
-    }
-    .ds-sparkle.sp1 { top: 4%;  left: 12%; font-size: 12px; animation-delay: 4.0s; }
-    .ds-sparkle.sp2 { top: 14%; right: 2%; font-size: 16px; animation-delay: 4.35s; }
-    .ds-sparkle.sp3 { bottom: 8%; right: 14%; font-size: 11px; animation-delay: 4.7s; }
-    .ds-sparkle.sp4 { bottom: 2%; left: 20%; font-size: 15px; animation-delay: 5.05s; }
-    .ds-sparkle.sp5 { top: 46%; left: -2%; font-size: 10px; animation-delay: 5.4s; }
-    .ds-sparkle.sp6 { top: 40%; right: -3%; font-size: 13px; animation-delay: 5.75s; }
-    .ds-cross {
-      position: absolute; z-index: 3;
-      fill: none; stroke: #ef5350; stroke-width: 2; stroke-linecap: round;
-      filter: drop-shadow(0 0 10px rgba(211,47,47,0.85));
-      animation: dsCrossFadeOut 0.4s ease-in 2.1s forwards;
-    }
-    .ds-cross .cross-v { stroke-dasharray: 144; stroke-dashoffset: 144; animation: dsDrawV 0.9s ease-out 0.3s forwards; }
-    .ds-cross .cross-h { stroke-dasharray: 92; stroke-dashoffset: 92; animation: dsDrawH 0.5s ease-out 1.15s forwards; }
-    .ds-cross .cross-node { fill: #fff; opacity: 0; transform-origin: 60px 58px; animation: dsNodePop 0.4s ease-out 1.75s forwards; }
-    .ds-flash {
-      position: absolute; z-index: 2;
-      width: 320px; height: 320px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,255,255,0.92), rgba(211,47,47,0.5) 40%, transparent 70%);
-      transform: scale(0); opacity: 0;
-      animation: dsFlashBurst 0.6s ease-out 1.9s forwards;
-      pointer-events: none;
-    }
-    /* Khối ngoài: điều khiển việc BAY VÀO từ xa trong không gian 3D (một lần) */
-    .ds-crest-flyer {
-      position: relative; z-index: 1;
-      transform-style: preserve-3d;
-      opacity: 0;
-      animation: dsCrestFlyIn 1.85s cubic-bezier(0.19,1,0.22,1) 1.65s both;
-    }
-    /* Khối trong: điều khiển việc LƠ LỬNG BỒNG BỀNH liên tục sau khi đáp */
-    .ds-crest-float {
-      animation: dsCrestLevitate 4.4s ease-in-out 3.5s infinite;
-    }
-    .ds-crest-ring {
-      position: relative; z-index: 1;
-      width: 172px; height: 172px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .ds-crest-ring::before {
-      content: ""; position: absolute; inset: 0; border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.45);
-      border-top-color: rgba(255,255,255,0.95);
-      opacity: 0;
-      animation: dsFrameFadeIn 0.6s ease-out 3.6s forwards, dsRingSpinSlow 10s linear 3.6s infinite;
-    }
-    .ds-crest-ring::after {
-      content: ""; position: absolute; inset: 14px; border-radius: 50%;
-      border: 1px dashed rgba(255,255,255,0.3);
-      opacity: 0;
-      animation: dsFrameFadeIn 0.6s ease-out 3.8s forwards, dsRingSpinSlowRev 22s linear 3.8s infinite;
-    }
-    .ds-crest-wrap {
-      position: relative; width: 126px; height: 126px; border-radius: 50%; overflow: hidden; z-index: 2;
-      animation: dsCrestGlow 3.2s ease-in-out 4s infinite;
-      border: 3px solid rgba(255,255,255,0.95);
-      background: white;
-      box-shadow: 0 0 0 1px rgba(211,47,47,0.5), 0 20px 60px rgba(0,0,0,0.45);
-    }
-    .ds-crest-wrap::after {
-      content: ""; position: absolute; top: -50%; left: -50%; width: 40%; height: 200%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
-      animation: dsCrestSheen 3.6s ease-in-out 4.1s infinite;
-    }
-    .ds-crest { width: 100%; height: 100%; object-fit: cover; display: block; }
-    /* Tia quét công nghệ (hologram) lướt qua mặt logo */
-    .ds-crest-scan { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 3; }
-    .ds-crest-scan::before {
-      content: ""; position: absolute; left: 0; right: 0; height: 42%;
-      background: linear-gradient(180deg, transparent, rgba(190,232,255,0.55), transparent);
-      mix-blend-mode: screen;
-      animation: dsScanSweep 2.6s ease-in-out 3.95s infinite;
-    }
-
-    .ds-kicker {
-      color: rgba(255,255,255,0.85); font-size: 12px; font-weight: 600;
-      letter-spacing: 4.5px; text-transform: uppercase; opacity: 0; margin-bottom: 10px;
-      animation: dsKickerFade 0.8s ease-out 4.25s forwards;
-    }
-    .ds-title {
-      color: white; font-size: 34px; font-weight: 800; margin: 0;
-      text-transform: uppercase; letter-spacing: 3px; text-align: center;
-      display: flex; flex-wrap: wrap; justify-content: center; gap: 0.42em;
-      perspective: 500px;
-      background: linear-gradient(100deg, #ffffff 30%, #90caf9 45%, #fffdf7 50%, #90caf9 55%, #ffffff 70%);
-      background-size: 250% auto;
-      -webkit-background-clip: text; background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: dsTitleShine 3.2s linear 6.7s infinite;
-    }
-    .ds-title span { display: inline-block; opacity: 0; animation: dsLetterCarve 0.75s cubic-bezier(0.16,1,0.3,1) forwards; }
-    .ds-divider {
-      position: relative; height: 1px; width: 0; margin: 20px 0 16px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
-      animation: dsDividerExpand 0.9s ease-out 5.95s forwards;
-    }
-    .ds-divider::after {
-      content: ""; position: absolute; top: 50%; left: 50%;
-      width: 6px; height: 6px; background: #ef5350; border-radius: 50%;
-      box-shadow: 0 0 10px rgba(41,121,255,0.9);
-      animation: dsDividerGemPulse 2.4s ease-in-out 6.85s infinite;
-    }
-    .ds-subtitle-type {
-      display: flex; align-items: center; justify-content: center;
-      color: rgba(255,255,255,0.92); font-size: 15px; font-weight: 500; letter-spacing: 2px;
-      text-align: center; margin: 0; min-height: 20px;
-    }
-    .ds-type-text {
-      display: inline-block; overflow: hidden; white-space: nowrap; width: 0;
-      animation: dsTypeReveal 1.15s steps(30, end) 6.9s forwards;
-    }
-    .ds-caret {
-      display: inline-block; width: 2px; height: 14px; margin-left: 2px;
-      background: rgba(255,255,255,0.95); opacity: 0;
-      animation: dsCaretBlink 0.9s steps(1) 6.9s infinite;
-    }
-    .ds-tagline {
-      color: rgba(255,255,255,0.75); font-size: 12.5px; font-style: italic; letter-spacing: 0.5px;
-      text-align: center; margin: 10px 0 0; opacity: 0;
-      animation: dsTaglineReveal 0.8s ease-out 8.3s forwards;
-    }
-
-    /* (Đã bỏ thanh trạng thái/khởi tạo hệ thống ở đáy màn hình theo yêu cầu) */
-
-
-    /* HIỆU ỨNG KHÉP ỐNG KÍNH KHI KẾT THÚC INTRO */
-    #splash-screen-desktop.ds-exit { animation: dsIrisClose 0.9s cubic-bezier(0.55,0,0.15,1) 0.15s forwards; }
-    #splash-screen-desktop.ds-exit .ds-content,
-    #splash-screen-desktop.ds-exit .ds-frame {
-      animation: dsContentFadeExit 0.4s ease-in forwards;
+    /* Lưu ý: animation tắt chỉ dùng "forwards" (không "both"), nếu không
+       trạng thái opacity:1 của nó sẽ đè lên animation hiện từ lúc trang vừa mở. */
+    #splash-screen.intro-run .intro-logo-1 {
+      animation: introLogoIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0s both,
+                 introLogoOut 0.35s ease-in 1.3s forwards;
+    }
+    #splash-screen.intro-run .intro-logo-2 {
+      animation: introLogoIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) 1.8s both,
+                 introLogoOut 0.35s ease-in 3.1s forwards;
     }
 
     /* MÀN HÌNH ĐĂNG NHẬP */
@@ -2843,80 +2211,11 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   <div id="nhacviec-container"></div>
   <canvas id="confetti-canvas"></canvas>
 
-  <!-- MÀN HÌNH CHỜ (SPLASH SCREEN) -->
+  <!-- MÀN HÌNH CHỜ (INTRO): logo Xứ Đoàn -> logo Hill -> nền trắng -> vào app -->
   <div id="splash-screen">
-    <div class="splash-particles" id="splashParticles"></div>
-    <div class="splash-content">
-      <div class="splash-logo-ring">
-        <img src="icons/logo-dai-dien.jpg" class="splash-logo">
-      </div>
-      <h1 class="splash-title">
-        <span style="animation-delay:0.05s">XỨ</span>
-        <span style="animation-delay:0.13s">ĐOÀN</span>
-        <span style="animation-delay:0.21s">LÒNG</span>
-        <span style="animation-delay:0.29s">CHÚA</span>
-        <span style="animation-delay:0.37s">THƯƠNG</span>
-        <span style="animation-delay:0.45s">XÓT</span>
-      </h1>
-      <div class="splash-divider"></div>
-      <p class="splash-subtitle">GIÁO XỨ BẾN SIÊU · PORTAL HUYNH TRƯỞNG</p>
-      <div class="splash-progress"><div class="splash-progress-fill"></div></div>
-    </div>
-  </div>
-
-  <!-- MÀN HÌNH CHỜ DÀNH RIÊNG CHO MÁY TÍNH (DESKTOP) -->
-  <div id="splash-screen-desktop">
-    <div class="ds-gridlines"></div>
-    <div class="ds-aurora a1"></div>
-    <div class="ds-aurora a2"></div>
-    <div class="ds-particles" id="dsParticles"></div>
-    <div class="ds-sweep"></div>
-    <div class="ds-vignette"></div>
-    <div class="ds-frame">
-      <span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>
-    </div>
-    <div class="ds-content">
-      <div class="ds-emblem-stage">
-        <svg class="ds-cross" viewBox="0 0 120 160" width="88" height="118">
-          <line class="cross-v" x1="60" y1="8" x2="60" y2="152"></line>
-          <line class="cross-h" x1="14" y1="58" x2="106" y2="58"></line>
-          <circle class="cross-node" cx="60" cy="58" r="3.5"></circle>
-        </svg>
-        <div class="ds-flash"></div>
-        <div class="ds-crest-trail"></div>
-        <div class="ds-impact-ring"></div>
-        <div class="ds-crest-halo"></div>
-        <div class="ds-crest-rays"></div>
-        <div class="ds-gold-ring"></div>
-        <span class="ds-sparkle sp1">✦</span>
-        <span class="ds-sparkle sp2">✧</span>
-        <span class="ds-sparkle sp3">✦</span>
-        <span class="ds-sparkle sp4">✧</span>
-        <span class="ds-sparkle sp5">✦</span>
-        <span class="ds-sparkle sp6">✧</span>
-        <div class="ds-crest-flyer">
-          <div class="ds-crest-float">
-            <div class="ds-crest-ring">
-              <div class="ds-crest-wrap">
-                <img src="icons/logo-dai-dien.jpg" class="ds-crest">
-                <div class="ds-crest-scan"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="ds-kicker">Chào mừng bạn trở lại</div>
-      <h1 class="ds-title">
-        <span style="animation-delay:4.60s">XỨ</span>
-        <span style="animation-delay:4.74s">ĐOÀN</span>
-        <span style="animation-delay:4.88s">LÒNG</span>
-        <span style="animation-delay:5.02s">CHÚA</span>
-        <span style="animation-delay:5.16s">THƯƠNG</span>
-        <span style="animation-delay:5.30s">XÓT</span>
-      </h1>
-      <div class="ds-divider"></div>
-      <p class="ds-subtitle-type"><span class="ds-type-text">Giáo Xứ Bến Siêu · Hệ Thống Quản Lý Huynh Trưởng</span><span class="ds-caret"></span></p>
-      <p class="ds-tagline">Cầu nguyện, rước lễ, hy sinh &amp; làm tông đồ</p>
+    <div class="intro-stage">
+      <img src="icons/logo-dai-dien.jpg" class="intro-logo intro-logo-1" alt="Xứ Đoàn Lòng Chúa Thương Xót">
+      <img src="icons/hill-v2.png" class="intro-logo intro-logo-2" alt="Hill">
     </div>
   </div>
 
@@ -4191,79 +3490,29 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       pill.style.width = el.offsetWidth + 'px';
     }
 
-    // 0. HIỆU ỨNG MÀN HÌNH CHỜ (SPLASH SCREEN)
-    // Nhận diện thiết bị: điện thoại -> intro cũ (nhanh, gọn) | máy tính -> intro mới (sắc sảo, cao cấp, 10 giây)
-    function isMobileDeviceForSplash() {
-      var ua = navigator.userAgent || navigator.vendor || window.opera || "";
-      var mobileUA = /android|iphone|ipod|iemobile|blackberry|opera mini|windows phone|mobile/i.test(ua);
-      var isTabletIPad = /ipad|tablet/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-      var narrowScreen = Math.min(window.innerWidth, window.innerHeight) <= 820;
-      var hasTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
-      return mobileUA || isTabletIPad || (narrowScreen && hasTouch);
-    }
-    var isMobileSplash = isMobileDeviceForSplash();
-
-    (function initSplashParticles() {
-      var wrap = document.getElementById("splashParticles");
-      if (!wrap) return;
-      var n = 26;
-      for (var i = 0; i < n; i++) {
-        var p = document.createElement("span");
-        var size = (Math.random() * 3 + 2).toFixed(1);
-        p.style.width = size + "px";
-        p.style.height = size + "px";
-        p.style.left = (Math.random() * 100) + "%";
-        p.style.animationDuration = (4 + Math.random() * 5).toFixed(2) + "s";
-        p.style.animationDelay = (Math.random() * 6).toFixed(2) + "s";
-        p.style.opacity = (0.3 + Math.random() * 0.5).toFixed(2);
-        wrap.appendChild(p);
+    // 0. MÀN HÌNH CHỜ (INTRO): logo Xứ Đoàn -> logo Hill -> nền trắng -> vào app
+    // Chuỗi thời gian nằm trong CSS (#splash-screen.intro-run); JS chỉ bật chuỗi
+    // sau khi logo đầu đã tải xong (hoặc chờ tối đa 1,2 giây) để không bị trống hình.
+    (function chayIntro() {
+      var splash = document.getElementById("splash-screen");
+      if (!splash) return;
+      var daBatDau = false;
+      function batDau() {
+        if (daBatDau) return;
+        daBatDau = true;
+        splash.classList.add("intro-run");
+        // Logo 2 tắt lúc 3,45s; nền trắng giữ tới 3,95s rồi mờ dần 0,45s.
+        setTimeout(function() { splash.classList.add("intro-done"); }, 4420);
       }
-    })();
-
-    (function initDsParticles() {
-      var wrap = document.getElementById("dsParticles");
-      if (!wrap) return;
-      var n = 36;
-      for (var i = 0; i < n; i++) {
-        var p = document.createElement("span");
-        var size = (Math.random() * 3 + 2).toFixed(1);
-        p.style.width = size + "px";
-        p.style.height = size + "px";
-        p.style.left = (Math.random() * 100) + "%";
-        p.style.animationDuration = (6 + Math.random() * 6).toFixed(2) + "s";
-        p.style.animationDelay = (Math.random() * 8).toFixed(2) + "s";
-        p.style.opacity = (0.25 + Math.random() * 0.5).toFixed(2);
-        wrap.appendChild(p);
-      }
-    })();
-
-    window.addEventListener('load', function() {
-      var splashMobile = document.getElementById("splash-screen");
-      var splashDesktop = document.getElementById("splash-screen-desktop");
-
-      if (isMobileSplash) {
-        // ĐIỆN THOẠI: giữ nguyên intro cũ
-        if (splashDesktop) { splashDesktop.classList.remove("ds-active"); splashDesktop.style.display = "none"; }
-        setTimeout(function() {
-          if (splashMobile) {
-            splashMobile.classList.add("splash-exit");
-            setTimeout(function() { splashMobile.style.opacity = "0"; }, 380);
-            setTimeout(function() { splashMobile.style.display = "none"; }, 900);
-          }
-        }, 4300);
+      var logoDau = splash.querySelector(".intro-logo-1");
+      if (logoDau && !logoDau.complete) {
+        logoDau.addEventListener("load", batDau);
+        logoDau.addEventListener("error", batDau);
+        setTimeout(batDau, 1200);
       } else {
-        // MÁY TÍNH: intro điện ảnh mới, tổng thời gian 10 giây
-        if (splashMobile) { splashMobile.style.display = "none"; }
-        if (splashDesktop) { splashDesktop.classList.add("ds-active"); }
-
-        setTimeout(function() {
-          if (splashDesktop) {
-            splashDesktop.classList.add("ds-exit");
-            setTimeout(function() { splashDesktop.style.display = "none"; }, 1100);
-          }
-        }, 10000);
+        batDau();
       }
-    });
+    })();
 
     // HÀM TẠO LOGO XOAY TRÒN ĐỘC QUYỀN (CUSTOM LOGO LOADER)
     function getLogoLoaderHtml(text) {
@@ -11865,10 +11114,8 @@ var APP_PHIEN_BAN = {
     var t0 = Date.now();
     (function lap() {
       var con = false;
-      ["splash-screen", "splash-screen-desktop"].forEach(function (id) {
-        var el = document.getElementById(id);
-        if (el && getComputedStyle(el).display !== "none") con = true;
-      });
+      var el = document.getElementById("splash-screen");
+      if (el && getComputedStyle(el).display !== "none") con = true;
       if (!con || Date.now() - t0 > 13000) return fn();
       setTimeout(lap, 350);
     })();
