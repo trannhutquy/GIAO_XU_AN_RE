@@ -3799,6 +3799,15 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           <button class="btn-action" onclick="quyLuuMucDong()" style="margin-top:0;">Lưu mức đóng</button>
 
           <hr style="margin:15px 0; border:none; border-top:1px solid #eee;">
+          <h3 style="margin-top:0; font-size:14px; color:#2c3e50;">Số dư quỹ đầu kỳ</h3>
+          <div style="display:flex; gap:10px; align-items:center; margin-bottom:8px;">
+            <label style="flex:1; font-size:13px;">Số dư đầu kỳ (đ)</label>
+            <input type="number" id="quySoDuDauKy" placeholder="0" style="width:120px; padding:6px; border:1px solid #ddd; border-radius:6px;">
+          </div>
+          <div style="font-size:11.5px; color:#95a5a6; margin-bottom:8px;">Tiền quỹ có sẵn trước khi dùng app (hoặc thu ngoài app). Tồn quỹ = Số dư đầu kỳ + Tổng thu − Tổng chi.</div>
+          <button class="btn-action" onclick="quyLuuSoDuDauKy()" style="margin-top:0;">Lưu số dư đầu kỳ</button>
+
+          <hr style="margin:15px 0; border:none; border-top:1px solid #eee;">
           <button onclick="quyMoMienThuModal()" style="width:100%; background:#2c3e50; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px; margin-bottom:10px;"><i class="fas fa-user-slash"></i> Chọn Huynh Trưởng không thu tiền</button>
           <button onclick="quyMoChiTieuModal()" style="width:100%; background:#c62828; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px; margin-bottom:10px;"><i class="fas fa-money-bill-wave"></i> Quản lý Chi Tiêu Quỹ</button>
           <button onclick="quyXuatPDF()" style="width:100%; background:#d32f2f; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px;">Xuất Báo Cáo Thu Quỹ Tuần (PDF)</button>
@@ -3818,7 +3827,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
             </div>
 
             <div style="text-align:center; font-size:13px; margin-bottom:6px;">Tổng chi trong tháng: <b id="quyChiTieuTongThang" style="color:#e74c3c;">0đ</b></div>
-            <div style="text-align:center; font-size:11px; color:#95a5a6; margin-bottom:10px;">Chỉ lưu chi tiết khoản chi trong 3 tháng gần nhất — khoản chi cũ hơn sẽ tự động bị xoá (Tồn Quỹ vẫn tính đúng).</div>
+            <div style="text-align:center; font-size:11px; color:#95a5a6; margin-bottom:10px;">Toàn bộ khoản chi được lưu giữ để đối soát — hệ thống không tự xoá dữ liệu cũ.</div>
 
             <button onclick="quyXuatPDFChiTuan()" style="width:100%; background:#c62828; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:13px; margin-bottom:4px;"><i class="fas fa-file-pdf"></i> Xuất Báo Cáo Chi Quỹ Tuần (PDF)</button>
             <div style="text-align:center; font-size:11px; color:#95a5a6; margin-bottom:10px;">Xuất theo tuần đang chọn ở trang Quỹ chính: Chủ Nhật <span id="quyChiTieuTuanXuatLabel">--/--/----</span></div>
@@ -3832,9 +3841,10 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
               <input type="date" id="quyChiNgay" style="width:100%; padding:8px; margin-bottom:6px; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;">
               <input type="text" id="quyChiNoiDung" placeholder="Nội dung chi (VD: Mua bánh kẹo sinh hoạt)" style="width:100%; padding:8px; margin-bottom:6px; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;">
               <input type="number" id="quyChiSoTien" placeholder="Số tiền (đ)" style="width:100%; padding:8px; margin-bottom:6px; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;">
+              <input type="text" id="quyChiNguoiChi" placeholder="Người chi (không bắt buộc — mặc định là bạn)" style="width:100%; padding:8px; margin-bottom:6px; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;">
               <input type="text" id="quyChiGhiChu" placeholder="Ghi chú (không bắt buộc)" style="width:100%; padding:8px; margin-bottom:6px; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;">
               <input type="file" id="quyChiAnh" accept="image/*" style="width:100%; margin-bottom:8px; font-size:12.5px;">
-              <button onclick="quyThemChiSubmit()" style="width:100%; background:#c62828; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px;">Lưu khoản chi</button>
+              <button id="quyChiLuuBtn" onclick="quyThemChiSubmit()" style="width:100%; background:#c62828; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px;">Lưu khoản chi</button>
             </div>
           </div>
         </div>
@@ -3845,7 +3855,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
               <h3 style="margin:0; color:#2c3e50; font-size:16px;">Huynh Trưởng không thu tiền</h3>
               <button onclick="quyDongMienThuModal()" style="border:none; background:#f1f3f5; padding:6px 10px; border-radius:8px; cursor:pointer; color:#2c3e50;"><i class="fas fa-times"></i></button>
             </div>
-            <div style="font-size:12px; color:#7f8c8d; margin-bottom:10px;">Tích chọn những Huynh Trưởng sẽ KHÔNG bị thu quỹ hàng tuần và sẽ KHÔNG xuất hiện trong file PDF báo cáo.</div>
+            <div style="font-size:12px; color:#7f8c8d; margin-bottom:10px;">Tích chọn những Huynh Trưởng <b>không phải đóng</b> quỹ hàng tuần. Lưu ý: nếu trước đó họ đã đóng thì khoản tiền đã đóng vẫn được tính vào báo cáo và tồn quỹ.</div>
             <div id="quyMienThuList" style="flex:1; overflow-y:auto; border:1px solid #eee; border-radius:8px; padding:6px;">
               <div class="loading-logo-wrapper"><span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/logo-dai-dien.jpg" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span><div class="loading-logo-text">Đang tải...</div></div>
             </div>
@@ -4018,7 +4028,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   </div>
 
   <script>
-    var currentUserMa = ""; var currentUserToken = ""; var currentUserUnit = ""; var currentUserIsAdmin = false; var currentUserIsSuperAdmin = false; 
+    var currentUserMa = ""; var currentUserToken = ""; var currentUserUnit = ""; var currentUserIsAdmin = false; var currentUserIsSuperAdmin = false; var currentUserFullname = "";
     var globalCTTTData = []; var localAttendanceMap = {};
     var countdownIntervalId = null; var currentCalendarDate = new Date();
     var pollNenIntervalId = null;            // Vòng lặp kiểm tra nền (đơn chờ duyệt + thông báo chung)
@@ -8708,25 +8718,44 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     return String(d.getDate()).padStart(2, '0') + "/" + String(d.getMonth() + 1).padStart(2, '0') + "/" + d.getFullYear();
   }
 
+  // Cộng/trừ tháng nhưng LUÔN chuẩn hoá về ngày 1 trước khi tính — tránh lỗi
+  // "tràn tháng" của JS khi ngày hiện tại là 29/30/31 (VD: 31/01 + 1 tháng =
+  // 03/03 thay vì tháng 2).
+  function quyCongThang(d, delta) {
+    var y = d.getFullYear();
+    var m = d.getMonth() + delta;
+    return new Date(y, m, 1);
+  }
+
+  // Bỏ dấu tiếng Việt để tìm kiếm không cần gõ đúng dấu ("nguyen" khớp "Nguyễn").
+  function quyBoDau(s) {
+    s = String(s || "");
+    try {
+      s = s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    } catch (e) {}
+    return s.replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
+  }
+
   function quyKhoiTao() {
     if (!currentUserToken) { showToast("Vui lòng đăng nhập lại!", "error"); return; }
     if (!quyState.tuan) quyState.tuan = quyChuNhatGanNhat(0);
-    document.getElementById("quyAdminBox").style.display = currentUserIsAdmin ? "block" : "none";
+    var laQuanTri = !!(currentUserIsAdmin || currentUserIsSuperAdmin);
+    document.getElementById("quyAdminBox").style.display = laQuanTri ? "block" : "none";
 
     // Số liệu thu quỹ TỔNG HỢP (đã thu bao nhiêu/tổng bao nhiêu, tổng tiền, thanh
     // tiến trình) chỉ dành cho Admin và Quyền Tối Cao xem — Huynh Trưởng thường
     // chỉ được xem trạng thái đóng quỹ của CHÍNH MÌNH (xem khối quyCaNhanBox).
-    var xemDuocThongKe = currentUserIsAdmin || currentUserIsSuperAdmin;
+    var xemDuocThongKe = laQuanTri;
     document.getElementById("quyThongKeBox").style.display = xemDuocThongKe ? "block" : "none";
     document.getElementById("quyCaNhanBox").style.display = xemDuocThongKe ? "none" : "flex";
 
-    // Chỉ Admin mới được thấy/thu quỹ Huynh Trưởng. HT thường chỉ thấy quỹ Thiếu Nhi.
+    // Chỉ Admin/Quyền Tối Cao mới được thấy/thu quỹ Huynh Trưởng. HT thường chỉ thấy quỹ Thiếu Nhi.
     var tabHT = document.getElementById("quyTabHT");
-    if (currentUserIsAdmin) {
+    if (laQuanTri) {
       tabHT.style.display = "block";
     } else {
       tabHT.style.display = "none";
-      quyState.loai = "TN"; // ép luôn về tab Thiếu Nhi nếu không phải Admin
+      quyState.loai = "TN"; // ép luôn về tab Thiếu Nhi nếu không phải quản trị
     }
 
     quyChonTab(quyState.loai, true);
@@ -8748,10 +8777,10 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     google.script.run
       .withSuccessHandler(function (res) {
         if (!res || !res.success) { el.innerText = "Không tải được"; return; }
-        if (res.mienThu) {
-          el.innerText = "Được miễn thu"; el.style.background = "#f1f3f5"; el.style.color = "#7f8c8d";
-        } else if (res.daThu) {
+        if (res.daThu) {
           el.innerText = "Đã đóng"; el.style.background = "#eafaf1"; el.style.color = "#27ae60";
+        } else if (res.mienThu) {
+          el.innerText = "Được miễn thu"; el.style.background = "#f1f3f5"; el.style.color = "#7f8c8d";
         } else {
           el.innerText = "Chưa đóng"; el.style.background = "#fdecea"; el.style.color = "#e74c3c";
         }
@@ -8766,7 +8795,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         quyState.muc = res.muc;
         document.getElementById("quyMucTN").innerText = Number(res.muc.TN).toLocaleString('vi-VN') + "đ";
         document.getElementById("quyMucHT").innerText = Number(res.muc.HT).toLocaleString('vi-VN') + "đ";
-        if (currentUserIsAdmin) {
+        if (currentUserIsAdmin || currentUserIsSuperAdmin) {
           document.getElementById("quyInputMucHT").value = res.muc.HT;
           document.getElementById("quyInputMucTN").value = res.muc.TN;
         }
@@ -8780,6 +8809,14 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   function quyDoiTuan(delta) {
     var d = new Date(quyState.tuan);
     d.setDate(d.getDate() + delta * 7);
+    d.setHours(0, 0, 0, 0);
+    // Chặn xem/thu trước các tuần trong tương lai (Chủ Nhật sắp tới là tuần xa nhất).
+    var tuanToiDa = quyChuNhatGanNhat(0);
+    tuanToiDa.setHours(0, 0, 0, 0);
+    if (d.getTime() > tuanToiDa.getTime()) {
+      showToast("Chưa tới tuần này, không thể xem/thu trước.", "error");
+      return;
+    }
     quyState.tuan = d;
     quyBatTatCheDoChonNhieu(); // đổi tuần thì thoát chế độ chọn nhiều, tránh chọn nhầm sang dữ liệu tuần khác
     quyCapNhatTieuDeTuan();
@@ -8788,6 +8825,11 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   }
 
   function quyChonTab(loai, khoiTao) {
+    // Chặn cứng ở giao diện: HT thường không xem/thu được quỹ Huynh Trưởng.
+    if (loai === 'HT' && !(currentUserIsAdmin || currentUserIsSuperAdmin)) {
+      if (!khoiTao) showToast("Chỉ Admin/Quyền Tối Cao mới xem được quỹ Huynh Trưởng!", "error");
+      loai = 'TN';
+    }
     quyState.loai = loai;
     document.getElementById("quyTabTN").classList.toggle('quy-tab-active', loai === 'TN');
     document.getElementById("quyTabHT").classList.toggle('quy-tab-active', loai === 'HT');
@@ -8801,6 +8843,23 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     var tuanKey = quyFormatDateKey(quyState.tuan);
     google.script.run.withSuccessHandler(function (res) {
       if (!res || !res.success) { cont.innerHTML = '<p style="text-align:center; color:#e74c3c;">' + (res && res.error ? res.error : "Lỗi tải dữ liệu") + '</p>'; return; }
+      if (res.chuaLienKet) {
+        // CSDL Thiếu Nhi chưa liên kết: quản trị tự chuyển sang tab Huynh Trưởng,
+        // HT thường hiện thông báo thân thiện thay vì lỗi đỏ.
+        if (quyState.loai === 'TN' && (currentUserIsAdmin || currentUserIsSuperAdmin)) {
+          quyState.loai = 'HT';
+          quyChonTab('HT', true);
+          quyTaiDanhSach();
+          return;
+        }
+        cont.innerHTML = '<div style="text-align:center; padding:24px 12px; color:#7f8c8d; line-height:1.6;">' +
+          '<div style="font-size:34px; color:#b0bec5; margin-bottom:8px;"><i class="fas fa-database"></i></div>' +
+          '<div style="font-size:13.5px;">' + (res.thongBao || 'CSDL Thiếu Nhi chưa được liên kết.') + '</div>' +
+          '</div>';
+        quyState.danhSach = [];
+        quyCapNhatSummary([]);
+        return;
+      }
       if (res.muc) quyState.muc = res.muc;
       // Tổng tiền chính xác từ máy chủ (đã tính đúng theo mức đóng LƯU TẠI THỜI ĐIỂM
       // thu của từng ô, không bị lệch nếu Admin đổi mức đóng sau khi đã thu xong).
@@ -8819,7 +8878,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       return;
     }
     var html = list.map(function (item) {
-      var dataTen = (item.hoTen + " " + item.ma).toLowerCase();
+      var dataTen = quyBoDau((item.hoTen || "") + " " + (item.ma || ""));
       var chuCai = String(item.hoTen || '?').trim().slice(-1).toUpperCase();
       return '<div class="quy-item quy-item-modern" data-ten="' + dataTen + '" data-ma="' + item.ma + '">' +
         '<div class="quy-avatar-modern">' + chuCai + '</div>' +
@@ -8837,15 +8896,22 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   // Render riêng phần "Thu" / "Đã thu" của 1 dòng — tách ra để có thể cập nhật lại
   // đúng 1 dòng ngay lập tức (optimistic UI) mà không cần vẽ lại cả danh sách.
   function quyRenderTrangThai(item) {
-    if (item.mienThu) {
+    var coTheHuy = item.daThu && (currentUserIsAdmin || currentUserIsSuperAdmin);
+    if (item.mienThu && !item.daThu) {
       return '<div class="quy-trangthai" style="text-align:right;">' +
         '<span class="quy-badge-modern-mienthu" style="font-size:11px; font-weight:bold; padding:6px 10px; border-radius:20px; white-space:nowrap;"><i class="fas fa-user-slash"></i> Không thu</span>' +
         '</div>';
     }
-    var coTheHuy = item.daThu && currentUserIsAdmin;
     if (item.daThu) {
+      // Nếu vừa "miễn thu" vừa đã đóng tiền (đóng trước khi được miễn) thì vẫn phải
+      // hiện "Đã thu" — tiền đã vào quỹ và vẫn được tính trong báo cáo/tồn quỹ.
+      var ghiChuMienThu = item.mienThu ? '<div style="font-size:10px; color:#95a5a6; margin-top:2px;">(đã miễn thu)</div>' : '';
+      var nguoiThuTen = item.nguoiThuTen || item.nguoiThu || '';
+      var ghiChuNguoiThu = nguoiThuTen ? '<div style="font-size:10px; color:#95a5a6; margin-top:2px;">Thu bởi: ' + nguoiThuTen + '</div>' : '';
       return '<div class="quy-trangthai" style="text-align:right;">' +
           '<span class="quy-badge-modern-daThu" style="font-size:11px; font-weight:bold; padding:6px 10px; border-radius:20px; white-space:nowrap;"><i class="fas fa-check-circle"></i> Đã thu</span>' +
+          ghiChuNguoiThu +
+          ghiChuMienThu +
           (coTheHuy ? '<br><span onclick="quyHuyThu(\'' + item.ma + '\')" style="font-size:10.5px; color:#e74c3c; cursor:pointer; text-decoration:underline;">Hủy</span>' : '') +
         '</div>';
     }
@@ -8877,6 +8943,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     if (!item) return;
     item.daThu = daThu;
     item.nguoiThu = daThu ? (currentUserMa || "") : "";
+    item.nguoiThuTen = daThu ? (currentUserFullname || currentUserMa || "") : "";
 
     var el = quyTimPhanTuTheoMa(ma);
     if (el) {
@@ -8891,11 +8958,14 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   }
 
   function quyCapNhatSummary(list) {
-    var dsCanThu = list.filter(function (i) { return !i.mienThu; }); // bỏ những người không thu tiền khỏi tổng số cần thu
+    var dsCanThu = list.filter(function (i) { return !i.mienThu; }); // mẫu số: người có nghĩa vụ đóng
     var soDaThu = dsCanThu.filter(function (i) { return i.daThu; }).length;
     var mucTien = quyState.loai === 'HT' ? quyState.muc.HT : quyState.muc.TN;
     document.getElementById("quyDaThuCount").innerText = "Đã thu: " + soDaThu + "/" + dsCanThu.length;
-    var tongHienThi = (typeof quyState.tongTienThuc === 'number') ? quyState.tongTienThuc : (soDaThu * (mucTien || 0));
+    // Khi chưa có số chính xác từ máy chủ, phải cộng cả người "miễn thu" ĐÃ đóng tiền
+    // (đóng trước khi được miễn) để tạm tính không bị thiếu so với tồn quỹ.
+    var soLuotDaThu = list.filter(function (i) { return i.daThu; }).length;
+    var tongHienThi = (typeof quyState.tongTienThuc === 'number') ? quyState.tongTienThuc : (soLuotDaThu * (mucTien || 0));
     document.getElementById("quyTongThu").innerText = tongHienThi.toLocaleString('vi-VN') + "đ";
     var phanTram = dsCanThu.length > 0 ? Math.round((soDaThu / dsCanThu.length) * 100) : 0;
     var thanhTienDo = document.getElementById("quyProgressBar");
@@ -8903,9 +8973,10 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   }
 
   function quyLoc() {
-    var q = document.getElementById("quySearch").value.toLowerCase().trim();
+    var q = quyBoDau(document.getElementById("quySearch").value.trim());
     document.querySelectorAll("#quyDanhSachContainer .quy-item").forEach(function (el) {
-      el.style.display = el.getAttribute("data-ten").indexOf(q) !== -1 ? "flex" : "none";
+      var ten = el.getAttribute("data-ten") || "";
+      el.style.display = (q === "" || ten.indexOf(q) !== -1) ? "flex" : "none";
     });
   }
 
@@ -8922,6 +8993,9 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       if (!res || !res.success) {
         quyDanhDauTucThoi(ma, false);
         showToast(res && res.error ? res.error : "Lỗi khi ghi nhận, đã hoàn tác!", "error");
+        // Ô đã có người khác thu từ trước: tải lại danh sách để hiện đúng trạng thái
+        // "Đã thu" thay vì để dòng trông như chưa thu.
+        if (res && res.daThuRoi) quyTaiDanhSach();
         return;
       }
       if (!imBatch) quyToastHoanTacThu(ma, hoTen);
@@ -9043,18 +9117,41 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   function quyBatXacNhan() {
     var maList = Object.keys(quyState.daChon);
     if (maList.length === 0) return;
-    var soLuong = maList.length;
-    appConfirm({ title: 'Xác nhận thu quỹ hàng loạt', message: 'Xác nhận thu quỹ cho ' + soLuong + ' người đã chọn?', okText: 'Xác nhận thu', danger: false }, function (ok) {
+    // Chỉ gửi những người thực sự cần thu (bỏ người đã thu / được miễn thu đang lỡ tick).
+    var dsGui = [];
+    maList.forEach(function (ma) {
+      var item = null;
+      for (var i = 0; i < quyState.danhSach.length; i++) { if (quyState.danhSach[i].ma === ma) { item = quyState.danhSach[i]; break; } }
+      if (item && !item.daThu && !item.mienThu) dsGui.push(ma);
+    });
+    if (dsGui.length === 0) { showToast("Những người đã chọn đều đã thu hoặc được miễn thu.", "info"); return; }
+
+    appConfirm({ title: 'Xác nhận thu quỹ hàng loạt', message: 'Xác nhận thu quỹ cho ' + dsGui.length + ' người đã chọn?', okText: 'Xác nhận thu', danger: false }, function (ok) {
       if (!ok) return;
-      maList.forEach(function (ma) {
-        var item = null;
-        for (var i = 0; i < quyState.danhSach.length; i++) { if (quyState.danhSach[i].ma === ma) { item = quyState.danhSach[i]; break; } }
-        if (!item || item.daThu || item.mienThu) return;
-        quyGhiNhanThu(ma, item.hoTen || '', item.chiDoan || '', true); // true = đang thu hàng loạt, không hiện toast Hoàn tác riêng từng người
-      });
-      quyState.daChon = {};
-      quyBatCapNhatBar();
-      showToast("Đã gửi thu cho " + soLuong + " người!", "success");
+      var tuanKey = quyFormatDateKey(quyState.tuan);
+      showToast("Đang thu cho " + dsGui.length + " người...", "info");
+      google.script.run.withSuccessHandler(function (res) {
+        if (!res || !res.success) {
+          showToast(res && res.error ? res.error : "Lỗi khi thu hàng loạt!", "error");
+          return;
+        }
+        var ketQua = res.ketQua || [];
+        var soOk = Number(res.soThanhCong) || 0;
+        var dsLoi = ketQua.filter(function (k) { return !k.ok; });
+        quyState.daChon = {};
+        quyBatCapNhatBar();
+        quyTaiDanhSach(); // tải lại 1 lần để lấy đúng "ai đã thu" + tổng tiền chính xác
+        if (soOk > 0) showToast("Đã thu " + soOk + "/" + ketQua.length + " người!", "success");
+        if (dsLoi.length > 0) {
+          var tenLoi = dsLoi.slice(0, 3).map(function (k) {
+            return (k.hoTen || k.ma) + " (" + (k.error || "lỗi") + ")";
+          }).join("; ");
+          var conLai = dsLoi.length > 3 ? " và " + (dsLoi.length - 3) + " người khác" : "";
+          setTimeout(function () { showToast("Chưa thu được: " + tenLoi + conLai, "error"); }, 500);
+        }
+      }).withFailureHandler(function (err) {
+        showToast("Lỗi kết nối: " + err, "error");
+      }).quyGhiNhanThuHangLoat(currentUserToken, dsGui, quyState.loai, tuanKey);
     });
   }
 
@@ -9062,15 +9159,14 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     var mucHT = document.getElementById("quyInputMucHT").value;
     var mucTN = document.getElementById("quyInputMucTN").value;
     if (mucHT === "" || mucTN === "" || Number(mucHT) < 0 || Number(mucTN) < 0) { showToast("Mức đóng không hợp lệ!", "error"); return; }
-    google.script.run.withSuccessHandler(function (res1) {
-      if (!res1 || !res1.success) { showToast(res1 && res1.error ? res1.error : "Lỗi khi lưu!", "error"); return; }
-      google.script.run.withSuccessHandler(function (res2) {
-        if (!res2 || !res2.success) { showToast(res2 && res2.error ? res2.error : "Lỗi khi lưu!", "error"); return; }
-        showToast("Đã cập nhật mức đóng quỹ!", "success");
-        quyTaiMucDong();
-        quyTaiDanhSach();
-      }).quyCapNhatMucDong(currentUserToken, "TN", mucTN);
-    }).quyCapNhatMucDong(currentUserToken, "HT", mucHT);
+    // Lưu CẢ HAI mức trong 1 lần gọi (1 lock ở máy chủ) — tránh lưu nửa chừng.
+    google.script.run.withSuccessHandler(function (res) {
+      if (!res || !res.success) { showToast(res && res.error ? res.error : "Lỗi khi lưu!", "error"); return; }
+      showToast("Đã cập nhật mức đóng quỹ!", "success");
+      quyTaiMucDong();
+      quyTaiDanhSach();
+    }).withFailureHandler(function (err) { showToast("Lỗi kết nối: " + err, "error"); })
+      .quyCapNhatMucDongCaHai(currentUserToken, Number(mucHT), Number(mucTN));
   }
 
   function quyXuatPDF() {
@@ -9166,8 +9262,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   }
 
   function quyChiTieuDoiThang(delta) {
-    var d = new Date(quyChiTieuState.thang);
-    d.setMonth(d.getMonth() + delta);
+    var d = quyCongThang(quyChiTieuState.thang, delta);
     quyChiTieuState.thang = d;
     quyChiTieuCapNhatTieuDe();
     quyChiTieuTaiDanhSach();
@@ -9205,44 +9300,95 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       .quyLayDanhSachChiThang(currentUserToken, thangKey);
   }
 
+  var quyChiDangLuu = false; // cờ chống bấm "Lưu khoản chi" 2 lần liên tiếp
+
+  // Nén ảnh hoá đơn trước khi tải lên (tối đa 1280px, JPEG 70%) — giảm dung lượng
+  // và thời gian tải, tránh lỗi khi ảnh điện thoại quá lớn. Trả về data URL đầy đủ
+  // (giữ tiền tố "data:image/jpeg;base64,") + tên file .jpg.
+  function quyNenAnh(file, callback) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var img = new Image();
+      img.onload = function () {
+        try {
+          var maxDim = 1280;
+          var scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+          var canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.round(img.width * scale));
+          canvas.height = Math.max(1, Math.round(img.height * scale));
+          var ctx = canvas.getContext('2d');
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          callback(canvas.toDataURL('image/jpeg', 0.7), 'hoa_don_' + Date.now() + '.jpg');
+        } catch (err) {
+          callback(e.target.result, file.name || ('hoa_don_' + Date.now() + '.jpg'));
+        }
+      };
+      img.onerror = function () { callback(e.target.result, file.name || ('hoa_don_' + Date.now() + '.jpg')); };
+      img.src = e.target.result;
+    };
+    reader.onerror = function () { callback(null, null); };
+    reader.readAsDataURL(file);
+  }
+
   function quyThemChiSubmit() {
+    if (quyChiDangLuu) return;
     var ngay = document.getElementById("quyChiNgay").value;
     var noiDung = document.getElementById("quyChiNoiDung").value.trim();
     var soTien = document.getElementById("quyChiSoTien").value;
+    var nguoiChi = document.getElementById("quyChiNguoiChi").value.trim();
     var ghiChu = document.getElementById("quyChiGhiChu").value.trim();
     var fileInput = document.getElementById("quyChiAnh");
+    var btn = document.getElementById("quyChiLuuBtn");
 
     if (!ngay) { showToast("Vui lòng chọn ngày chi!", "error"); return; }
     if (!noiDung) { showToast("Vui lòng nhập nội dung khoản chi!", "error"); return; }
     if (!soTien || Number(soTien) <= 0) { showToast("Số tiền không hợp lệ!", "error"); return; }
 
+    function batDauLuu() {
+      quyChiDangLuu = true;
+      if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang lưu...'; }
+    }
+    function ketThucLuu() {
+      quyChiDangLuu = false;
+      if (btn) { btn.disabled = false; btn.innerHTML = 'Lưu khoản chi'; }
+    }
+
     function guiLenServer(base64Data, fileName) {
       google.script.run.withSuccessHandler(function (res) {
+        ketThucLuu();
         if (!res || !res.success) { showToast(res && res.error ? res.error : "Lỗi khi lưu khoản chi!", "error"); return; }
         showToast("Đã ghi nhận khoản chi!", "success");
         document.getElementById("quyChiNoiDung").value = "";
         document.getElementById("quyChiSoTien").value = "";
+        document.getElementById("quyChiNguoiChi").value = "";
         document.getElementById("quyChiGhiChu").value = "";
         fileInput.value = "";
         quyChiTieuTaiDanhSach();
         quyTaiTonQuy();
-      }).withFailureHandler(function (err) { showToast("Lỗi kết nối: " + err, "error"); })
-        .quyThemKhoanChi(currentUserToken, ngay, noiDung, soTien, "", ghiChu, base64Data, fileName);
+      }).withFailureHandler(function (err) {
+        ketThucLuu();
+        showToast("Lỗi kết nối: " + err, "error");
+      }).quyThemKhoanChi(currentUserToken, ngay, noiDung, soTien, nguoiChi, ghiChu, base64Data, fileName);
     }
 
+    batDauLuu();
     if (fileInput.files.length > 0) {
-      var file = fileInput.files[0];
-      var reader = new FileReader();
-      reader.onload = function (e) { guiLenServer(e.target.result, file.name); };
-      reader.onerror = function () { showToast("Lỗi khi đọc file ảnh hoá đơn!", "error"); };
-      reader.readAsDataURL(file);
+      quyNenAnh(fileInput.files[0], function (base64Data, fileName) {
+        if (!base64Data) { ketThucLuu(); showToast("Lỗi khi đọc file ảnh hoá đơn!", "error"); return; }
+        guiLenServer(base64Data, fileName);
+      });
     } else {
       guiLenServer(null, null);
     }
   }
 
   function quyXoaChi(rowIndex) {
-    appConfirm({ title: 'Xoá khoản chi?', message: 'Thao tác này không thể hoàn tác.', okText: 'Xoá', danger: true }, function (ok) {
+    var item = null;
+    (quyChiTieuState.dsChi || []).forEach(function (kc) { if (Number(kc.rowIndex) === Number(rowIndex)) item = kc; });
+    if (!item) { showToast("Không tìm thấy khoản chi này. Vui lòng tải lại danh sách.", "error"); return; }
+    appConfirm({ title: 'Xoá khoản chi?', message: 'Xoá "' + (item.noiDung || '') + '" — ' + Number(item.soTien || 0).toLocaleString('vi-VN') + 'đ?\nThao tác này không thể hoàn tác.', okText: 'Xoá', danger: true }, function (ok) {
       if (!ok) return;
       google.script.run.withSuccessHandler(function (res) {
         if (!res || !res.success) { showToast(res && res.error ? res.error : "Lỗi khi xoá!", "error"); return; }
@@ -9250,20 +9396,36 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         quyChiTieuTaiDanhSach();
         quyTaiTonQuy();
       }).withFailureHandler(function (err) { showToast("Lỗi kết nối: " + err, "error"); })
-        .quyXoaKhoanChi(currentUserToken, rowIndex);
+        .quyXoaKhoanChi(currentUserToken, item.rowIndex, item.ngayChi, item.noiDung, item.soTien);
     });
   }
 
-  // Tồn quỹ hiện tại — chỉ hiện trong quyAdminBox (Admin/Thủ quỹ)
+  // Tồn quỹ hiện tại — chỉ hiện trong quyAdminBox (Admin/Quyền Tối Cao)
   function quyTaiTonQuy() {
-    if (!currentUserIsAdmin) return;
+    if (!(currentUserIsAdmin || currentUserIsSuperAdmin)) return;
     google.script.run.withSuccessHandler(function (res) {
       var el = document.getElementById("quyTonQuySo");
       if (!el) return;
       if (!res || !res.success) { el.innerText = "--đ"; return; }
       el.innerText = res.tonQuy.toLocaleString('vi-VN') + "đ";
       el.style.color = res.tonQuy < 0 ? "#e74c3c" : "#27ae60";
+      var inp = document.getElementById("quySoDuDauKy");
+      if (inp) inp.value = Number(res.soDuDauKy || 0);
     }).quyLayTonQuyHienTai(currentUserToken);
+  }
+
+  // Lưu "số dư quỹ đầu kỳ" — tiền quỹ có sẵn trước khi dùng app (nhập 1 lần).
+  function quyLuuSoDuDauKy() {
+    var inp = document.getElementById("quySoDuDauKy");
+    if (!inp) return;
+    var v = inp.value;
+    if (v === "" || isNaN(Number(v))) { showToast("Số dư đầu kỳ không hợp lệ!", "error"); return; }
+    google.script.run.withSuccessHandler(function (res) {
+      if (!res || !res.success) { showToast(res && res.error ? res.error : "Lỗi khi lưu!", "error"); return; }
+      showToast("Đã lưu số dư đầu kỳ!", "success");
+      quyTaiTonQuy();
+    }).withFailureHandler(function (err) { showToast("Lỗi kết nối: " + err, "error"); })
+      .quyCapNhatSoDuDauKy(currentUserToken, Number(v));
   }
 
   // Xuất PDF chi quỹ theo TUẦN — dùng đúng tuần (Chủ Nhật) đang chọn ở trang Quỹ chính
@@ -9289,15 +9451,18 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     quyBaoCaoState.loaiKy = loaiKy;
     quyBaoCaoState.moc = new Date(quyState.tuan || new Date());
     document.getElementById("quyBaoCaoModal").style.display = "flex";
-    document.getElementById("quyBaoCaoXuatPdfBtn").style.display = currentUserIsAdmin ? "block" : "none";
+    document.getElementById("quyBaoCaoXuatPdfBtn").style.display = (currentUserIsAdmin || currentUserIsSuperAdmin) ? "block" : "none";
     quyBaoCaoCapNhatTieuDe();
     quyBaoCaoTai();
   }
 
   function quyBaoCaoDoiKy(delta) {
-    var d = new Date(quyBaoCaoState.moc);
-    if (quyBaoCaoState.loaiKy === 'thang') d.setMonth(d.getMonth() + delta);
-    else d.setFullYear(d.getFullYear() + delta);
+    var d;
+    if (quyBaoCaoState.loaiKy === 'thang') {
+      d = quyCongThang(quyBaoCaoState.moc, delta);
+    } else {
+      d = new Date(quyBaoCaoState.moc.getFullYear() + delta, 0, 1);
+    }
     quyBaoCaoState.moc = d;
     quyBaoCaoCapNhatTieuDe();
     quyBaoCaoTai();
@@ -9429,7 +9594,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   }
 
   function quyBaoCaoXuatPDF() {
-    if (!currentUserIsAdmin) return;
+    if (!(currentUserIsAdmin || currentUserIsSuperAdmin)) return;
     openChuKyModal(function (chuKy) {
       showToast("Đang tạo file PDF, vui lòng chờ...", "info");
       if (quyBaoCaoState.loaiKy === 'thang') {
@@ -11106,7 +11271,34 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   // link thật để người dùng tự bấm tay — cách này không trình duyệt nào
   // chặn vì đó là click thật của người dùng lên thẻ <a>.
   // ========================================================
-  function hienThiKetQuaPDF(url) {
+  // Máy chủ có thể trả:
+  //  - Chuỗi URL (các module PDF cũ vẫn tạo file trên Drive) -> dùng trực tiếp.
+  //  - Object { success, base64, mime, fileName } (báo cáo quỹ mới) -> dựng Blob URL
+  //    ngay trong trình duyệt, KHÔNG cần file công khai trên Drive.
+  var _quyPdfBlobUrl = null;
+  function _quyBase64SangBlobUrl(base64, mime) {
+    try {
+      var byteChars = atob(base64);
+      var bytes = new Uint8Array(byteChars.length);
+      for (var i = 0; i < byteChars.length; i++) bytes[i] = byteChars.charCodeAt(i);
+      var blob = new Blob([bytes], { type: mime || "application/pdf" });
+      return URL.createObjectURL(blob);
+    } catch (e) { return ""; }
+  }
+  function hienThiKetQuaPDF(kq) {
+    var url = "";
+    if (kq && typeof kq === "object") {
+      if (kq.success === false) { showToast(kq.error || "Không tạo được file PDF!", "error"); return; }
+      if (kq.base64) {
+        if (_quyPdfBlobUrl) { try { URL.revokeObjectURL(_quyPdfBlobUrl); } catch (e) {} _quyPdfBlobUrl = null; }
+        url = _quyBase64SangBlobUrl(kq.base64, kq.mime);
+        _quyPdfBlobUrl = url;
+      } else if (kq.url) {
+        url = kq.url;
+      }
+    } else {
+      url = kq;
+    }
     if (!url) { showToast("Không tạo được file PDF!", "error"); return; }
     var link = document.getElementById("ketQuaPdfLink");
     link.href = url;
