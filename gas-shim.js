@@ -205,15 +205,8 @@
   }
   document.addEventListener("visibilitychange", catchUp);
 
-  // ---------- trạng thái mạng / cập nhật ----------
+  // ---------- trạng thái mạng ----------
+  // Việc báo/cập nhật phiên bản do khối "xd-capnhat" ở cuối index.html đảm nhiệm.
   window.addEventListener("offline", function () { toast("Đang offline — một số chức năng tạm dừng"); });
   window.addEventListener("online", function () { toast("Đã có mạng trở lại"); catchUp(); });
-  window.addEventListener("pwa-update-ready", function () {
-    toast("Có bản cập nhật — đóng hẳn app rồi mở lại để dùng bản mới");
-  });
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.addEventListener("message", function (e) {
-      if (e.data && e.data.type === "update-ready") window.dispatchEvent(new Event("pwa-update-ready"));
-    });
-  }
 })();

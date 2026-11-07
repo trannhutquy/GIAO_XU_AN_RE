@@ -1,6 +1,6 @@
 // Service worker: mở app TỨC THÌ từ bộ nhớ máy, tải bản mới ở nền, báo khi có bản mới,
 // và nhận THÔNG BÁO ĐẨY (Firebase Cloud Messaging) kể cả khi app đang đóng.
-var VERSION = "v15";
+var VERSION = "v16";
 var SHELL = "shell-" + VERSION;
 var STATIC = "static-" + VERSION;
 var SHELL_FILES = ["./", "index.html", "config.js", "gas-shim.js", "push.js", "manifest.webmanifest",
@@ -45,9 +45,22 @@ self.addEventListener("notificationclick", function (e) {
 });
 
 // ---------- Cache / cập nhật ----------
+// Bản mới cài xong sẽ Ở TRẠNG THÁI CHỜ, không tự chiếm quyền: app hiện thẻ nhắc,
+// người dùng bấm "Cập nhật ngay" thì gửi SKIP_WAITING -> kích hoạt -> trang tự tải lại.
 self.addEventListener("install", function (e) {
-  e.waitUntil(caches.open(SHELL).then(function (c) { return c.addAll(SHELL_FILES); }));
-  self.skipWaiting();
+  e.waitUntil(caches.open(SHELL).then(function (c) {
+    return c.addAll(SHELL_FILES);
+  }).then(function () {
+    // Báo cho trang đang mở biết đã có bản mới (kể cả khi trang bỏ lỡ sự kiện updatefound)
+    return self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(function (cs) {
+      cs.forEach(function (c) { c.postMessage({ type: "update-ready" }); });
+    });
+  }));
+});
+
+// Trang gọi khi người dùng bấm "Cập nhật ngay"
+self.addEventListener("message", function (e) {
+  if (e.data && e.data.type === "SKIP_WAITING") self.skipWaiting();
 });
 
 self.addEventListener("activate", function (e) {

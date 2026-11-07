@@ -11377,13 +11377,13 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 // Hiện ĐÚNG 1 LẦN ngay sau khi đăng nhập (kể cả tự đăng nhập lại) cho mỗi phiên bản, trên mỗi thiết bị.
 // Muốn giới thiệu bản mới: đổi "so" (ví dụ "2.1.0") + sửa nội dung "muc" -> mọi người sẽ thấy lại 1 lần.
 var APP_PHIEN_BAN = {
-  so: "2.6.0",
-  ngay: "09/10/2026",
-  tieuDe: "Hẹn giờ gửi thông báo",
+  so: "2.7.0",
+  ngay: "07/11/2026",
+  tieuDe: "Cập nhật ngay khi mở app",
   muc: [
-    { icon: "fa-clock", tieuDe: "Hẹn ngày giờ gửi thông báo", moTa: "Quản trị viên soạn trước và chọn thời điểm, thông báo tự được gửi đúng giờ cho cả Xứ Đoàn." },
-    { icon: "fa-calendar-check", tieuDe: "Chọn nhanh hoặc tự chọn", moTa: "Có sẵn các mốc Tối nay, Sáng mai, Sáng Chủ nhật. Mặc định vẫn là Gửi ngay khi cần báo gấp." },
-    { icon: "fa-rotate-left", tieuDe: "Xem và huỷ hẹn dễ dàng", moTa: "Các thông báo đang chờ nằm đầu danh sách trong tab Thông Báo, bấm Huỷ hẹn bất cứ lúc nào trước giờ gửi." }
+    { icon: "fa-cloud-arrow-down", tieuDe: "Thẻ nhắc cập nhật tự hiện", moTa: "Vừa mở app mà có phiên bản mới là thẻ nhắc hiện ra ngay, không cần tự vào Cài đặt kiểm tra." },
+    { icon: "fa-bolt", tieuDe: "Cập nhật một chạm", moTa: "Bấm “Cập nhật ngay” là ứng dụng tự tải bản mới và mở lại, giữ nguyên đăng nhập và dữ liệu." },
+    { icon: "fa-list-check", tieuDe: "Vẫn xem rõ có gì thay đổi", moTa: "Sau khi cập nhật, mục Cài đặt → Bản cập nhật liệt kê chi tiết từng thay đổi của phiên bản." }
   ]
 };
 
@@ -11800,21 +11800,193 @@ var APP_PHIEN_BAN = {
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', chay); else chay();
 })();
 </script>
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function () {
-    navigator.serviceWorker.register('sw.js').then(function (reg) {
-      reg.addEventListener('updatefound', function () {
-        var nw = reg.installing;
-        nw && nw.addEventListener('statechange', function () {
-          if (nw.state === 'installed' && navigator.serviceWorker.controller) {
-            window.dispatchEvent(new Event('pwa-update-ready'));
+<script id="xd-capnhat">
+// ===== THẺ NHẮC CẬP NHẬT KHI MỞ APP =====
+// Có bản mới (service worker mới hoặc nội dung mới) -> hiện thẻ ngay khi vừa mở app.
+// Bấm "Cập nhật ngay": kích hoạt bản mới rồi tự tải lại trang. Bấm "Để sau": nhắc lại ở lần mở app kế tiếp.
+(function () {
+  if (!('serviceWorker' in navigator)) return;
+
+  var reg = null;
+  var daQuaSplash = false;
+  var coBanMoi = false;
+  var dangHien = false;
+  var daBoQua = false;
+  var dangCapNhat = false;
+  var daTaiLai = false;
+  var lanKiemTra = 0;
+
+  function esc(s) { var d = document.createElement("div"); d.textContent = s == null ? "" : String(s); return d.innerHTML; }
+
+  function themCss() {
+    if (document.getElementById("xdcn-css")) return;
+    var st = document.createElement("style");
+    st.id = "xdcn-css";
+    st.textContent =
+      "#xdcn{position:fixed;inset:0;z-index:100002;display:flex;align-items:center;justify-content:center;padding:18px;" +
+        "background:rgba(10,22,40,.58);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);opacity:0;transition:opacity .25s}" +
+      "#xdcn.on{opacity:1}" +
+      "#xdcn .xdcn-card{width:100%;max-width:370px;overflow:hidden;background:#fff;border-radius:24px;" +
+        "box-shadow:0 28px 60px rgba(0,0,0,.35);transform:translateY(16px) scale(.96);transition:transform .3s cubic-bezier(.2,.9,.3,1.2);" +
+        "font-family:'Be Vietnam Pro','Segoe UI',Tahoma,sans-serif;color:#2c3e50}" +
+      "#xdcn.on .xdcn-card{transform:none}" +
+      "#xdcn .xdcn-head{padding:24px 22px 18px;text-align:center;color:#fff;background:linear-gradient(135deg,#1e88e5,#0d47a1)}" +
+      "#xdcn .xdcn-ico{width:54px;height:54px;margin:0 auto 10px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:24px}" +
+      "#xdcn .xdcn-ver{display:inline-block;padding:3px 12px;border-radius:99px;background:rgba(255,255,255,.22);font-size:12.5px;font-weight:700;letter-spacing:.3px}" +
+      "#xdcn h3{margin:10px 0 3px;font-size:18.5px;font-weight:700;line-height:1.3;color:#fff}" +
+      "#xdcn .xdcn-sub{font-size:12.5px;opacity:.9;line-height:1.45}" +
+      "#xdcn .xdcn-body{padding:16px 22px 4px}" +
+      "#xdcn .xdcn-note{font-size:13.5px;line-height:1.6;color:#5b6472}" +
+      "#xdcn .xdcn-hint{margin-top:10px;padding:10px 12px;border-radius:12px;background:#eef5ff;color:#1565c0;font-size:12.5px;line-height:1.5}" +
+      "#xdcn .xdcn-foot{padding:14px 22px 22px;display:flex;flex-direction:column;gap:8px}" +
+      "#xdcn .xdcn-btn{width:100%;border:0;border-radius:14px;padding:13px;font:700 15px 'Be Vietnam Pro','Segoe UI',sans-serif;color:#fff;cursor:pointer;" +
+        "background:linear-gradient(135deg,#1e88e5,#0d47a1);box-shadow:0 8px 18px rgba(13,71,161,.32)}" +
+      "#xdcn .xdcn-btn:active{transform:scale(.98)}" +
+      "#xdcn .xdcn-btn[disabled]{opacity:.75;cursor:default;transform:none}" +
+      "#xdcn .xdcn-later{width:100%;border:0;border-radius:14px;padding:11px;font:600 14px 'Be Vietnam Pro','Segoe UI',sans-serif;color:#6b7280;background:transparent;cursor:pointer}" +
+      "#xdcn .xdcn-later:active{background:#f3f5f8}" +
+      "body.dark-mode #xdcn .xdcn-card{background:#1e1f24;color:#e4e6eb}" +
+      "body.dark-mode #xdcn .xdcn-note{color:#b8bcc6}" +
+      "body.dark-mode #xdcn .xdcn-hint{background:#16233a;color:#7fb3ff}" +
+      "body.dark-mode #xdcn .xdcn-later{color:#a8adb8}" +
+      "body.dark-mode #xdcn .xdcn-later:active{background:#2a2c33}";
+    document.head.appendChild(st);
+  }
+
+  function dongThe() {
+    var el = document.getElementById("xdcn");
+    if (!el) return;
+    el.classList.remove("on");
+    setTimeout(function () { if (el.parentNode) el.remove(); dangHien = false; }, 280);
+  }
+
+  // Chờ màn hình chào (splash) kết thúc rồi mới hiện thẻ, tránh chồng lên intro.
+  function choHetSplash(fn) {
+    var t0 = Date.now();
+    (function lap() {
+      var con = false;
+      ["splash-screen", "splash-screen-desktop"].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el && getComputedStyle(el).display !== "none") con = true;
+      });
+      if (!con || Date.now() - t0 > 13000) return fn();
+      setTimeout(lap, 350);
+    })();
+  }
+
+  function hienThe() {
+    if (!coBanMoi || daBoQua || dangHien || dangCapNhat) return;
+    // Lần cài đặt đầu tiên (chưa có SW đang chạy) không phải là "cập nhật"
+    if (!navigator.serviceWorker.controller) return;
+    if (!daQuaSplash || document.getElementById("xdcn")) return;
+    themCss();
+    dangHien = true;
+
+    var el = document.createElement("div");
+    el.id = "xdcn";
+    el.setAttribute("role", "dialog");
+    el.setAttribute("aria-modal", "true");
+    el.innerHTML =
+      '<div class="xdcn-card">' +
+        '<div class="xdcn-head"><div class="xdcn-ico"><i class="fas fa-cloud-arrow-down"></i></div>' +
+          '<span class="xdcn-ver">Bản cập nhật mới</span>' +
+          '<h3>Ứng dụng đã có phiên bản mới</h3>' +
+          '<div class="xdcn-sub">Cập nhật ngay để dùng những thay đổi mới nhất</div></div>' +
+        '<div class="xdcn-body"><div class="xdcn-note">Bản mới đã sẵn sàng trên thiết bị. Cập nhật chỉ mất vài giây, ' +
+          'giữ nguyên đăng nhập và dữ liệu của bạn.</div>' +
+          '<div class="xdcn-hint"><i class="fas fa-circle-info"></i> Sau khi cập nhật, xem chi tiết thay đổi ở Cài đặt → Bản cập nhật.</div></div>' +
+        '<div class="xdcn-foot"><button type="button" class="xdcn-btn">Cập nhật ngay</button>' +
+          '<button type="button" class="xdcn-later">Để sau</button></div>' +
+      '</div>';
+    el.addEventListener("click", function (e) { if (e.target === el) { daBoQua = true; dongThe(); } });
+    el.querySelector(".xdcn-later").addEventListener("click", function () { daBoQua = true; dongThe(); });
+    el.querySelector(".xdcn-btn").addEventListener("click", batDauCapNhat);
+    document.body.appendChild(el);
+    requestAnimationFrame(function () { requestAnimationFrame(function () { el.classList.add("on"); }); });
+  }
+
+  function taiLai() {
+    if (daTaiLai) return;
+    daTaiLai = true;
+    location.reload();
+  }
+
+  function batDauCapNhat() {
+    if (dangCapNhat) return;
+    dangCapNhat = true;
+
+    var btn = document.querySelector("#xdcn .xdcn-btn");
+    if (btn) { btn.disabled = true; btn.textContent = "Đang cập nhật..."; }
+    var note = document.querySelector("#xdcn .xdcn-note");
+    if (note) note.textContent = "Đang chuyển sang bản mới, ứng dụng sẽ tự mở lại...";
+
+    setTimeout(taiLai, 5000); // lưới an toàn: không để màn hình đứng yên
+
+    var sw = reg && (reg.waiting || reg.installing);
+    if (sw && sw.state !== "activated") {
+      try { sw.postMessage({ type: "SKIP_WAITING" }); } catch (e) {}
+    } else if (reg && reg.waiting) {
+      try { reg.waiting.postMessage({ type: "SKIP_WAITING" }); } catch (e) {}
+    } else {
+      // Chỉ có nội dung mới (SW không đổi): tải lại là đủ
+      setTimeout(taiLai, 350);
+    }
+  }
+
+  function thuHien() {
+    if (!coBanMoi || daBoQua || dangHien || dangCapNhat || !daQuaSplash) return;
+    hienThe();
+  }
+
+  function kiemTraBanMoi() {
+    if (!reg) return;
+    lanKiemTra = Date.now();
+    try { var p = reg.update(); if (p && p.catch) p.catch(function () {}); } catch (e) {}
+  }
+
+  function xetDangCho() {
+    if (reg && reg.waiting) { coBanMoi = true; thuHien(); }
+  }
+
+  // SW báo có nội dung mới (khi sw.js không đổi nhưng index.html đổi).
+  // Bỏ qua lúc cài đặt lần đầu: khi đó chưa có SW nào đang chạy, không phải "cập nhật".
+  navigator.serviceWorker.addEventListener("message", function (e) {
+    if (e.data && e.data.type === "update-ready" && navigator.serviceWorker.controller) {
+      coBanMoi = true;
+      thuHien();
+    }
+  });
+
+  // SW mới vừa kích hoạt và nắm quyền -> tải lại để dùng bản mới
+  navigator.serviceWorker.addEventListener("controllerchange", function () {
+    if (dangCapNhat) taiLai();
+  });
+
+  window.addEventListener("load", function () {
+    choHetSplash(function () { daQuaSplash = true; thuHien(); });
+
+    navigator.serviceWorker.register("sw.js").then(function (r) {
+      reg = r;
+      xetDangCho();
+      kiemTraBanMoi();
+      r.addEventListener("updatefound", function () {
+        var nw = r.installing;
+        if (!nw) return;
+        nw.addEventListener("statechange", function () {
+          if (nw.state === "installed" && navigator.serviceWorker.controller) {
+            coBanMoi = true;
+            thuHien();
           }
         });
       });
-    }).catch(function (e) { console.warn('SW lỗi:', e); });
+    }).catch(function (e) { console.warn("SW lỗi:", e); });
   });
-}
+
+  // Quay lại app sau một thời gian dài: kiểm tra bản mới
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "visible" && Date.now() - lanKiemTra > 30 * 60 * 1000) kiemTraBanMoi();
+  });
+})();
 </script>
 </body>
 </html>
