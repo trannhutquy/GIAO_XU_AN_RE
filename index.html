@@ -712,6 +712,7 @@
       position: fixed; 
       bottom: 0; 
       width: 100%; 
+      box-sizing: border-box;
       background: rgba(255, 255, 255, 0.9); 
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
@@ -2128,13 +2129,44 @@ body.dark-mode .glv-quick-title { color: #e4e6eb; }
 .glv-tile-wide { grid-column: 1 / -1; }
 .glv-tile-half { grid-column: span 1; }
 .glv-tile-ico { flex: 0 0 34px; height: 34px; border-radius: 11px; background: #fdecea; color: #c62828; display: flex; align-items: center; justify-content: center; font-size: 14px; }
-.glv-tile-lb { font-size: 11px; font-weight: 600; color: #8a8f98; text-transform: uppercase; letter-spacing: 0.3px; }
+.glv-tile-lb { font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.3px; }
 .glv-tile-val { font-size: 14px; font-weight: 600; color: #2c3e50; margin-top: 2px; word-break: break-word; }
-.glv-hint { margin-top: 14px; padding-top: 12px; border-top: 1px dashed #ddd; color: #999; font-size: 12px; line-height: 1.5; }
+.glv-hint { margin-top: 14px; padding-top: 12px; border-top: 1px dashed #ddd; color: #757b83; font-size: 12px; line-height: 1.5; }
 body.dark-mode .glv-tile { background: #26272c; border-color: rgba(255,255,255,0.05); }
+body.dark-mode .glv-tile-lb { color: #9aa0aa; }
 body.dark-mode .glv-tile-val { color: #e4e6eb; }
-body.dark-mode .glv-tile-ico { background: rgba(229,57,53,0.16); }
-body.dark-mode .glv-hint { border-top-color: #3a3b42; }
+body.dark-mode .glv-tile-ico { background: rgba(229,57,53,0.16); color: #ff8a80; }
+body.dark-mode .glv-hint { border-top-color: #3a3b42; color: #9aa0aa; }
+
+/* ---- Danh sách Thiếu Nhi / danh sách đã điểm danh ----
+   Dùng class thay cho màu inline để Giao diện Tối đọc được rõ (trước đây chữ
+   xám #666 nằm trực tiếp trong style nên ở nền tối bị mờ, khó đọc). */
+.glv-sum { font-size: 12.5px; color: #5b6270; margin-bottom: 10px; }
+.glv-count { color: #d32f2f; }
+.glv-err { color: #c0392b; }
+.glv-tn-item { border: 1px solid #eee; border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; }
+.glv-tn-name { font-weight: 700; font-size: 13.5px; color: #2c3e50; word-break: break-word; }
+.glv-tn-ma { color: #8a8f98; font-weight: 400; font-size: 11.5px; white-space: nowrap; }
+.glv-tn-meta { font-size: 12px; color: #5b6270; margin-top: 2px; word-break: break-word; }
+.glv-dd-item { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; border: 1px solid #eee; border-radius: 10px; padding: 8px 12px; margin-bottom: 6px; font-size: 13px; }
+.glv-dd-ten { min-width: 0; word-break: break-word; }
+.glv-dd-ma { color: #8a8f98; font-size: 11px; }
+.glv-dd-gio { color: #8a8f98; white-space: nowrap; font-size: 12px; }
+.glv-dd-empty { font-size: 12.5px; color: #8a8f98; text-align: center; padding: 10px; }
+.glv-note { font-size: 12px; color: #8a8f98; text-align: center; margin: -4px 0 10px; }
+body.dark-mode .glv-sum,
+body.dark-mode .glv-tn-meta { color: #b9bdc7; }
+body.dark-mode .glv-count,
+body.dark-mode .glv-err { color: #ff8a80; }
+body.dark-mode .glv-tn-name { color: #e4e6eb; }
+body.dark-mode .glv-tn-ma,
+body.dark-mode .glv-dd-ma,
+body.dark-mode .glv-dd-gio,
+body.dark-mode .glv-dd-empty,
+body.dark-mode .glv-note { color: #9aa0aa; }
+body.dark-mode .glv-tn-item,
+body.dark-mode .glv-dd-item { border-color: #3a3b42; }
+body.dark-mode #glv-side-lop { color: #ff8a80; }
 
 /* Sidebar chỉ dùng trên laptop */
 #glv-sidebar { display: none; }
@@ -2257,8 +2289,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 
   <!-- ==========================================
        KHU VỰC GIÁO LÝ VIÊN (GLV): tài khoản hoàn toàn riêng biệt với Huynh Trưởng.
-       Hiện chỉ có khung đăng nhập + trang chờ; phần quản lý Lớp Giáo Lý sẽ được
-       xây dựng thêm vào đây (dashboard này) khi module Lớp Giáo Lý hoàn thiện.
+       Gồm 4 tab: Lớp của tôi, Thiếu nhi, Điểm danh, Tiến độ. Tài khoản GLV được
+       quản lý ở sheet GIAO_LY_VIEN, phiên đăng nhập riêng (không dùng token HT).
        ========================================== -->
   <div id="glv-app" style="display:none;">
 
@@ -2295,7 +2327,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           <p id="glv-head-lop" style="margin:0; font-size:11px; opacity:0.8;">Xứ Đoàn Lòng Chúa Thương Xót</p>
         </div>
       </div>
-      <div style="font-size:22px; cursor:pointer; position:relative; padding:5px;" onclick="toggleMenuGLV(event)">
+      <div style="font-size:22px; cursor:pointer; position:relative; padding:9px;" onclick="toggleMenuGLV(event)">
         <i class="fas fa-cog"></i>
         <div id="glvSettingsDropdown" class="settings-menu">
           <div onclick="reloadApp()"><i class="fas fa-sync-alt"></i> Làm mới App</div>
@@ -2355,9 +2387,9 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       <div id="glv-tab-diemdanh" style="display:none;">
         <div class="card">
           <h3 style="margin-top:0;">Điểm danh buổi học hôm nay</h3>
-          <div id="glv-diemdanh-siso" style="font-size:12.5px; color:#666; margin-bottom:10px;"></div>
+          <div id="glv-diemdanh-siso" class="glv-sum"></div>
           <button class="btn-action" onclick="glvMoAppDiemDanhQR()" style="margin-bottom:10px;"><i class="fas fa-qrcode"></i> Mở App Điểm Danh QR</button>
-          <p style="font-size:12px; color:#999; text-align:center; margin:-4px 0 10px;">Mở app điểm danh QR (đang deploy trên Vercel) ở tab mới - dùng chung với Huynh Trưởng.</p>
+          <p class="glv-note">Mở trang điểm danh QR ở tab mới – dùng chung với Huynh Trưởng.</p>
           <div id="glv-diemdanh-danhsach"></div>
         </div>
       </div>
@@ -3881,15 +3913,15 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           box.innerHTML = getEmptyStateHtml("Lớp \"" + escapeHtml(res.tenLop) + "\" hiện chưa có Thiếu Nhi nào trong sổ bộ.", "fa-child");
           return;
         }
-        var html = '<div style="font-size:12.5px; color:#666; margin-bottom:10px;">Lớp <b>' + escapeHtml(res.tenLop) + '</b> - Sĩ số: <b>' + res.list.length + '</b> em</div>';
+        var html = '<div class="glv-sum">Lớp <b>' + escapeHtml(res.tenLop) + '</b> - Sĩ số: <b>' + res.list.length + '</b> em</div>';
         res.list.forEach(function (tn) {
-          html += '<div style="border:1px solid #eee; border-radius:12px; padding:10px 12px; margin-bottom:8px;">';
-          html += '<div style="font-weight:bold; font-size:13.5px;">' + escapeHtml(tn.ten) + ' <span style="color:#999; font-weight:normal; font-size:11.5px;">(' + tn.maTN + ')</span></div>';
+          html += '<div class="glv-tn-item">';
+          html += '<div class="glv-tn-name">' + escapeHtml(tn.ten) + ' <span class="glv-tn-ma">(' + escapeHtml(tn.maTN) + ')</span></div>';
           var chiTiet = [];
           if (tn.ngaySinh) chiTiet.push('Ngày sinh: ' + escapeHtml(tn.ngaySinh));
           if (tn.tenPH) chiTiet.push('PH: ' + escapeHtml(tn.tenPH));
           if (tn.sdtPH) chiTiet.push('SĐT: ' + escapeHtml(tn.sdtPH));
-          if (chiTiet.length) html += '<div style="font-size:12px; color:#666; margin-top:2px;">' + chiTiet.join(' · ') + '</div>';
+          if (chiTiet.length) html += '<div class="glv-tn-meta">' + chiTiet.join(' · ') + '</div>';
           html += '</div>';
         });
         box.innerHTML = html;
@@ -3902,35 +3934,56 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     // Dùng chung App Điểm Danh QR (Vercel) với Huynh Trưởng thay vì quét camera
     // ngay trong app này - xem openDiemDanh() dành cho HT để đối chiếu.
     function taiDiemDanhHomNayGLV() {
+      var siso = document.getElementById("glv-diemdanh-siso");
+      var ds = document.getElementById("glv-diemdanh-danhsach");
+      // Xoá nội dung cũ trước khi tải: tránh trường hợp lỗi/mất mạng mà danh sách
+      // của lần mở trước vẫn còn nằm đó, gây hiểu nhầm là số liệu mới.
+      siso.classList.remove("glv-err");
+      siso.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Đang tải...';
+      ds.innerHTML = "";
       google.script.run.withSuccessHandler(function (res) {
         if (!res || !res.success) {
-          document.getElementById("glv-diemdanh-siso").innerText = (res && res.error) || "Lỗi tải dữ liệu.";
+          siso.classList.add("glv-err");
+          siso.innerText = (res && res.error) || "Lỗi tải dữ liệu.";
+          ds.innerHTML = "";
           return;
         }
         if (!res.coLop) {
-          document.getElementById("glv-diemdanh-siso").innerText = "Bạn chưa được phân công phụ trách lớp nào.";
+          siso.innerText = "Bạn chưa được phân công phụ trách lớp nào.";
+          ds.innerHTML = "";
           return;
         }
-        document.getElementById("glv-diemdanh-siso").innerHTML =
-          'Lớp <b>' + escapeHtml(res.tenLop) + '</b> - Đã điểm danh: <b style="color:#d32f2f;">' + res.daDiemDanh.length + '</b> / ' + res.tongSiSo + ' em';
-        var ds = document.getElementById("glv-diemdanh-danhsach");
+        siso.innerHTML =
+          'Lớp <b>' + escapeHtml(res.tenLop) + '</b> - Đã điểm danh: <b class="glv-count">' + res.daDiemDanh.length + '</b> / ' + res.tongSiSo + ' em';
         if (!res.daDiemDanh.length) {
-          ds.innerHTML = '<div style="font-size:12.5px; color:#999; text-align:center; padding:10px;">Chưa có em nào được điểm danh hôm nay.</div>';
+          ds.innerHTML = '<div class="glv-dd-empty">Chưa có em nào được điểm danh hôm nay.</div>';
           return;
         }
         var html = '';
         res.daDiemDanh.forEach(function (tn) {
-          html += '<div style="display:flex; justify-content:space-between; border:1px solid #eee; border-radius:10px; padding:8px 12px; margin-bottom:6px; font-size:13px;">';
-          html += '<span><i class="fas fa-check-circle" style="color:#2ecc71;"></i> ' + escapeHtml(tn.ten) + ' <span style="color:#999; font-size:11px;">(' + tn.maTN + ')</span></span>';
-          html += '<span style="color:#999;">' + tn.gio + '</span></div>';
+          html += '<div class="glv-dd-item">';
+          html += '<span class="glv-dd-ten"><i class="fas fa-check-circle" style="color:#2ecc71;"></i> ' + escapeHtml(tn.ten) + ' <span class="glv-dd-ma">(' + escapeHtml(tn.maTN) + ')</span></span>';
+          html += '<span class="glv-dd-gio">' + escapeHtml(tn.gio) + '</span></div>';
         });
         ds.innerHTML = html;
+      }).withFailureHandler(function (err) {
+        siso.classList.add("glv-err");
+        siso.innerText = "Lỗi kết nối: " + err;
+        ds.innerHTML = "";
       }).layDiemDanhHomNayGLV(currentGLVToken);
     }
 
     function glvMoAppDiemDanhQR() {
-      // Mở app Điểm Danh QR (đang deploy trên Vercel) ở tab mới - dùng chung với HT
-      window.open("https://bensieu.vercel.app/", "_blank");
+      // Mở app Điểm Danh QR (đang deploy trên Vercel) ở tab mới - dùng chung với HT.
+      // Nếu trình duyệt chặn popup (một số bản iOS/Android), báo rõ để GLV biết
+      // cần cho phép mở tab mới thay vì bấm mà không thấy gì xảy ra.
+      var cuaSoMoi = window.open("https://bensieu.vercel.app/", "_blank");
+      if (cuaSoMoi) {
+        try { cuaSoMoi.opener = null; } catch (e) {}
+      } else {
+        try { showToast("Trình duyệt đã chặn tab mới. Vui lòng cho phép mở tab rồi thử lại.", "error"); }
+        catch (e2) { alert("Trình duyệt đã chặn tab mới. Vui lòng cho phép mở tab rồi thử lại."); }
+      }
     }
 
     function confirmEntry() {
@@ -10646,13 +10699,13 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 // Hiện ĐÚNG 1 LẦN ngay sau khi đăng nhập (kể cả tự đăng nhập lại) cho mỗi phiên bản, trên mỗi thiết bị.
 // Muốn giới thiệu bản mới: đổi "so" (ví dụ "2.1.0") + sửa nội dung "muc" -> mọi người sẽ thấy lại 1 lần.
 var APP_PHIEN_BAN = {
-  so: "2.7.0",
+  so: "2.7.1",
   ngay: "07/11/2026",
   tieuDe: "Cập nhật ngay khi mở app",
   muc: [
-    { icon: "fa-cloud-arrow-down", tieuDe: "Thẻ nhắc cập nhật tự hiện", moTa: "Vừa mở app mà có phiên bản mới là thẻ nhắc hiện ra ngay, không cần tự vào Cài đặt kiểm tra." },
-    { icon: "fa-bolt", tieuDe: "Cập nhật một chạm", moTa: "Bấm “Cập nhật ngay” là ứng dụng tự tải bản mới và mở lại, giữ nguyên đăng nhập và dữ liệu." },
-    { icon: "fa-list-check", tieuDe: "Vẫn xem rõ có gì thay đổi", moTa: "Sau khi cập nhật, mục Cài đặt → Bản cập nhật liệt kê chi tiết từng thay đổi của phiên bản." }
+    { icon: "fa-palette", tieuDe: "Giao diện Giáo Lý Viên dễ đọc hơn", moTa: "Danh sách Thiếu Nhi và danh sách điểm danh hiển thị rõ ở cả nền sáng lẫn Giao diện Tối." },
+    { icon: "fa-magnifying-glass", tieuDe: "Báo rõ khi tải dữ liệu lỗi", moTa: "Tab Điểm danh hiện “Đang tải…”, tự xoá danh sách cũ và báo lỗi kết nối thay vì để số liệu cũ nằm lại." },
+    { icon: "fa-qrcode", tieuDe: "Mở App Điểm Danh QR ổn định hơn", moTa: "Nếu trình duyệt chặn tab mới, ứng dụng nhắc rõ để Giáo Lý Viên cho phép mở tab rồi thử lại." }
   ]
 };
 
@@ -11040,6 +11093,11 @@ var APP_PHIEN_BAN = {
   function xong() { if (ov.parentNode) ov.remove(); }
   function hetHan(msg) {
     xoaPhienLuu(); xong();
+    // Phiên của Giáo Lý Viên hết hạn: chuyển sẵn ô đăng nhập sang tab GLV để
+    // người dùng không phải tự bấm lại (trước đây luôn hiện tab Huynh Trưởng).
+    if (saved.loai === 'glv' && typeof setLoginMode === 'function') {
+      try { setLoginMode('glv'); } catch (e) {}
+    }
     var er = document.getElementById('error'); if (er) er.innerText = msg || 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!';
   }
 
