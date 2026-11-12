@@ -3394,22 +3394,22 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     // - Nếu không có link: Trưởng hãy để trống "" hoặc "#" (Người dùng bấm vào sẽ chỉ xem ảnh, không nhảy trang)
     var promoData = [
       {
-        image: "https://lh3.googleusercontent.com/d/1uuATnxvh_dHrup-XAtYdl18iq1MEKRiY",
+        image: "icons/banner-quang-cao-1.jpg",
         title: "XỨ ĐOÀN THÁNH ANRÊ",
         desc: "Chào mừng đến với Xứ Đoàn",
-        link: "#" // Thử nghiệm ảnh có đường dẫn thật
+        link: "#" // Không có link: bấm vào chỉ xem ảnh, không nhảy trang
       },
       {
-        image: "https://lh3.googleusercontent.com/d/1uuATnxvh_dHrup-XAtYdl18iq1MEKRiY",
+        image: "icons/banner-quang-cao-2.jpg",
         title: "XỨ ĐOÀN THÁNH ANRÊ",
         desc: "Chào mừng đến với Xứ Đoàn",
-        link: "#"// Không có link (chỉ xem, bấm vào không nhảy trang)
+        link: "#"
       },
       {
-        image: "https://lh3.googleusercontent.com/d/1uuATnxvh_dHrup-XAtYdl18iq1MEKRiY",
+        image: "icons/banner-quang-cao-3.jpg",
         title: "XỨ ĐOÀN THÁNH ANRÊ",
         desc: "Chào mừng đến với Xứ Đoàn",
-        link: "#" // Không có link (chỉ xem, bấm vào không nhảy trang)
+        link: "#"
       }
     ];
 
@@ -10708,10 +10708,11 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 // Hiện ĐÚNG 1 LẦN ngay sau khi đăng nhập (kể cả tự đăng nhập lại) cho mỗi phiên bản, trên mỗi thiết bị.
 // Muốn giới thiệu bản mới: đổi "so" (ví dụ "2.1.0") + sửa nội dung "muc" -> mọi người sẽ thấy lại 1 lần.
 var APP_PHIEN_BAN = {
-  so: "2.8.1",
+  so: "2.8.2",
   ngay: "12/11/2026",
   tieuDe: "Xứ Đoàn Thánh Anrê",
   muc: [
+    { icon: "fa-images", tieuDe: "Ảnh banner quảng cáo", moTa: "Banner trang chủ dùng 3 ảnh mới của Xứ Đoàn, tự chuyển slide, tải nhanh và xem được cả khi mất mạng." },
     { icon: "fa-church", tieuDe: "Tên mới: Xứ Đoàn Thánh Anrê", moTa: "Toàn bộ giao diện, màn hình đăng nhập, văn bản và báo cáo PDF đã chuyển sang tên mới." },
     { icon: "fa-image", tieuDe: "Logo mới", moTa: "Logo Xứ Đoàn được thay bằng bộ nhận diện mới, đồng bộ trên điện thoại và máy tính." },
     { icon: "fa-location-dot", tieuDe: "Cập nhật vị trí nhà thờ", moTa: "Mã QR cá nhân giờ chỉ hiện khi bạn đứng trong vòng 150m quanh nhà thờ Giáo xứ Thánh Anrê (vị trí mới)." }
