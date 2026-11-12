@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+  <title>Xứ Đoàn Thánh Anrê</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#d32f2f">
 
@@ -23,13 +24,13 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Xứ Đoàn Lòng Chúa Thương Xót">
-  <meta name="application-name" content="Xứ Đoàn Lòng Chúa Thương Xót">
+  <meta name="apple-mobile-web-app-title" content="Xứ Đoàn Thánh Anrê">
+  <meta name="application-name" content="Xứ Đoàn Thánh Anrê">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" type="image/png" href="icons/icon-192.png">
   
-  <link rel="shortcut icon" href="icons/logo-dai-dien.jpg" type="image/jpeg">
+  <link rel="shortcut icon" href="icons/icon-192.png" type="image/png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <script src="config.js"></script>
@@ -2017,10 +2018,10 @@
     body.dark-mode .quy-progress-modern { background: #1c1d21; }
   </style>
 <script id="xd-avatar">
-// ===== ẢNH ĐẠI DIỆN: dùng ảnh của chính người đó; chưa có hoặc tải lỗi thì dùng logo Giáo xứ =====
+// ===== ẢNH ĐẠI DIỆN: dùng ảnh của chính người đó; chưa có hoặc tải lỗi thì dùng logo Xứ Đoàn =====
 // Logo mặc định để NGAY TRONG thư mục web (không phụ thuộc Drive/ibb) nên luôn hiện,
 // kể cả khi mất mạng hoặc Drive hết lượt tải.
-var ANH_LOGO_MAC_DINH = "icons/logo-dai-dien.jpg";
+var ANH_LOGO_MAC_DINH = "icons/icon-512.png";
 
 // Chuẩn hoá mọi link ảnh lấy từ máy chủ / sheet / localStorage:
 //  - link ibb cũ (đã 404)  -> logo mặc định
@@ -2264,7 +2265,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   <!-- MÀN HÌNH CHỜ (INTRO): logo Xứ Đoàn -> logo Hill -> nền trắng -> vào app -->
   <div id="splash-screen">
     <div class="intro-stage">
-      <img src="icons/logo-dai-dien.jpg" class="intro-logo intro-logo-1" alt="Xứ Đoàn Lòng Chúa Thương Xót">
+      <img src="icons/icon-512.png" class="intro-logo intro-logo-1" alt="Xứ Đoàn Thánh Anrê">
       <img src="icons/hill-community.png" class="intro-logo intro-logo-2" alt="Hill Community">
     </div>
   </div>
@@ -2273,10 +2274,10 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   <div id="login-screen">
     <div class="login-box">
       <div class="login-left-col">
-        <img src="icons/logo-dai-dien.jpg" class="logo-img">
+        <img src="icons/icon-512.png" class="logo-img">
         <div class="login-org-name-box">
-          XỨ ĐOÀN LÒNG CHÚA THƯƠNG XÓT
-          <small>Giáo xứ Bến Siêu</small>
+          XỨ ĐOÀN THÁNH ANRÊ
+          <small>Thiếu Nhi Thánh Thể Việt Nam</small>
         </div>
       </div>
       <div class="login-right-col">
@@ -2305,11 +2306,11 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     <!-- ===== SIDEBAR TRÁI (LAPTOP): giống bố cục của Huynh Trưởng ===== -->
     <div id="glv-sidebar">
       <div class="desktop-title-bar">
-        <img src="icons/logo-dai-dien.jpg" class="desktop-org-avatar" alt="">
-        <span>XỨ ĐOÀN LÒNG CHÚA THƯƠNG XÓT</span>
+        <img src="icons/icon-512.png" class="desktop-org-avatar" alt="">
+        <span>XỨ ĐOÀN THÁNH ANRÊ</span>
       </div>
       <div class="glv-side-user">
-        <img id="glv-side-img" src="icons/logo-dai-dien.jpg" alt="">
+        <img id="glv-side-img" src="icons/icon-512.png" alt="">
         <div class="glv-side-user-txt">
           <div id="glv-side-name">Giáo Lý Viên</div>
           <small id="glv-side-lop">Giáo Lý Viên</small>
@@ -2328,11 +2329,11 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     <div class="header">
       <div style="display:flex; align-items:center; flex-grow:1; min-width:0;">
         <span class="avatar-frame" style="margin-right:15px;">
-          <img id="glv-head-img" src="icons/logo-dai-dien.jpg" class="profile-img" style="margin-right:0;" alt="" decoding="async">
+          <img id="glv-head-img" src="icons/icon-512.png" class="profile-img" style="margin-right:0;" alt="" decoding="async">
         </span>
         <div style="min-width:0;">
           <h3 id="glv-head-name" style="margin:0; font-size:15px;">Giáo Lý Viên</h3>
-          <p id="glv-head-lop" style="margin:0; font-size:11px; opacity:0.8;">Xứ Đoàn Lòng Chúa Thương Xót</p>
+          <p id="glv-head-lop" style="margin:0; font-size:11px; opacity:0.8;">Xứ Đoàn Thánh Anrê</p>
         </div>
       </div>
       <div style="font-size:22px; cursor:pointer; position:relative; padding:9px;" onclick="toggleMenuGLV(event)">
@@ -2350,7 +2351,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     <div class="content" style="display:block;">
       <div id="glv-tab-lopcuatoi">
         <div class="glv-hero">
-          <span class="avatar-frame"><img id="glv-hero-img" class="glv-hero-img" src="icons/logo-dai-dien.jpg" alt="" decoding="async"></span>
+          <span class="avatar-frame"><img id="glv-hero-img" class="glv-hero-img" src="icons/icon-512.png" alt="" decoding="async"></span>
           <div class="glv-hero-txt">
             <div class="glv-hero-hi">XIN CHÀO QUÝ THẦY CÔ!</div>
             <h2 id="glv-hero-name">Giáo Lý Viên</h2>
@@ -2480,8 +2481,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     <div id="desktop-sidebar" class="desktop-only">
       <div id="desktop-topbar" class="desktop-only">
         <div class="desktop-title-bar">
-          <img src="icons/logo-dai-dien.jpg" class="desktop-org-avatar" onclick="toggleMenu(event)">
-          <span>XỨ ĐOÀN LÒNG CHÚA THƯƠNG XÓT</span>
+          <img src="icons/icon-512.png" class="desktop-org-avatar" onclick="toggleMenu(event)">
+          <span>XỨ ĐOÀN THÁNH ANRÊ</span>
         </div>
         <button class="desktop-settings-btn" onclick="toggleMenu(event)"><i class="fas fa-cog"></i> CÀI ĐẶT</button>
       </div>
@@ -2699,7 +2700,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         <h3 style="color:#d32f2f; display:flex; align-items:center; gap:8px;">NHỮNG DẤU SON CỦA XỨ ĐOÀN</h3>
         <div id="hanhtrinh-container">
           <div class="loading-logo-wrapper">
-            <span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/logo-dai-dien.jpg" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span>
+            <span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/icon-512.png" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span>
             <div class="loading-logo-text">Đang tải lịch sử...</div>
           </div>
         </div>
@@ -2726,7 +2727,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           <h3 style="font-size:15px; color:#2c3e50; margin-bottom:10px;">Đơn Của Tôi</h3>
           <div id="my-leave-container">
             <div class="loading-logo-wrapper">
-              <span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/logo-dai-dien.jpg" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span>
+              <span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/icon-512.png" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span>
               <div class="loading-logo-text">Đang tải đơn của bạn...</div>
             </div>
           </div>
@@ -2738,7 +2739,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         <p style="font-size:13px; color:#7f8c8d;">Lịch trực phân công dành riêng cho Trưởng.</p>
         <div id="work-container">
           <div class="loading-logo-wrapper">
-            <span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/logo-dai-dien.jpg" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span>
+            <span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/icon-512.png" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span>
             <div class="loading-logo-text">Đang tra cứu lịch...</div>
           </div>
         </div>
@@ -2749,7 +2750,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         <p style="font-size:13px; color:#7f8c8d;">Xác nhận tiến độ chương trình thăng tiến tại đây.</p>
         <div id="cttt-container">
           <div class="loading-logo-wrapper">
-            <span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/logo-dai-dien.jpg" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span>
+            <span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/icon-512.png" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span>
             <div class="loading-logo-text">Đang tải CTTT...</div>
           </div>
         </div>
@@ -2764,7 +2765,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 
         <div id="thieunhi-container">
           <div class="loading-logo-wrapper">
-            <span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/logo-dai-dien.jpg" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span>
+            <span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/icon-512.png" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span>
             <div class="loading-logo-text">Đang tải danh sách...</div>
           </div>
         </div>
@@ -2794,7 +2795,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 
         <div id="approval-container">
           <div class="loading-logo-wrapper">
-            <span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/logo-dai-dien.jpg" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span>
+            <span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/icon-512.png" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span>
             <div class="loading-logo-text">Đang tải đơn...</div>
           </div>
         </div>
@@ -2858,7 +2859,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
             <button onclick="thiDuaTaiDuLieu()" style="border:none; background:#f1f3f5; padding:6px 9px; border-radius:8px; cursor:pointer; color:#2c3e50; font-size:12px;"><i class="fas fa-sync-alt"></i></button>
           </div>
           <div id="td-my-history">
-            <div class="loading-logo-wrapper"><span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/logo-dai-dien.jpg" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span><div class="loading-logo-text">Đang tải...</div></div>
+            <div class="loading-logo-wrapper"><span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/icon-512.png" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span><div class="loading-logo-text">Đang tải...</div></div>
           </div>
         </div>
 
@@ -2866,7 +2867,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         <div class="card" style="padding:12px; margin-top:15px;">
           <h3 style="margin:0 0 10px; font-size:14px; color:#2c3e50;"><i class="fas fa-list-ol" style="color:#d32f2f;"></i> Bảng Xếp Hạng Thi Đua (<span id="td-thang-hientai">--</span>)</h3>
           <div id="td-bang-xephang">
-            <div class="loading-logo-wrapper"><span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/logo-dai-dien.jpg" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span><div class="loading-logo-text">Đang tải bảng xếp hạng...</div></div>
+            <div class="loading-logo-wrapper"><span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/icon-512.png" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span><div class="loading-logo-text">Đang tải bảng xếp hạng...</div></div>
           </div>
         </div>
       </div>
@@ -2886,7 +2887,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 
         <div id="kt-tab-dangmo" class="kt-tab-content">
           <div id="kt-ds-dangmo">
-            <div class="loading-logo-wrapper"><span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/logo-dai-dien.jpg" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span><div class="loading-logo-text">Đang tải...</div></div>
+            <div class="loading-logo-wrapper"><span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/icon-512.png" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span><div class="loading-logo-text">Đang tải...</div></div>
           </div>
         </div>
 
@@ -3109,7 +3110,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 
           <div id="quyDanhSachContainer">
             <div class="loading-logo-wrapper">
-              <span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/logo-dai-dien.jpg" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span>
+              <span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/icon-512.png" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span>
               <div class="loading-logo-text">Đang tải danh sách...</div>
             </div>
           </div>
@@ -3182,7 +3183,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
             <div style="text-align:center; font-size:11px; color:#95a5a6; margin-bottom:10px;">Xuất theo tuần đang chọn ở trang Quỹ chính: Chủ Nhật <span id="quyChiTieuTuanXuatLabel">--/--/----</span></div>
 
             <div id="quyChiTieuListWrap" style="flex:1; overflow-y:auto; border:1px solid #eee; border-radius:8px; padding:6px; margin-bottom:10px;">
-              <div class="loading-logo-wrapper"><span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/logo-dai-dien.jpg" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span><div class="loading-logo-text">Đang tải...</div></div>
+              <div class="loading-logo-wrapper"><span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/icon-512.png" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span><div class="loading-logo-text">Đang tải...</div></div>
             </div>
 
             <div style="border-top:1px solid #eee; padding-top:10px;">
@@ -3206,7 +3207,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
             </div>
             <div style="font-size:12px; color:#7f8c8d; margin-bottom:10px;">Tích chọn những Huynh Trưởng <b>không phải đóng</b> quỹ hàng tuần. Lưu ý: nếu trước đó họ đã đóng thì khoản tiền đã đóng vẫn được tính vào báo cáo và tồn quỹ.</div>
             <div id="quyMienThuList" style="flex:1; overflow-y:auto; border:1px solid #eee; border-radius:8px; padding:6px;">
-              <div class="loading-logo-wrapper"><span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/logo-dai-dien.jpg" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span><div class="loading-logo-text">Đang tải...</div></div>
+              <div class="loading-logo-wrapper"><span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/icon-512.png" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span><div class="loading-logo-text">Đang tải...</div></div>
             </div>
             <button id="quyMienThuLuuBtn" onclick="quyLuuMienThuHTSubmit()" style="width:100%; background:#d32f2f; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px; margin-top:10px;">Lưu danh sách</button>
           </div>
@@ -3264,7 +3265,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       <span class="cbot-fab-figure">
         <span class="cbot-fab-arm cbot-fab-arm-l"></span>
         <span class="cbot-fab-arm cbot-fab-arm-r"></span>
-        <img src="icons/logo-dai-dien.jpg" class="cbot-fab-img">
+        <img src="icons/icon-512.png" class="cbot-fab-img">
         <span class="cbot-fab-leg cbot-fab-leg-l"></span>
         <span class="cbot-fab-leg cbot-fab-leg-r"></span>
       </span>
@@ -3394,20 +3395,20 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     var promoData = [
       {
         image: "https://lh3.googleusercontent.com/d/1uuATnxvh_dHrup-XAtYdl18iq1MEKRiY",
-        title: "XỨ ĐOÀN LÒNG CHÚA THƯƠNG XÓT",
-        desc: "Xin chào Giáo xứ Bến Siêu",
+        title: "XỨ ĐOÀN THÁNH ANRÊ",
+        desc: "Chào mừng đến với Xứ Đoàn",
         link: "#" // Thử nghiệm ảnh có đường dẫn thật
       },
       {
         image: "https://lh3.googleusercontent.com/d/1uuATnxvh_dHrup-XAtYdl18iq1MEKRiY",
-        title: "XỨ ĐOÀN LÒNG CHÚA THƯƠNG XÓT",
-        desc: "Xin chào Giáo xứ Bến Siêu",
+        title: "XỨ ĐOÀN THÁNH ANRÊ",
+        desc: "Chào mừng đến với Xứ Đoàn",
         link: "#"// Không có link (chỉ xem, bấm vào không nhảy trang)
       },
       {
         image: "https://lh3.googleusercontent.com/d/1uuATnxvh_dHrup-XAtYdl18iq1MEKRiY",
-        title: "XỨ ĐOÀN LÒNG CHÚA THƯƠNG XÓT",
-        desc: "Xin chào Giáo xứ Bến Siêu",
+        title: "XỨ ĐOÀN THÁNH ANRÊ",
+        desc: "Chào mừng đến với Xứ Đoàn",
         link: "#" // Không có link (chỉ xem, bấm vào không nhảy trang)
       }
     ];
@@ -3579,7 +3580,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       var displayText = text || "Đang tải...";
       return `
         <div class="loading-logo-wrapper" style="animation: fadeIn 0.35s ease-out both;">
-          <span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/logo-dai-dien.jpg" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span>
+          <span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/icon-512.png" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span>
           <div class="loading-logo-text">${displayText}</div>
         </div>`;
     }
@@ -5368,7 +5369,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       btn.innerHTML =
         '<span class="logo-figure" style="margin-bottom:0;">' +
           '<span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span>' +
-          '<img src="icons/logo-dai-dien.jpg" class="loading-logo-img">' +
+          '<img src="icons/icon-512.png" class="loading-logo-img">' +
           '<span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span>' +
         '</span>' +
         '<span>Đang nộp bài...</span>';
@@ -5994,7 +5995,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     // điểm danh -> logo Xứ Đoàn hiện màu như bình thường + tick xanh; ngày
     // chưa tới -> logo bị làm mờ/xám. Ô "hôm nay" được viền đỏ nổi bật.
     function tdVeLuoiDiemDanh(chuoiHoanThanh, daDiemDanhHomNay) {
-      var LOGO_URL = "icons/logo-dai-dien.jpg";
+      var LOGO_URL = "icons/icon-512.png";
       var homNayIdx = daDiemDanhHomNay ? chuoiHoanThanh : ((chuoiHoanThanh >= 10) ? 1 : (chuoiHoanThanh + 1));
 
       var html = "";
@@ -7295,16 +7296,16 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       <div style="padding:18px 18px 6px 18px; overflow-y:auto; flex:1;">
         <div style="text-align:center; margin-bottom:16px;">
           <div style="display:flex; justify-content:center; align-items:center; gap:14px;">
-            <img src="icons/logo-dai-dien.jpg" alt="Logo Xứ Đoàn" style="width:64px; height:64px; border-radius:50%; object-fit:cover; border:3px solid #f0f2f5; background:#fff;">
+            <img src="icons/icon-512.png" alt="Logo Xứ Đoàn" style="width:64px; height:64px; border-radius:50%; object-fit:cover; border:3px solid #f0f2f5; background:#fff;">
             <img src="icons/hill-v2.png" alt="Logo Hill" style="width:64px; height:64px; border-radius:50%; object-fit:cover; border:3px solid #f0f2f5; background:#fff;">
           </div>
-          <h4 style="margin:10px 0 2px 0; color:#2c3e50;">Xứ Đoàn Lòng Chúa Thương Xót</h4>
-          <p style="margin:0; font-size:12px; color:#95a5a6;">Giáo xứ Bến Siêu · Hệ thống quản lý Huynh Trưởng</p>
+          <h4 style="margin:10px 0 2px 0; color:#2c3e50;">Xứ Đoàn Thánh Anrê</h4>
+          <p style="margin:0; font-size:12px; color:#95a5a6;">Hệ thống quản lý Huynh Trưởng</p>
         </div>
 
         <div style="background:#f8f9fa; border-radius:12px; padding:14px; margin-bottom:12px;">
           <div style="font-size:11px; text-transform:uppercase; font-weight:bold; color:#d32f2f; letter-spacing:0.5px; margin-bottom:6px;"><i class="fas fa-code"></i> Nhà phát triển</div>
-          <div style="font-size:14px; font-weight:600; color:#2c3e50;">Phát triển Portal Huynh trưởng xứ đoàn GX Bến Siêu</div>
+          <div style="font-size:14px; font-weight:600; color:#2c3e50;">Phát triển Portal Huynh trưởng Xứ Đoàn Thánh Anrê</div>
         </div>
 
         <div style="background:#f8f9fa; border-radius:12px; padding:14px; margin-bottom:12px;">
@@ -8169,7 +8170,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 
   function quyTaiDanhSach() {
     var cont = document.getElementById("quyDanhSachContainer");
-    cont.innerHTML = '<div class="loading-logo-wrapper"><span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/logo-dai-dien.jpg" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span><div class="loading-logo-text">Đang tải...</div></div>';
+    cont.innerHTML = '<div class="loading-logo-wrapper"><span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/icon-512.png" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span><div class="loading-logo-text">Đang tải...</div></div>';
     var tuanKey = quyFormatDateKey(quyState.tuan);
     google.script.run.withSuccessHandler(function (res) {
       if (!res || !res.success) { cont.innerHTML = '<p style="text-align:center; color:#e74c3c;">' + (res && res.error ? res.error : "Lỗi tải dữ liệu") + '</p>'; return; }
@@ -8517,7 +8518,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   function quyMoMienThuModal() {
     document.getElementById("quyMienThuModalBg").style.display = "flex";
     var cont = document.getElementById("quyMienThuList");
-    cont.innerHTML = '<div class="loading-logo-wrapper"><span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/logo-dai-dien.jpg" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span><div class="loading-logo-text">Đang tải...</div></div>';
+    cont.innerHTML = '<div class="loading-logo-wrapper"><span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/icon-512.png" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span><div class="loading-logo-text">Đang tải...</div></div>';
     google.script.run.withSuccessHandler(function (res) {
       if (!res || !res.success) { cont.innerHTML = '<p style="text-align:center; color:#e74c3c;">' + (res && res.error ? res.error : "Lỗi tải dữ liệu") + '</p>'; return; }
       var list = res.danhSach || [];
@@ -8600,7 +8601,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 
   function quyChiTieuTaiDanhSach() {
     var cont = document.getElementById("quyChiTieuListWrap");
-    cont.innerHTML = '<div class="loading-logo-wrapper"><span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/logo-dai-dien.jpg" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span><div class="loading-logo-text">Đang tải...</div></div>';
+    cont.innerHTML = '<div class="loading-logo-wrapper"><span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/icon-512.png" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span><div class="loading-logo-text">Đang tải...</div></div>';
     var thangKey = quyChiTieuThangKey(quyChiTieuState.thang);
     google.script.run.withSuccessHandler(function (res) {
       if (!res || !res.success) { cont.innerHTML = '<p style="text-align:center; color:#e74c3c;">' + (res && res.error ? res.error : "Lỗi tải dữ liệu") + '</p>'; return; }
@@ -10707,11 +10708,12 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 // Hiện ĐÚNG 1 LẦN ngay sau khi đăng nhập (kể cả tự đăng nhập lại) cho mỗi phiên bản, trên mỗi thiết bị.
 // Muốn giới thiệu bản mới: đổi "so" (ví dụ "2.1.0") + sửa nội dung "muc" -> mọi người sẽ thấy lại 1 lần.
 var APP_PHIEN_BAN = {
-  so: "2.7.2",
-  ngay: "07/11/2026",
-  tieuDe: "Sửa lỗi màn hình chờ",
+  so: "2.8.0",
+  ngay: "12/11/2026",
+  tieuDe: "Xứ Đoàn Thánh Anrê",
   muc: [
-    { icon: "fa-wand-magic-sparkles", tieuDe: "Logo Xứ Đoàn đứng yên khi mở app", moTa: "Logo không còn bị lệch rồi “nhảy” vào giữa lúc màn hình chờ bắt đầu. Hiệu ứng hiện ra mượt hơn trên cả điện thoại và máy tính." }
+    { icon: "fa-church", tieuDe: "Tên mới: Xứ Đoàn Thánh Anrê", moTa: "Toàn bộ giao diện, màn hình đăng nhập, văn bản và báo cáo PDF đã chuyển sang tên mới." },
+    { icon: "fa-image", tieuDe: "Logo mới", moTa: "Logo Xứ Đoàn được thay bằng bộ nhận diện mới, đồng bộ trên điện thoại và máy tính." }
   ]
 };
 

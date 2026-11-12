@@ -1,7 +1,7 @@
 {
-  "name": "Xứ Đoàn Lòng Chúa Thương Xót",
-  "short_name": "Xứ Đoàn",
-  "description": "Portal Huynh Trưởng Xứ Đoàn",
+  "name": "Xứ Đoàn Thánh Anrê",
+  "short_name": "Xứ Đoàn Thánh Anrê",
+  "description": "Portal Huynh Trưởng Xứ Đoàn Thánh Anrê",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
