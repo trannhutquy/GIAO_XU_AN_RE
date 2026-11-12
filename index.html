@@ -5063,8 +5063,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     }
 
     // ---- QR CÁ NHÂN CHỈ HIỆN KHI ĐỨNG GẦN NHÀ THỜ (trong vòng 150m) ----
-    var NHATHO_LAT = 10.610558942759313;
-    var NHATHO_LNG = 105.36005762424163;
+    var NHATHO_LAT = 10.689258942820503;
+    var NHATHO_LNG = 105.35959478006345;
     var QR_BAN_KINH_MET = 150;
     var qrDangKiemTraViTri = false;
 
@@ -10708,12 +10708,13 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 // Hiện ĐÚNG 1 LẦN ngay sau khi đăng nhập (kể cả tự đăng nhập lại) cho mỗi phiên bản, trên mỗi thiết bị.
 // Muốn giới thiệu bản mới: đổi "so" (ví dụ "2.1.0") + sửa nội dung "muc" -> mọi người sẽ thấy lại 1 lần.
 var APP_PHIEN_BAN = {
-  so: "2.8.0",
+  so: "2.8.1",
   ngay: "12/11/2026",
   tieuDe: "Xứ Đoàn Thánh Anrê",
   muc: [
     { icon: "fa-church", tieuDe: "Tên mới: Xứ Đoàn Thánh Anrê", moTa: "Toàn bộ giao diện, màn hình đăng nhập, văn bản và báo cáo PDF đã chuyển sang tên mới." },
-    { icon: "fa-image", tieuDe: "Logo mới", moTa: "Logo Xứ Đoàn được thay bằng bộ nhận diện mới, đồng bộ trên điện thoại và máy tính." }
+    { icon: "fa-image", tieuDe: "Logo mới", moTa: "Logo Xứ Đoàn được thay bằng bộ nhận diện mới, đồng bộ trên điện thoại và máy tính." },
+    { icon: "fa-location-dot", tieuDe: "Cập nhật vị trí nhà thờ", moTa: "Mã QR cá nhân giờ chỉ hiện khi bạn đứng trong vòng 150m quanh nhà thờ Giáo xứ Thánh Anrê (vị trí mới)." }
   ]
 };
 
