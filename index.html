@@ -2121,6 +2121,75 @@
     body.dark-mode .qy-divider { background: #3a3b42; }
     body.dark-mode .qy-btn-save { background: #cfd8dc; color: #263238; }
     body.dark-mode .qy-btn-neutral { background: #2b2c31; color: #e1e3e6; }
+
+    /* ==========================================
+       CTTT: GỬI BÀI LÊN DUYỆT & QUYỀN TỐI CAO DUYỆT
+       ========================================== */
+    .cttt-topbar { display: flex; flex-wrap: wrap; gap: 8px; margin: 2px 0 12px; }
+    .cttt-topbtn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 14px; border: 1px solid #e3e6e8; border-radius: 22px; background: #fff; color: #2c3e50; font-size: 12.5px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.04); }
+    .cttt-topbtn i { font-size: 12.5px; color: #d32f2f; }
+    .cttt-topbtn-primary { background: linear-gradient(135deg, #ef5350, #d32f2f); border-color: transparent; color: #fff; box-shadow: 0 4px 14px rgba(211,47,47,.28); }
+    .cttt-topbtn-primary i { color: #fff; }
+    .cttt-topbtn-approve { background: #eef7f0; border-color: #cfe9d8; color: #1e8449; }
+    .cttt-topbtn-approve i { color: #1e8449; }
+    .cttt-topbtn-approve.is-approver { background: linear-gradient(135deg, #43a047, #2e7d32); border-color: transparent; color: #fff; }
+    .cttt-topbtn-approve.is-approver i { color: #fff; }
+    .cttt-badge { display: inline-block; min-width: 19px; padding: 1px 6px; border-radius: 11px; background: #fff; color: #c62828; font-size: 10.5px; font-weight: 800; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,.18); }
+
+    .cttt-modal { position: fixed; inset: 0; z-index: 99998; display: flex; align-items: center; justify-content: center; padding: 14px; background: rgba(0,0,0,.55); }
+    .cttt-modal-card { width: 100%; max-width: 460px; max-height: 90vh; overflow-y: auto; background: #fff; border-radius: 16px; padding: 18px; box-shadow: 0 18px 50px rgba(0,0,0,.3); box-sizing: border-box; }
+    .cttt-modal-wide { max-width: 560px; }
+    .cttt-modal-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+    .cttt-modal-title { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 800; color: #2c3e50; }
+    .cttt-modal-title i { color: #d32f2f; font-size: 14px; }
+    .cttt-modal-close { flex: 0 0 auto; width: 32px; height: 32px; border: none; border-radius: 50%; background: #f1f3f5; color: #5b6770; cursor: pointer; }
+    .cttt-field { margin-bottom: 11px; }
+    .cttt-field label { display: block; margin-bottom: 5px; font-size: 11.5px; font-weight: 700; letter-spacing: .3px; text-transform: uppercase; color: #7f8c8d; }
+    .cttt-field-row { display: flex; gap: 10px; }
+    .cttt-field-row .cttt-field { flex: 1; min-width: 0; }
+    .cttt-input, .cttt-select, .cttt-textarea { width: 100%; box-sizing: border-box; padding: 11px 12px; border: 1px solid #e3e6e8; border-radius: 11px; background: #f9fafb; color: #2c3e50; font-size: 13.5px; font-family: inherit; outline: none; }
+    .cttt-textarea { resize: vertical; min-height: 92px; line-height: 1.5; }
+    .cttt-input:focus, .cttt-select:focus, .cttt-textarea:focus { border-color: #d32f2f; background: #fff; }
+    .cttt-note { display: flex; gap: 7px; align-items: flex-start; margin: 4px 0 13px; padding: 9px 11px; border-radius: 10px; background: #f6f8fa; color: #7f8c8d; font-size: 11.5px; line-height: 1.45; }
+    .cttt-note i { margin-top: 2px; color: #95a5a6; }
+    .cttt-submit { width: 100%; padding: 12px; border: none; border-radius: 11px; background: linear-gradient(135deg, #ef5350, #d32f2f); color: #fff; font-size: 13.5px; font-weight: 800; cursor: pointer; box-shadow: 0 6px 16px rgba(211,47,47,.28); }
+    .cttt-submit:disabled { opacity: .65; cursor: default; }
+
+    .cttt-pending-list { display: flex; flex-direction: column; gap: 10px; }
+    .cttt-empty { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 26px 10px; color: #95a5a6; font-size: 13px; }
+    .cttt-empty i { font-size: 26px; color: #c7cbd1; }
+    .cttt-pending { padding: 12px; border: 1px solid #eef1f3; border-radius: 13px; background: #fcfcfd; }
+    .cttt-pending.is-readonly { opacity: .92; }
+    .cttt-pending-top { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+    .cttt-lv-tag { display: inline-block; padding: 3px 9px; border-radius: 20px; background: #e8f0fe; color: #1a56b0; font-size: 10.5px; font-weight: 800; }
+    .cttt-status { margin-left: auto; padding: 3px 9px; border-radius: 20px; font-size: 10.5px; font-weight: 800; }
+    .cttt-status.cho { background: #fff4e0; color: #b26a00; }
+    .cttt-status.duyet { background: #e7f6ec; color: #1e8449; }
+    .cttt-status.tu { background: #fdecea; color: #c62828; }
+    .cttt-pending-title { font-size: 14px; font-weight: 800; color: #2c3e50; line-height: 1.35; }
+    .cttt-pending-body { margin-top: 3px; font-size: 12.5px; line-height: 1.5; color: #5b6770; white-space: pre-wrap; }
+    .cttt-pending-meta { margin-top: 5px; font-size: 11.5px; color: #8b949c; }
+    .cttt-pending-meta i { margin-right: 2px; color: #a7b3bd; }
+    .cttt-pending-note { margin-top: 5px; padding: 6px 9px; border-radius: 8px; background: #f6f8fa; font-size: 11.5px; color: #5b6770; }
+    .cttt-pending-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .cttt-btn-ok, .cttt-btn-no { flex: 1; padding: 10px; border: none; border-radius: 10px; font-size: 12.5px; font-weight: 800; cursor: pointer; }
+    .cttt-btn-ok { background: #2e7d32; color: #fff; box-shadow: 0 4px 12px rgba(46,125,50,.25); }
+    .cttt-btn-no { background: #fdecea; color: #c62828; }
+
+    .cttt-lv-head { display: flex; align-items: center; gap: 6px; margin: 12px 0 8px; font-size: 11.5px; font-weight: 800; letter-spacing: .4px; text-transform: uppercase; color: #1a56b0; }
+    .cttt-lv-head i { font-size: 10px; }
+
+    body.dark-mode .cttt-modal-card { background: #1f2025; }
+    body.dark-mode .cttt-modal-title { color: #e1e3e6; }
+    body.dark-mode .cttt-modal-close { background: #2b2c31; color: #c7cbd1; }
+    body.dark-mode .cttt-input, body.dark-mode .cttt-select, body.dark-mode .cttt-textarea { background: #1c1d21; border-color: #3a3b42; color: #e1e3e6; }
+    body.dark-mode .cttt-note, body.dark-mode .cttt-pending-note { background: #26272c; color: #9aa0a6; }
+    body.dark-mode .cttt-topbtn { background: #26272c; border-color: #3a3b42; color: #e1e3e6; }
+    body.dark-mode .cttt-topbtn-approve { background: #16261d; border-color: #24402f; color: #7fd39b; }
+    body.dark-mode .cttt-pending { background: #1c1d21; border-color: #3a3b42; }
+    body.dark-mode .cttt-pending-title { color: #e1e3e6; }
+    body.dark-mode .cttt-lv-tag { background: #16264a; color: #8ab4ff; }
+    body.dark-mode .cttt-lv-head { color: #8ab4ff; }
   </style>
 <script id="xd-avatar">
 // ===== ẢNH ĐẠI DIỆN: dùng ảnh của chính người đó; chưa có hoặc tải lỗi thì dùng logo Xứ Đoàn =====
@@ -2852,7 +2921,18 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       
       <div id="cttt" class="page">
         <h2>Khung CTTT - <span id="cttt-unit-title" style="color:#d32f2f;"></span></h2>
-        <p style="font-size:13px; color:#7f8c8d;">Xác nhận tiến độ chương trình thăng tiến tại đây.</p>
+        <p style="font-size:13px; color:#7f8c8d; margin-bottom:10px;">Xác nhận tiến độ chương trình thăng tiến tại đây.</p>
+
+        <div id="ctttActionBar" class="cttt-topbar" style="display:none;">
+          <button id="ctttBtnGui" class="cttt-topbtn cttt-topbtn-primary" onclick="ctttMoFormGui()" style="display:none;">
+            <i class="fas fa-paper-plane"></i> Gửi bài lên CTTT
+          </button>
+          <button id="ctttBtnDuyet" class="cttt-topbtn cttt-topbtn-approve" onclick="ctttMoDanhSachDuyet()" style="display:none;">
+            <i class="fas fa-clipboard-check"></i> <span id="ctttBtnDuyetText">Bài đã gửi</span>
+            <span id="ctttDuyetBadge" class="cttt-badge" style="display:none;">0</span>
+          </button>
+        </div>
+
         <div id="cttt-container">
           <div class="loading-logo-wrapper">
             <span class="logo-figure"><span class="lf-arm lf-arm-l"></span><span class="lf-arm lf-arm-r"></span><img src="icons/icon-512.png" class="loading-logo-img"><span class="lf-leg lf-leg-l"></span><span class="lf-leg lf-leg-r"></span></span>
@@ -2860,7 +2940,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           </div>
         </div>
       </div>
-      
+
       <div id="thieunhi-page" class="page">
         <button class="desktop-only desktop-modal-close" onclick="closeDesktopOverlay('thieunhi-page')"><i class="fas fa-times"></i></button>
         <h2>Danh Sách Thiếu Nhi</h2>
@@ -3822,6 +3902,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           initHTCalendar();
           loadMyLeaveRequests();
           loadCTTTData();
+          ctttCapNhatThanhCongCu(); // hiện nút "Gửi bài lên CTTT" ngay cả khi mạng chậm
+          ctttTaiChoDuyet(false);
           loadWorkAssignments(res.name);
           loadHeaderDanhHieu(); // Hiện danh hiệu thi đua (VD: Huynh Trưởng Tốt) ngay cạnh tên ở header
           batDauPollNen(); // Bắt đầu kiểm tra nền: đơn chờ duyệt + thông báo chung
@@ -4475,7 +4557,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 
             for(const [date, group] of Object.entries(groupedByDate)) {
               let safeID = (className + "_" + date).replace(/[\/\-\s\_\.\#]/g, '');
-              let lessonsHtml = group.lessons.map(l => `<div style="margin-bottom:10px; border-bottom:1px dashed rgba(0,0,0,0.08); padding-bottom:10px;"><strong>${l.tenBai}</strong><br><span style="font-size:13px; color:#666;">${l.noiDung}</span></div>`).join('');
+              let lessonsHtml = ctttVeBaiHoc(group.lessons);
               let btnHtml;
               if (group.allNhan) {
                 if (group.allDay) {
@@ -4589,6 +4671,233 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     }
     document.addEventListener('pointerup', finishSwipe);
     document.addEventListener('pointercancel', finishSwipe);
+
+    // ============================================
+    // CTTT: GỬI BÀI LÊN DUYỆT & QUYỀN TỐI CAO DUYỆT
+    // - Admin (cột G) / Quyền Tối Cao (cột H): gửi bài.
+    // - Chỉ Quyền Tối Cao: duyệt / từ chối.
+    // - Duyệt xong ghi vào NOI_DUNG_CTTT -> mọi máy thấy ngay.
+    // ============================================
+    var ctttState = { laNguoiDuyet: false, laNguoiGui: false, soChoDuyet: 0, danhSach: [], danhSachChiDoan: [] };
+
+    function ctttEsc(s) {
+      return String(s == null ? "" : s)
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    // Vẽ danh sách bài của 1 ngày: có lĩnh vực thì nhóm theo 4 mục.
+    function ctttVeBaiHoc(lessons) {
+      function motBai(l) {
+        return '<div style="margin-bottom:10px; border-bottom:1px dashed rgba(0,0,0,0.08); padding-bottom:10px;">' +
+          '<strong>' + ctttEsc(l.tenBai) + '</strong><br>' +
+          '<span style="font-size:13px; color:#666;">' + ctttEsc(l.noiDung) + '</span></div>';
+      }
+      var ds = lessons || [];
+      var coLinhVuc = ds.some(function (l) { return String(l.linhVuc || "").trim() !== ""; });
+      if (!coLinhVuc) return ds.map(motBai).join("");
+
+      var thuTu = ["Nhân Bản", "Phong trào", "Kĩ năng chuyên môn", "Sinh hoạt"];
+      var nhom = {};
+      ds.forEach(function (l) {
+        var lv = String(l.linhVuc || "").trim() || "Khác";
+        if (!nhom[lv]) nhom[lv] = [];
+        nhom[lv].push(l);
+      });
+      var khoa = Object.keys(nhom);
+      khoa.sort(function (a, b) {
+        var ia = thuTu.indexOf(a); if (ia === -1) ia = 99;
+        var ib = thuTu.indexOf(b); if (ib === -1) ib = 99;
+        return ia - ib;
+      });
+      return khoa.map(function (k) {
+        return '<div class="cttt-lv-head"><i class="fas fa-bookmark"></i> ' + ctttEsc(k) + '</div>' +
+          nhom[k].map(motBai).join("");
+      }).join("");
+    }
+
+    function ctttCapNhatThanhCongCu() {
+      var bar = document.getElementById("ctttActionBar");
+      if (!bar) return;
+      var btnGui = document.getElementById("ctttBtnGui");
+      var btnDuyet = document.getElementById("ctttBtnDuyet");
+      var badge = document.getElementById("ctttDuyetBadge");
+      var text = document.getElementById("ctttBtnDuyetText");
+
+      var coQuyenGui = !!(currentUserIsAdmin || currentUserIsSuperAdmin);
+      if (btnGui) btnGui.style.display = coQuyenGui ? "inline-flex" : "none";
+
+      var coGiDeXem = ctttState.laNguoiDuyet || (ctttState.laNguoiGui && ctttState.danhSach.length > 0);
+      if (btnDuyet) {
+        btnDuyet.style.display = coGiDeXem ? "inline-flex" : "none";
+        btnDuyet.classList.toggle("is-approver", !!ctttState.laNguoiDuyet);
+      }
+      if (text) text.innerText = ctttState.laNguoiDuyet ? "Duyệt bài" : "Bài đã gửi";
+      if (badge) {
+        var so = ctttState.laNguoiDuyet ? (ctttState.soChoDuyet || 0) : (ctttState.danhSach || []).length;
+        badge.innerText = so;
+        badge.style.display = so > 0 ? "inline-block" : "none";
+      }
+      bar.style.display = (coQuyenGui || coGiDeXem) ? "flex" : "none";
+    }
+
+    function ctttTaiChoDuyet(hienThi) {
+      if (!currentUserToken) return;
+      google.script.run.withSuccessHandler(function (res) {
+        if (!res || !res.success) {
+          if (hienThi) showToast((res && res.error) || "Không tải được danh sách duyệt.", "error");
+          return;
+        }
+        ctttState.laNguoiDuyet = !!res.laNguoiDuyet;
+        ctttState.laNguoiGui = !!res.laNguoiGui;
+        ctttState.soChoDuyet = res.soChoDuyet || 0;
+        ctttState.danhSach = res.danhSach || [];
+        ctttState.danhSachChiDoan = res.danhSachChiDoan || [];
+        ctttCapNhatThanhCongCu();
+        if (hienThi) ctttVeDanhSachDuyet();
+      }).withFailureHandler(function () {
+        if (hienThi) showToast("Lỗi kết nối, vui lòng thử lại!", "error");
+      }).ctttLayChoDuyet(currentUserToken);
+    }
+
+    function ctttNgayChuNhatToi() {
+      var d = new Date();
+      d.setHours(0, 0, 0, 0);
+      d.setDate(d.getDate() + ((7 - d.getDay()) % 7));
+      var m = String(d.getMonth() + 1).padStart(2, "0");
+      var ngay = String(d.getDate()).padStart(2, "0");
+      return d.getFullYear() + "-" + m + "-" + ngay;
+    }
+
+    function ctttMoFormGui() {
+      var sel = document.getElementById("ctttFChiDoan");
+      if (!sel) return;
+      if (sel.options.length === 0) {
+        var ds = (ctttState.danhSachChiDoan || []).slice();
+        if (currentUserUnit && ds.indexOf(currentUserUnit) === -1) ds.unshift(currentUserUnit);
+        ds.forEach(function (cd) {
+          var o = document.createElement("option");
+          o.value = cd;
+          o.textContent = cd;
+          sel.appendChild(o);
+        });
+        if (currentUserUnit) sel.value = currentUserUnit;
+      }
+      var ngay = document.getElementById("ctttFNgay");
+      if (ngay && !ngay.value) ngay.value = ctttNgayChuNhatToi();
+      document.getElementById("ctttGuiModalBg").style.display = "flex";
+      var ten = document.getElementById("ctttFTenBai");
+      if (ten) setTimeout(function () { ten.focus(); }, 120);
+    }
+
+    function ctttDongFormGui() {
+      var bg = document.getElementById("ctttGuiModalBg");
+      if (bg) bg.style.display = "none";
+    }
+
+    function ctttGuiBai() {
+      var btn = document.getElementById("ctttBtnGuiSubmit");
+      var linhVuc = document.getElementById("ctttFLinhVuc").value;
+      var tenBai = document.getElementById("ctttFTenBai").value.trim();
+      var noiDung = document.getElementById("ctttFNoiDung").value.trim();
+      var chiDoan = document.getElementById("ctttFChiDoan").value;
+      var ngayInput = document.getElementById("ctttFNgay").value;
+
+      if (!tenBai) { showToast("Vui lòng nhập tên bài.", "error"); return; }
+      if (!chiDoan) { showToast("Vui lòng chọn chi đoàn.", "error"); return; }
+      if (!ngayInput) { showToast("Vui lòng chọn ngày dạy.", "error"); return; }
+      var ph = ngayInput.split("-");
+      if (ph.length !== 3) { showToast("Ngày dạy không hợp lệ.", "error"); return; }
+      var ngayDay = ph[2] + "/" + ph[1] + "/" + ph[0];
+
+      if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...'; }
+      google.script.run.withSuccessHandler(function (res) {
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> Gửi lên duyệt'; }
+        if (!res || !res.success) { showToast((res && res.error) || "Không gửi được bài.", "error"); return; }
+        showToast("Đã gửi bài, chờ Quyền Tối Cao duyệt.", "success");
+        document.getElementById("ctttFTenBai").value = "";
+        document.getElementById("ctttFNoiDung").value = "";
+        ctttDongFormGui();
+        ctttTaiChoDuyet(false);
+      }).withFailureHandler(function () {
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> Gửi lên duyệt'; }
+        showToast("Lỗi kết nối, vui lòng thử lại!", "error");
+      }).ctttGuiBai(currentUserToken, {
+        linhVuc: linhVuc, tenBai: tenBai, noiDung: noiDung, chiDoan: chiDoan, ngayDay: ngayDay
+      });
+    }
+
+    function ctttMoDanhSachDuyet() {
+      document.getElementById("ctttDuyetModalBg").style.display = "flex";
+      ctttVeDanhSachDuyet();
+      ctttTaiChoDuyet(true);
+    }
+
+    function ctttDongDanhSachDuyet() {
+      var bg = document.getElementById("ctttDuyetModalBg");
+      if (bg) bg.style.display = "none";
+    }
+
+    function ctttVeDanhSachDuyet() {
+      var box = document.getElementById("ctttDuyetList");
+      var tieuDe = document.getElementById("ctttDuyetModalTitle");
+      if (!box) return;
+      if (tieuDe) tieuDe.innerText = ctttState.laNguoiDuyet ? "Bài chờ duyệt" : "Bài đã gửi";
+
+      var ds = ctttState.danhSach || [];
+      if (ds.length === 0) {
+        box.innerHTML = '<div class="cttt-empty"><i class="fas fa-inbox"></i><div>' +
+          (ctttState.laNguoiDuyet ? "Không có bài nào chờ duyệt." : "Bạn chưa gửi bài nào.") +
+          '</div></div>';
+        return;
+      }
+
+      box.innerHTML = ds.map(function (b) {
+        var st = b.trangThai || "Chờ duyệt";
+        var stCls = st === "Đã duyệt" ? "duyet" : (st === "Từ chối" ? "tu" : "cho");
+        var coTheDuyet = ctttState.laNguoiDuyet && st === "Chờ duyệt";
+        var html = '<div class="cttt-pending' + (coTheDuyet ? "" : " is-readonly") + '">';
+        html += '<div class="cttt-pending-top">';
+        html += '<span class="cttt-lv-tag">' + ctttEsc(b.linhVuc || "Khác") + '</span>';
+        html += '<span class="cttt-status ' + stCls + '">' + ctttEsc(st) + '</span>';
+        html += '</div>';
+        html += '<div class="cttt-pending-title">' + ctttEsc(b.tenBai) + '</div>';
+        if (b.noiDung) html += '<div class="cttt-pending-body">' + ctttEsc(b.noiDung) + '</div>';
+        html += '<div class="cttt-pending-meta"><i class="fas fa-users"></i> ' + ctttEsc(b.chiDoan) +
+          ' &middot; <i class="fas fa-calendar-day"></i> ' + ctttEsc(b.ngayDay) + '</div>';
+        html += '<div class="cttt-pending-meta"><i class="fas fa-user"></i> ' +
+          ctttEsc(b.nguoiGuiTen || b.nguoiGuiMa) + ' &middot; ' + ctttEsc(b.thoiGianGui || "") + '</div>';
+        if (st === "Từ chối" && b.ghiChu) html += '<div class="cttt-pending-note">Lý do: ' + ctttEsc(b.ghiChu) + '</div>';
+        if (st === "Đã duyệt" && b.nguoiDuyetTen) html += '<div class="cttt-pending-note">Duyệt bởi: ' + ctttEsc(b.nguoiDuyetTen) + '</div>';
+        if (coTheDuyet) {
+          var idAnToan = ctttEsc(b.id);
+          html += '<div class="cttt-pending-actions">';
+          html += '<button class="cttt-btn-ok" onclick="ctttXuLyBai(\'' + idAnToan + '\', true)"><i class="fas fa-check"></i> Duyệt</button>';
+          html += '<button class="cttt-btn-no" onclick="ctttXuLyBai(\'' + idAnToan + '\', false)"><i class="fas fa-xmark"></i> Từ chối</button>';
+          html += '</div>';
+        }
+        html += '</div>';
+        return html;
+      }).join("");
+    }
+
+    function ctttXuLyBai(id, dongY) {
+      var ghiChu = "";
+      if (!dongY) {
+        ghiChu = window.prompt("Lý do từ chối (không bắt buộc):", "") || "";
+      }
+      if (!window.confirm(dongY
+        ? "Duyệt bài này và đưa vào CTTT cho tất cả các máy?"
+        : "Từ chối bài gửi này?")) return;
+
+      google.script.run.withSuccessHandler(function (res) {
+        if (!res || !res.success) { showToast((res && res.error) || "Không xử lý được bài.", "error"); return; }
+        showToast(dongY ? "Đã duyệt bài và đưa vào CTTT." : "Đã từ chối bài gửi.", "success");
+        if (dongY) loadCTTTData();
+        ctttTaiChoDuyet(true);
+      }).withFailureHandler(function () {
+        showToast("Lỗi kết nối, vui lòng thử lại!", "error");
+      }).ctttDuyetBai(currentUserToken, id, !!dongY, ghiChu);
+    }
 
     // ============================================
     // ENGINE HIỆU ỨNG RIPPLE (GỢN SÓNG) KHI CHẠM NÚT
@@ -5040,6 +5349,12 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       currentUserMa = ""; 
       currentUserToken = "";
       currentUserUnit = "";
+      currentUserIsAdmin = false;
+      currentUserIsSuperAdmin = false;
+      ctttState = { laNguoiDuyet: false, laNguoiGui: false, soChoDuyet: 0, danhSach: [], danhSachChiDoan: [] };
+      ctttDongFormGui();
+      ctttDongDanhSachDuyet();
+      if (document.getElementById("ctttActionBar")) document.getElementById("ctttActionBar").style.display = "none";
       document.getElementById("user").value = ""; 
       document.getElementById("pass").value = ""; 
       
@@ -10890,15 +11205,71 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   </div>
 </div>
 
+<!-- ======================================================
+     CTTT: MODAL GỬI BÀI LÊN DUYỆT
+====================================================== -->
+<div id="ctttGuiModalBg" class="cttt-modal" style="display:none;" onclick="if(event.target===this) ctttDongFormGui()">
+  <div class="cttt-modal-card">
+    <div class="cttt-modal-head">
+      <div class="cttt-modal-title"><i class="fas fa-paper-plane"></i> Gửi bài lên CTTT</div>
+      <button class="cttt-modal-close" onclick="ctttDongFormGui()" aria-label="Đóng"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="cttt-field">
+      <label for="ctttFLinhVuc">Lĩnh vực</label>
+      <select id="ctttFLinhVuc" class="cttt-select">
+        <option value="Nhân Bản">Nhân Bản</option>
+        <option value="Phong trào">Phong trào</option>
+        <option value="Kĩ năng chuyên môn">Kĩ năng chuyên môn</option>
+        <option value="Sinh hoạt">Sinh hoạt</option>
+      </select>
+    </div>
+    <div class="cttt-field">
+      <label for="ctttFTenBai">Tên bài</label>
+      <input id="ctttFTenBai" class="cttt-input" type="text" maxlength="200" placeholder="VD: Bài 1 - Tìm hiểu về Thánh Thể">
+    </div>
+    <div class="cttt-field">
+      <label for="ctttFNoiDung">Nội dung</label>
+      <textarea id="ctttFNoiDung" class="cttt-textarea" rows="4" maxlength="2000" placeholder="Tóm tắt nội dung bài dạy..."></textarea>
+    </div>
+    <div class="cttt-field-row">
+      <div class="cttt-field">
+        <label for="ctttFChiDoan">Chi đoàn</label>
+        <select id="ctttFChiDoan" class="cttt-select"></select>
+      </div>
+      <div class="cttt-field">
+        <label for="ctttFNgay">Ngày dạy</label>
+        <input id="ctttFNgay" class="cttt-input" type="date">
+      </div>
+    </div>
+    <div class="cttt-note"><i class="fas fa-circle-info"></i> Bài sẽ được gửi tới Quyền Tối Cao duyệt. Khi được duyệt, mọi máy sẽ thấy bài để quẹt “Xác nhận nhận bài”.</div>
+    <button id="ctttBtnGuiSubmit" class="cttt-submit" onclick="ctttGuiBai()"><i class="fas fa-paper-plane"></i> Gửi lên duyệt</button>
+  </div>
+</div>
+
+<!-- ======================================================
+     CTTT: MODAL BÀI CHỜ DUYỆT / BÀI ĐÃ GỬI
+====================================================== -->
+<div id="ctttDuyetModalBg" class="cttt-modal" style="display:none;" onclick="if(event.target===this) ctttDongDanhSachDuyet()">
+  <div class="cttt-modal-card cttt-modal-wide">
+    <div class="cttt-modal-head">
+      <div class="cttt-modal-title"><i class="fas fa-clipboard-check"></i> <span id="ctttDuyetModalTitle">Bài chờ duyệt</span></div>
+      <button class="cttt-modal-close" onclick="ctttDongDanhSachDuyet()" aria-label="Đóng"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="ctttDuyetList" class="cttt-pending-list"></div>
+  </div>
+</div>
+
 <script id="xd-phienban">
 // ===== GIỚI THIỆU PHIÊN BẢN =====
 // Hiện ĐÚNG 1 LẦN ngay sau khi đăng nhập (kể cả tự đăng nhập lại) cho mỗi phiên bản, trên mỗi thiết bị.
 // Muốn giới thiệu bản mới: đổi "so" (ví dụ "2.1.0") + sửa nội dung "muc" -> mọi người sẽ thấy lại 1 lần.
 var APP_PHIEN_BAN = {
-  so: "2.8.3",
+  so: "2.8.4",
   ngay: "12/11/2026",
   tieuDe: "Xứ Đoàn Thánh Anrê",
   muc: [
+    { icon: "fa-graduation-cap", tieuDe: "CTTT: gửi & duyệt bài ngay trong app", moTa: "Huynh Trưởng có phân quyền gửi bài lên CTTT theo 4 lĩnh vực (Nhân Bản, Phong trào, Kĩ năng chuyên môn, Sinh hoạt); Quyền Tối Cao duyệt để bài về tất cả các máy." },
     { icon: "fa-coins", tieuDe: "Sắp xếp lại trang Thu Quỹ", moTa: "Bố cục 4 bước rõ ràng: chọn tuần → thu quỹ → quản trị → báo cáo. Thêm lọc Chưa thu/Đã thu/Miễn thu và nút về tuần hiện tại." },
     { icon: "fa-images", tieuDe: "Ảnh banner quảng cáo", moTa: "Banner trang chủ dùng 3 ảnh mới của Xứ Đoàn, tự chuyển slide, tải nhanh và xem được cả khi mất mạng." },
     { icon: "fa-church", tieuDe: "Tên mới: Xứ Đoàn Thánh Anrê", moTa: "Toàn bộ giao diện, màn hình đăng nhập, văn bản và báo cáo PDF đã chuyển sang tên mới." },
