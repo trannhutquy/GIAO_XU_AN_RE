@@ -2016,6 +2016,110 @@
     body.dark-mode .quy-item-modern { background: #26272c; border-color: #3a3b42; }
     body.dark-mode .quy-item-modern:hover { border-color: #5c2626; }
     body.dark-mode .quy-progress-modern { background: #1c1d21; }
+
+    /* ==========================================
+       SẮP XẾP LẠI TRANG "THU QUỸ": 4 khối rõ ràng
+       (1) chọn tuần/loại quỹ  (2) thu quỹ  (3) quản trị  (4) báo cáo
+       ========================================== */
+    .qy-panel { padding: 14px; margin-bottom: 12px; }
+    .qy-panel-top { padding: 10px; }
+    .qy-block-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+    .qy-block-title { display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 800; color: #2c3e50; }
+    .qy-block-title i { color: #d32f2f; font-size: 13px; }
+
+    .qy-week-mid { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 1px; }
+    .qy-week-label { font-size: 10px; font-weight: 700; letter-spacing: .7px; color: #7f8c8d; }
+    .qy-week-date { font-size: 16px; font-weight: 800; color: #d32f2f; letter-spacing: .3px; }
+    .qy-week-now { margin-top: 2px; padding: 2px 7px; border: none; border-radius: 8px; background: transparent; color: #98a4ae; font-size: 10.5px; font-weight: 700; cursor: pointer; }
+    .qy-week-now:hover { color: #d32f2f; background: #fdecea; }
+    .qy-week-now i { font-size: 9.5px; margin-right: 3px; }
+
+    #quyThongKeBox { margin-bottom: 12px; }
+    .qy-stats { display: flex; gap: 8px; margin-bottom: 8px; }
+    .qy-stat { flex: 1; min-width: 0; padding: 8px 10px; background: #f8f9fa; border: 1px solid #eef1f3; border-radius: 12px; }
+    .qy-stat-label { font-size: 10px; font-weight: 700; letter-spacing: .4px; color: #7f8c8d; text-transform: uppercase; }
+    .qy-stat-value { margin-top: 2px; font-size: 15px; font-weight: 800; color: #2c3e50; }
+    .qy-stat-money { background: #f1fbf5; border-color: #d7f0e1; }
+    .qy-green { color: #1e8449; }
+
+    .qy-me { display: flex; align-items: center; gap: 9px; padding: 10px 12px; margin-bottom: 12px; background: #f8f9fa; border: 1px solid #eef1f3; border-radius: 12px; }
+    .qy-me-icon { color: #7f8c8d; font-size: 13px; flex-shrink: 0; }
+    .qy-me-text { flex: 1; min-width: 0; font-size: 12.5px; font-weight: 600; color: #2c3e50; }
+    .qy-me-badge { padding: 5px 11px; border-radius: 20px; background: #f1f3f5; color: #7f8c8d; font-size: 11.5px; font-weight: 700; white-space: nowrap; }
+
+    .qy-search-wrap { position: relative; margin-bottom: 10px; }
+    .qy-search-wrap > i { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 12.5px; color: #a7b3bd; pointer-events: none; }
+    .qy-search-wrap input { width: 100%; box-sizing: border-box; padding: 11px 12px 11px 35px; font-size: 13px; color: #2c3e50; background: #f9fafb; border: 1px solid #e3e6e8; border-radius: 12px; outline: none; }
+    .qy-search-wrap input:focus { border-color: #d32f2f; background: #fff; }
+
+    .qy-chips { display: flex; gap: 6px; margin-bottom: 10px; padding-bottom: 2px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .qy-chips::-webkit-scrollbar { display: none; }
+    .qy-chip { flex: 0 0 auto; padding: 6px 12px; font-size: 11.5px; font-weight: 700; color: #5b6770; background: #fff; border: 1px solid #e3e6e8; border-radius: 20px; cursor: pointer; transition: color .15s, background .15s, border-color .15s; }
+    .qy-chip.active { color: #c62828; background: #fdecea; border-color: #f6c9c9; }
+
+    #quyDanhSachContainer { max-height: 56vh; padding: 6px; background: #fcfcfd; border: 1px solid #f0f0f0; border-radius: 14px; }
+    .qy-empty { padding: 16px 8px; text-align: center; font-size: 12.5px; color: #95a5a6; }
+
+    .qy-batchbar { position: sticky; bottom: 0; display: none; align-items: center; justify-content: space-between; gap: 8px; margin-top: 10px; padding: 9px 10px; background: #fff8f8; border: 1px solid #f5c6c6; border-radius: 12px; box-shadow: 0 -4px 14px rgba(0,0,0,.06); }
+    .qy-batch-count { font-size: 12.5px; font-weight: 800; color: #2c3e50; white-space: nowrap; }
+    .qy-batch-actions { display: flex; gap: 6px; align-items: center; }
+    .qy-batch-cancel { padding: 8px 12px; border: 1px solid #e3e6e8; border-radius: 20px; background: #fff; color: #5b6770; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .qy-batch-ok { padding: 9px 14px; border: none; border-radius: 20px; background: linear-gradient(135deg, #ef5350, #d32f2f); color: #fff; font-size: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(211,47,47,.3); }
+
+    .qy-treasury { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-radius: 14px; background: linear-gradient(135deg, #f1fbf5, #e8f9ef); border: 1px solid #d7f0e1; }
+    .qy-treasury-label { font-size: 10px; font-weight: 700; letter-spacing: .5px; color: #7f8c8d; }
+    .qy-treasury-value { margin-top: 2px; font-size: 21px; font-weight: 800; color: #219150; letter-spacing: -.3px; }
+    .qy-treasury-hint { margin-top: 2px; font-size: 10.5px; color: #95a5a6; }
+    .qy-treasury-icon { margin-left: auto; width: 42px; height: 42px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(39,174,96,.12); color: #27ae60; font-size: 17px; }
+
+    .qy-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0 12px; }
+    .qy-action { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; padding: 11px 6px; border: 1px solid #e3e6e8; border-radius: 13px; background: #fff; color: #2c3e50; font-size: 11px; font-weight: 700; line-height: 1.2; text-align: center; cursor: pointer; transition: border-color .15s, background .15s; }
+    .qy-action i { font-size: 15px; color: #d32f2f; }
+    .qy-action:hover { border-color: #f5c6c6; background: #fffafa; }
+    .qy-action-red { background: #fdecea; border-color: #f6c9c9; color: #c62828; }
+    .qy-action-red i { color: #c62828; }
+
+    .qy-settings { margin-top: 2px; padding-top: 10px; border-top: 1px solid #f0f0f0; }
+    .qy-settings > summary { list-style: none; display: flex; align-items: center; gap: 8px; padding: 4px 2px; font-size: 12.5px; font-weight: 700; color: #5b6770; cursor: pointer; }
+    .qy-settings > summary::-webkit-details-marker { display: none; }
+    .qy-settings > summary i { color: #7f8c8d; font-size: 12px; }
+    .qy-settings > summary::after { content: "\25BE"; margin-left: auto; color: #a7b3bd; font-size: 12px; transition: transform .2s; }
+    .qy-settings[open] > summary::after { transform: rotate(180deg); }
+    .qy-settings-body { padding-top: 10px; }
+    .qy-field { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .qy-field label { flex: 1; font-size: 12.5px; color: #2c3e50; }
+    .qy-field input { width: 120px; box-sizing: border-box; padding: 8px 10px; font-size: 13px; border: 1px solid #e3e6e8; border-radius: 10px; background: #f9fafb; outline: none; }
+    .qy-field input:focus { border-color: #d32f2f; background: #fff; }
+    .qy-btn-save { width: 100%; padding: 10px; border: none; border-radius: 10px; background: #37474f; color: #fff; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+    .qy-btn-save:hover { background: #263238; }
+    .qy-btn-neutral { background: #eceff1; color: #37474f; }
+    .qy-btn-neutral:hover { background: #dfe4e8; }
+    .qy-divider { height: 1px; margin: 12px 0; background: #f0f0f0; }
+    .qy-hint { margin: -2px 0 8px; font-size: 11px; line-height: 1.5; color: #95a5a6; }
+
+    .qy-report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .qy-report { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 12px 8px; border: none; border-radius: 12px; background: linear-gradient(135deg, #37474f, #263238); color: #fff; font-size: 12.5px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,.12); }
+    .qy-report:hover { filter: brightness(1.08); }
+
+    body.dark-mode .qy-block-title, body.dark-mode .qy-stat-value, body.dark-mode .qy-me-text,
+    body.dark-mode .qy-batch-count, body.dark-mode .qy-field label { color: #e1e3e6; }
+    body.dark-mode .qy-stat, body.dark-mode .qy-me { background: #1c1d21; border-color: #3a3b42; }
+    body.dark-mode .qy-stat-money { background: #16261d; border-color: #24402f; }
+    body.dark-mode .qy-search-wrap input, body.dark-mode .qy-field input { background: #1c1d21; border-color: #3a3b42; color: #e1e3e6; }
+    body.dark-mode .qy-chip { background: #1c1d21; border-color: #3a3b42; color: #9aa0a6; }
+    body.dark-mode .qy-chip.active { background: #3a1f1f; border-color: #5c2626; color: #ff8a80; }
+    body.dark-mode #quyDanhSachContainer { background: #1c1d21; border-color: #3a3b42; }
+    body.dark-mode .qy-batchbar { background: #2a1d1d; border-color: #5c2626; }
+    body.dark-mode .qy-batch-cancel { background: #1c1d21; border-color: #3a3b42; color: #c7cbd1; }
+    body.dark-mode .qy-treasury { background: linear-gradient(135deg, #16261d, #1b2f23); border-color: #24402f; }
+    body.dark-mode .qy-treasury-label, body.dark-mode .qy-treasury-hint { color: #8b949c; }
+    body.dark-mode .qy-action { background: #26272c; border-color: #3a3b42; color: #e1e3e6; }
+    body.dark-mode .qy-action-red { background: #3a1f1f; border-color: #5c2626; color: #ff8a80; }
+    body.dark-mode .qy-settings { border-color: #3a3b42; }
+    body.dark-mode .qy-settings > summary { color: #c7cbd1; }
+    body.dark-mode .qy-divider { background: #3a3b42; }
+    body.dark-mode .qy-btn-save { background: #cfd8dc; color: #263238; }
+    body.dark-mode .qy-btn-neutral { background: #2b2c31; color: #e1e3e6; }
   </style>
 <script id="xd-avatar">
 // ===== ẢNH ĐẠI DIỆN: dùng ảnh của chính người đó; chưa có hoặc tải lỗi thì dùng logo Xứ Đoàn =====
@@ -3062,6 +3166,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 
       <div id="quy-page" class="page">
         <button class="desktop-only desktop-modal-close" onclick="closeDesktopOverlay('quy-page')"><i class="fas fa-times"></i></button>
+
         <div class="quy-hero">
           <div>
             <h2 class="quy-hero-title">Thu Quỹ Hàng Tuần</h2>
@@ -3070,42 +3175,64 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           <button class="quy-hero-back" onclick="showPage('home', document.querySelector('.nav-item'))"><i class="fas fa-arrow-left"></i></button>
         </div>
 
-        <div class="card" style="padding:12px;">
+        <!-- (1) CHỌN TUẦN + LOẠI QUỸ -->
+        <div class="card qy-panel qy-panel-top">
           <div class="quy-week-modern">
-            <button class="quy-week-nav" onclick="quyDoiTuan(-1)"><i class="fas fa-chevron-left"></i></button>
-            <div style="text-align:center;">
-              <div style="font-size:11px; color:#7f8c8d; letter-spacing:.5px;">CHÚA NHẬT</div>
-              <div id="quyTuanHienTai" style="font-weight:bold; font-size:15px; color:#d32f2f;">--/--/----</div>
+            <button class="quy-week-nav" onclick="quyDoiTuan(-1)" aria-label="Tuần trước"><i class="fas fa-chevron-left"></i></button>
+            <div class="qy-week-mid">
+              <div class="qy-week-label">CHÚA NHẬT</div>
+              <div id="quyTuanHienTai" class="qy-week-date">--/--/----</div>
+              <button class="qy-week-now" onclick="quyVeTuanNay()"><i class="fas fa-undo"></i> Tuần này</button>
             </div>
-            <button class="quy-week-nav" onclick="quyDoiTuan(1)"><i class="fas fa-chevron-right"></i></button>
+            <button class="quy-week-nav" onclick="quyDoiTuan(1)" aria-label="Tuần sau"><i class="fas fa-chevron-right"></i></button>
           </div>
 
-          <div class="quy-tab-group">
+          <div class="quy-tab-group" style="margin-bottom:0;">
             <div id="quyTabTN" class="quy-tab-modern quy-tab-active" onclick="quyChonTab('TN')">Thiếu Nhi (<span id="quyMucTN">2.000đ</span>)</div>
             <div id="quyTabHT" class="quy-tab-modern" onclick="quyChonTab('HT')">Huynh Trưởng (<span id="quyMucHT">5.000đ</span>)</div>
           </div>
+        </div>
 
-          <div class="quy-toolbar-modern">
-            <div class="quy-search-modern"><input type="text" id="quySearch" placeholder="Tìm tên hoặc mã số..." onkeyup="quyLoc()"></div>
+        <!-- (2) THU QUỸ: tìm kiếm - lọc - danh sách -->
+        <div class="card qy-panel">
+          <div class="qy-block-head">
+            <div class="qy-block-title"><i class="fas fa-hand-holding-dollar"></i> Danh sách thu</div>
             <button id="quyBatchToggleBtn" class="quy-batch-toggle-modern" onclick="quyBatToggleChonNhieu()"><i class="fas fa-check-double"></i> Chọn nhiều</button>
           </div>
 
           <div id="quyThongKeBox" style="display:none;">
-            <div class="quy-summary-modern">
-              <span id="quyDaThuCount">Đã thu: 0/0</span>
-              <span id="quyTongThu" style="font-weight:bold; color:#27ae60;">0đ</span>
+            <div class="qy-stats">
+              <div class="qy-stat">
+                <div class="qy-stat-label">Đã thu</div>
+                <div id="quyDaThuCount" class="qy-stat-value">0/0</div>
+              </div>
+              <div class="qy-stat qy-stat-money">
+                <div class="qy-stat-label">Tổng thu tuần</div>
+                <div id="quyTongThu" class="qy-stat-value qy-green">0đ</div>
+              </div>
             </div>
             <div class="quy-progress-modern">
               <div id="quyProgressBar" class="quy-progress-modern-fill" style="width:0%;"></div>
             </div>
           </div>
 
-          <!-- Chỉ hiện với Huynh Trưởng THƯỜNG (không phải Admin/Quyền Tối Cao): thay vì
-               xem được số liệu thu quỹ tổng hợp toàn Xứ Đoàn, chỉ cho biết CHÍNH MÌNH đã
-               đóng quỹ Huynh Trưởng của tuần đang xem hay chưa. -->
-          <div id="quyCaNhanBox" style="display:none; align-items:center; gap:8px; background:#f9f9f9; border-radius:10px; padding:10px 12px; margin-bottom:10px;">
-            <span style="font-size:12.5px; color:#2c3e50; font-weight:600;">Quỹ Huynh Trưởng của bạn tuần này:</span>
-            <span id="quyCaNhanTrangThai" style="font-size:12px; font-weight:bold; padding:4px 10px; border-radius:20px; white-space:nowrap;">--</span>
+          <!-- Huynh Trưởng thường: chỉ thấy trạng thái đóng quỹ của chính mình -->
+          <div id="quyCaNhanBox" class="qy-me" style="display:none;">
+            <i class="fas fa-info-circle qy-me-icon"></i>
+            <div class="qy-me-text">Quỹ Huynh Trưởng của bạn tuần này</div>
+            <span id="quyCaNhanTrangThai" class="qy-me-badge">--</span>
+          </div>
+
+          <div class="qy-search-wrap">
+            <i class="fas fa-magnifying-glass"></i>
+            <input type="text" id="quySearch" placeholder="Tìm tên hoặc mã số..." onkeyup="quyLoc()" autocomplete="off">
+          </div>
+
+          <div class="qy-chips">
+            <button class="qy-chip active" data-loc="all" onclick="quyLocTheoTrangThai('all')">Tất cả</button>
+            <button class="qy-chip" data-loc="chua" onclick="quyLocTheoTrangThai('chua')">Chưa thu</button>
+            <button class="qy-chip" data-loc="da" onclick="quyLocTheoTrangThai('da')">Đã thu</button>
+            <button class="qy-chip" data-loc="mien" onclick="quyLocTheoTrangThai('mien')">Miễn thu</button>
           </div>
 
           <div id="quyDanhSachContainer">
@@ -3114,53 +3241,66 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
               <div class="loading-logo-text">Đang tải danh sách...</div>
             </div>
           </div>
+          <div id="quyLocTrong" class="qy-empty" style="display:none;">Không có ai trong nhóm này.</div>
 
-          <div id="quyBatchBar" style="display:none; position:sticky; bottom:0; left:0; right:0; margin-top:10px; background:#fff8f8; border:1px solid #f5c6c6; border-radius:10px; padding:10px 12px; align-items:center; justify-content:space-between; box-shadow:0 -2px 8px rgba(0,0,0,0.06);">
-            <span id="quyBatchCount" style="font-size:12.5px; font-weight:bold; color:#2c3e50;">Đã chọn: 0</span>
-            <button onclick="quyBatXacNhan()" style="background:#d32f2f; color:white; border:none; padding:8px 16px; border-radius:20px; font-size:12.5px; font-weight:bold; cursor:pointer;"><i class="fas fa-check"></i> Xác nhận thu</button>
-          </div>
-        </div>
-
-        <div class="card" style="padding:12px; margin-top:15px;">
-          <h3 style="margin:0 0 10px; font-size:14px; color:#2c3e50;">Báo cáo &amp; Thống kê tiền quỹ</h3>
-          <div style="display:flex; gap:8px;">
-            <button onclick="quyMoBaoCao('thang')" style="flex:1; background:linear-gradient(135deg,#37474f,#263238); color:white; border:none; padding:11px; border-radius:10px; font-weight:bold; cursor:pointer; font-size:12.5px; box-shadow:0 4px 12px rgba(0,0,0,0.12);"><i class="fas fa-calendar-week"></i> Báo cáo tháng</button>
-            <button onclick="quyMoBaoCao('nam')" style="flex:1; background:linear-gradient(135deg,#37474f,#263238); color:white; border:none; padding:11px; border-radius:10px; font-weight:bold; cursor:pointer; font-size:12.5px; box-shadow:0 4px 12px rgba(0,0,0,0.12);"><i class="fas fa-calendar"></i> Báo cáo năm</button>
-          </div>
-        </div>
-
-        <div class="card" id="quyAdminBox" style="display:none; padding:12px; margin-top:15px;">
-          <div id="quyTonQuyBox" style="display:flex; justify-content:space-between; align-items:center; background:linear-gradient(135deg,#f1fbf5,#e8f9ef); border:1px solid #d7f0e1; border-radius:14px; padding:12px 14px; margin-bottom:15px;">
-            <div>
-              <div style="font-size:11px; color:#7f8c8d; letter-spacing:.4px;">TỒN QUỸ HIỆN TẠI</div>
-              <div id="quyTonQuySo" style="font-size:20px; font-weight:800; color:#219150;">--đ</div>
+          <div id="quyBatchBar" class="qy-batchbar">
+            <span id="quyBatchCount" class="qy-batch-count">Đã chọn: 0</span>
+            <div class="qy-batch-actions">
+              <button class="qy-batch-cancel" onclick="quyBatToggleChonNhieu()">Bỏ chọn</button>
+              <button class="qy-batch-ok" onclick="quyBatXacNhan()"><i class="fas fa-check"></i> Xác nhận thu</button>
             </div>
           </div>
+        </div>
 
-          <h3 style="margin-top:0; font-size:14px; color:#2c3e50;">Cài đặt mức đóng (Thủ quỹ chịu mọi trách nhiệm khi sửa)</h3>
-          <div style="display:flex; gap:10px; align-items:center; margin-bottom:8px;">
-            <label style="flex:1; font-size:13px;">Huynh Trưởng (đ/tuần)</label>
-            <input type="number" id="quyInputMucHT" style="width:100px; padding:6px; border:1px solid #ddd; border-radius:6px;">
+        <!-- (3) QUẢN TRỊ QUỸ (chỉ Admin / Quyền Tối Cao) -->
+        <div class="card qy-panel" id="quyAdminBox" style="display:none;">
+          <div class="qy-treasury">
+            <div style="min-width:0;">
+              <div class="qy-treasury-label">TỒN QUỸ HIỆN TẠI</div>
+              <div id="quyTonQuySo" class="qy-treasury-value">--đ</div>
+              <div class="qy-treasury-hint">Số dư đầu kỳ + tổng thu − tổng chi</div>
+            </div>
+            <div class="qy-treasury-icon"><i class="fas fa-piggy-bank"></i></div>
           </div>
-          <div style="display:flex; gap:10px; align-items:center; margin-bottom:12px;">
-            <label style="flex:1; font-size:13px;">Thiếu Nhi (đ/tuần)</label>
-            <input type="number" id="quyInputMucTN" style="width:100px; padding:6px; border:1px solid #ddd; border-radius:6px;">
-          </div>
-          <button class="btn-action" onclick="quyLuuMucDong()" style="margin-top:0;">Lưu mức đóng</button>
 
-          <hr style="margin:15px 0; border:none; border-top:1px solid #eee;">
-          <h3 style="margin-top:0; font-size:14px; color:#2c3e50;">Số dư quỹ đầu kỳ</h3>
-          <div style="display:flex; gap:10px; align-items:center; margin-bottom:8px;">
-            <label style="flex:1; font-size:13px;">Số dư đầu kỳ (đ)</label>
-            <input type="number" id="quySoDuDauKy" placeholder="0" style="width:120px; padding:6px; border:1px solid #ddd; border-radius:6px;">
+          <div class="qy-actions">
+            <button class="qy-action" onclick="quyMoMienThuModal()"><i class="fas fa-user-slash"></i><span>Miễn thu</span></button>
+            <button class="qy-action qy-action-red" onclick="quyMoChiTieuModal()"><i class="fas fa-money-bill-wave"></i><span>Chi tiêu quỹ</span></button>
+            <button class="qy-action" onclick="quyXuatPDF()"><i class="fas fa-file-pdf"></i><span>PDF tuần</span></button>
           </div>
-          <div style="font-size:11.5px; color:#95a5a6; margin-bottom:8px;">Tiền quỹ có sẵn trước khi dùng app (hoặc thu ngoài app). Tồn quỹ = Số dư đầu kỳ + Tổng thu − Tổng chi.</div>
-          <button class="btn-action" onclick="quyLuuSoDuDauKy()" style="margin-top:0;">Lưu số dư đầu kỳ</button>
 
-          <hr style="margin:15px 0; border:none; border-top:1px solid #eee;">
-          <button onclick="quyMoMienThuModal()" style="width:100%; background:#2c3e50; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px; margin-bottom:10px;"><i class="fas fa-user-slash"></i> Chọn Huynh Trưởng không thu tiền</button>
-          <button onclick="quyMoChiTieuModal()" style="width:100%; background:#c62828; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px; margin-bottom:10px;"><i class="fas fa-money-bill-wave"></i> Quản lý Chi Tiêu Quỹ</button>
-          <button onclick="quyXuatPDF()" style="width:100%; background:#d32f2f; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px;">Xuất Báo Cáo Thu Quỹ Tuần (PDF)</button>
+          <details class="qy-settings">
+            <summary><i class="fas fa-sliders-h"></i> Cài đặt quỹ (mức đóng, số dư đầu kỳ)</summary>
+            <div class="qy-settings-body">
+              <div class="qy-field">
+                <label for="quyInputMucHT">Huynh Trưởng (đ/tuần)</label>
+                <input type="number" id="quyInputMucHT">
+              </div>
+              <div class="qy-field">
+                <label for="quyInputMucTN">Thiếu Nhi (đ/tuần)</label>
+                <input type="number" id="quyInputMucTN">
+              </div>
+              <button class="qy-btn-save" onclick="quyLuuMucDong()">Lưu mức đóng</button>
+
+              <div class="qy-divider"></div>
+
+              <div class="qy-field">
+                <label for="quySoDuDauKy">Số dư đầu kỳ (đ)</label>
+                <input type="number" id="quySoDuDauKy" placeholder="0">
+              </div>
+              <div class="qy-hint">Tiền quỹ có sẵn trước khi dùng app (hoặc thu ngoài app). Tồn quỹ = Số dư đầu kỳ + Tổng thu − Tổng chi.</div>
+              <button class="qy-btn-save qy-btn-neutral" onclick="quyLuuSoDuDauKy()">Lưu số dư đầu kỳ</button>
+            </div>
+          </details>
+        </div>
+
+        <!-- (4) BÁO CÁO -->
+        <div class="card qy-panel">
+          <div class="qy-block-title" style="margin-bottom:10px;"><i class="fas fa-chart-bar"></i> Báo cáo &amp; thống kê</div>
+          <div class="qy-report-grid">
+            <button class="qy-report" onclick="quyMoBaoCao('thang')"><i class="fas fa-calendar-week"></i><span>Báo cáo tháng</span></button>
+            <button class="qy-report" onclick="quyMoBaoCao('nam')"><i class="fas fa-calendar"></i><span>Báo cáo năm</span></button>
+          </div>
         </div>
 
         <div id="quyChiTieuModalBg" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:99999; padding:15px; box-sizing:border-box;">
@@ -8029,7 +8169,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   // CHỨC NĂNG: THU QUỸ HÀNG TUẦN (độc lập, không đụng chạm gì
   // tới logic điểm danh / exportFullPDF cũ ở trên)
   // ========================================================
-  var quyState = { tuan: null, loai: 'TN', danhSach: [], muc: { HT: 5000, TN: 2000 }, tongTienThuc: null, chonNhieu: false, daChon: {} };
+  var quyState = { tuan: null, loai: 'TN', danhSach: [], muc: { HT: 5000, TN: 2000 }, tongTienThuc: null, chonNhieu: false, daChon: {}, locTrangThai: 'all' };
 
   function quyChuNhatGanNhat(offsetTuan) {
     var d = new Date();
@@ -8150,6 +8290,23 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     }
     quyState.tuan = d;
     quyBatTatCheDoChonNhieu(); // đổi tuần thì thoát chế độ chọn nhiều, tránh chọn nhầm sang dữ liệu tuần khác
+    quyLocTheoTrangThai('all');
+    quyCapNhatTieuDeTuan();
+    quyTaiDanhSach();
+    if (!(currentUserIsAdmin || currentUserIsSuperAdmin)) quyTaiTrangThaiCaNhan();
+  }
+
+  // Về nhanh tuần hiện tại (Chủ Nhật sắp tới) thay vì bấm lùi từng tuần.
+  function quyVeTuanNay() {
+    var tuanNay = quyChuNhatGanNhat(0);
+    tuanNay.setHours(0, 0, 0, 0);
+    if (quyState.tuan && quyState.tuan.getTime() === tuanNay.getTime()) {
+      showToast("Đang ở tuần hiện tại.", "info");
+      return;
+    }
+    quyState.tuan = tuanNay;
+    quyBatTatCheDoChonNhieu();
+    quyLocTheoTrangThai('all');
     quyCapNhatTieuDeTuan();
     quyTaiDanhSach();
     if (!(currentUserIsAdmin || currentUserIsSuperAdmin)) quyTaiTrangThaiCaNhan();
@@ -8165,6 +8322,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     document.getElementById("quyTabTN").classList.toggle('quy-tab-active', loai === 'TN');
     document.getElementById("quyTabHT").classList.toggle('quy-tab-active', loai === 'HT');
     quyBatTatCheDoChonNhieu(); // đổi tab TN/HT thì thoát chế độ chọn nhiều
+    quyLocTheoTrangThai('all');
     if (!khoiTao) quyTaiDanhSach();
   }
 
@@ -8211,7 +8369,9 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     var html = list.map(function (item) {
       var dataTen = quyBoDau((item.hoTen || "") + " " + (item.ma || ""));
       var chuCai = String(item.hoTen || '?').trim().slice(-1).toUpperCase();
-      return '<div class="quy-item quy-item-modern" data-ten="' + dataTen + '" data-ma="' + item.ma + '">' +
+      var daThu = item.daThu ? "1" : "0";
+      var mienThu = item.mienThu ? "1" : "0";
+      return '<div class="quy-item quy-item-modern" data-ten="' + dataTen + '" data-ma="' + item.ma + '" data-dathu="' + daThu + '" data-mien="' + mienThu + '">' +
         '<div class="quy-avatar-modern">' + chuCai + '</div>' +
         '<div style="flex:1; min-width:0;">' +
           '<div style="font-weight:600; font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + item.hoTen + '</div>' +
@@ -8222,6 +8382,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     }).join('');
     cont.innerHTML = html;
     quyCapNhatSummary(list);
+    quyLoc(); // giữ đúng nhóm đang lọc sau khi vẽ lại danh sách
   }
 
   // Render riêng phần "Thu" / "Đã thu" của 1 dòng — tách ra để có thể cập nhật lại
@@ -8278,6 +8439,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 
     var el = quyTimPhanTuTheoMa(ma);
     if (el) {
+      el.setAttribute('data-dathu', daThu ? "1" : "0");
       var trangThaiEl = el.querySelector('.quy-trangthai');
       if (trangThaiEl) trangThaiEl.outerHTML = quyRenderTrangThai(item);
     }
@@ -8286,13 +8448,14 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     // đóng hiện tại) cho tới lần tải lại danh sách kế tiếp mới có số chính xác.
     quyState.tongTienThuc = null;
     quyCapNhatSummary(list);
+    quyLoc(); // dòng vừa thu có thể không còn thuộc nhóm "Chưa thu" đang lọc
   }
 
   function quyCapNhatSummary(list) {
     var dsCanThu = list.filter(function (i) { return !i.mienThu; }); // mẫu số: người có nghĩa vụ đóng
     var soDaThu = dsCanThu.filter(function (i) { return i.daThu; }).length;
     var mucTien = quyState.loai === 'HT' ? quyState.muc.HT : quyState.muc.TN;
-    document.getElementById("quyDaThuCount").innerText = "Đã thu: " + soDaThu + "/" + dsCanThu.length;
+    document.getElementById("quyDaThuCount").innerText = soDaThu + "/" + dsCanThu.length;
     // Khi chưa có số chính xác từ máy chủ, phải cộng cả người "miễn thu" ĐÃ đóng tiền
     // (đóng trước khi được miễn) để tạm tính không bị thiếu so với tồn quỹ.
     var soLuotDaThu = list.filter(function (i) { return i.daThu; }).length;
@@ -8303,12 +8466,35 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     if (thanhTienDo) thanhTienDo.style.width = phanTram + "%";
   }
 
+  // Lọc danh sách theo CẢ từ khoá tìm kiếm VÀ nhóm trạng thái đang chọn.
   function quyLoc() {
     var q = quyBoDau(document.getElementById("quySearch").value.trim());
+    var kieu = quyState.locTrangThai || "all";
+    var soHien = 0;
     document.querySelectorAll("#quyDanhSachContainer .quy-item").forEach(function (el) {
       var ten = el.getAttribute("data-ten") || "";
-      el.style.display = (q === "" || ten.indexOf(q) !== -1) ? "flex" : "none";
+      var daThu = el.getAttribute("data-dathu") === "1";
+      var mienThu = el.getAttribute("data-mien") === "1";
+      var khopTen = (q === "" || ten.indexOf(q) !== -1);
+      var khopTrangThai = true;
+      if (kieu === "da") khopTrangThai = daThu;
+      else if (kieu === "chua") khopTrangThai = !daThu && !mienThu;
+      else if (kieu === "mien") khopTrangThai = mienThu && !daThu;
+      var hien = khopTen && khopTrangThai;
+      el.style.display = hien ? "flex" : "none";
+      if (hien) soHien++;
     });
+    var trong = document.getElementById("quyLocTrong");
+    if (trong) trong.style.display = (soHien === 0 && (quyState.danhSach || []).length > 0) ? "block" : "none";
+  }
+
+  // Bấm chip lọc nhanh: Tất cả / Chưa thu / Đã thu / Miễn thu.
+  function quyLocTheoTrangThai(kieu) {
+    quyState.locTrangThai = kieu || "all";
+    document.querySelectorAll(".qy-chip").forEach(function (c) {
+      c.classList.toggle("active", c.getAttribute("data-loc") === quyState.locTrangThai);
+    });
+    quyLoc();
   }
 
   // Bấm "Thu": đổi giao diện thành "Đã thu" NGAY LẬP TỨC (không chờ máy chủ phản hồi),
