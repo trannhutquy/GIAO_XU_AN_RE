@@ -5188,6 +5188,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     }
     function showPage(id, navEl) {
       if (id === 'profile-page') { loadThongTinCaNhanCSDLHT(); qrKiemTraViTri(); }
+      if (id === 'cttt') { try { ctttTaiChoDuyet(false); } catch (e) {} }
       var current = document.querySelector('.page.active');
       var target = document.getElementById(id);
       if (!target || current === target) {
