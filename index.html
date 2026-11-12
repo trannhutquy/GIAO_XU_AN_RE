@@ -3110,14 +3110,22 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         <!-- TAB 1: HIỆN MÃ QR + MÃ SỐ (chỉ Admin/Quyền Tối Cao) -->
         <div id="khancap-tab-hienma" class="kt-tab-content">
           <div id="khancap-batdau-box" class="card" style="padding:16px; text-align:center;">
-            <p style="color:#7f8c8d; font-size:13px; margin-top:0;">Chưa có phiên điểm danh khẩn cấp nào đang mở. Bấm nút bên dưới để bắt đầu — mọi Huynh Trưởng sẽ thấy chức năng "Điểm danh" để quét mã hoặc nhập mã số ngay.</p>
+            <p style="color:#7f8c8d; font-size:13px; margin-top:0;">Chưa có phiên điểm danh khẩn cấp nào đang mở. Bấm nút bên dưới để bắt đầu — mọi Huynh Trưởng sẽ thấy chức năng "Điểm danh" để quét mã QR hoặc nhập mã số ngay trong app.</p>
             <input id="khancap-ten-phien-input" type="text" placeholder="Tên phiên (không bắt buộc, VD: Họp khẩn tối nay)" style="width:100%; box-sizing:border-box; padding:10px; border:1px solid #ddd; border-radius:8px; margin-bottom:10px; font-size:13px;">
             <button onclick="khanCapBatDauPhienUI()" style="width:100%; border:none; background:#d32f2f; color:white; font-weight:bold; padding:12px; border-radius:10px; cursor:pointer; font-size:14px;">Bắt đầu điểm danh khẩn cấp</button>
           </div>
 
           <div id="khancap-hienma-box" class="card" style="padding:18px; text-align:center; display:none;">
             <div style="font-size:13px; color:#7f8c8d; margin-bottom:6px;"><span id="khancap-ten-phien">-</span></div>
-            <div style="font-size:34px; font-weight:bold; letter-spacing:6px; color:#d32f2f; margin:14px 0 4px;" id="khancap-maso-text">------</div>
+
+            <!-- Mã QR lớn: Trưởng mở tab "Điểm danh" -> "Quét mã QR" là điểm danh được ngay trong app -->
+            <div style="width:206px; max-width:72vw; margin:4px auto 10px; background:white; border:1px solid #e6e6e6; border-radius:14px; padding:8px; box-sizing:border-box;">
+              <div id="khancap-qr-anh" style="min-height:60px; display:flex; align-items:center; justify-content:center;"></div>
+            </div>
+            <div style="font-size:12px; color:#7f8c8d; margin-bottom:10px;"><i class="fas fa-qrcode"></i> Trưởng mở tab “Điểm danh” → bấm “Quét mã QR”</div>
+
+            <div style="font-size:12px; color:#95a5a6; margin-bottom:2px;">Hoặc nhập tay mã số</div>
+            <div style="font-size:30px; font-weight:bold; letter-spacing:6px; color:#d32f2f; margin:0 0 4px;" id="khancap-maso-text">------</div>
             <div style="font-size:12px; color:#7f8c8d;">Mã tự đổi sau <span id="khancap-demngugoc" style="font-weight:bold; color:#2c3e50;">…</span></div>
             <div style="margin-top:14px; background:#f8f9fa; border-radius:10px; padding:10px; font-size:14px; font-weight:bold; color:#2c3e50;">
               Đã điểm danh: <span id="khancap-sodadiemdanh" style="color:#2ecc71;">0 / 0</span>
@@ -3129,10 +3137,30 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           </div>
         </div>
 
-        <!-- TAB 2: ĐIỂM DANH - nhập tay mã số (mọi Huynh Trưởng) -->
+        <!-- TAB 2: ĐIỂM DANH - quét mã QR hoặc nhập tay mã số (mọi Huynh Trưởng) -->
         <div id="khancap-tab-diemdanh" class="kt-tab-content" style="display:none;">
           <div class="card" style="padding:16px; text-align:center;">
-            <p style="color:#7f8c8d; font-size:13px; margin-top:0;">Nhập mã số 4 chữ số đang hiện trên màn hình Admin để điểm danh.</p>
+            <p style="color:#7f8c8d; font-size:13px; margin-top:0;">Quét mã QR đang hiện trên màn hình Admin để điểm danh — hoặc nhập tay mã số 4 chữ số.</p>
+
+            <button id="khancap-nut-quet" onclick="khanCapMoQuetQR()" style="width:100%; border:none; background:#d32f2f; color:white; font-weight:bold; padding:13px; border-radius:12px; cursor:pointer; font-size:15px;"><i class="fas fa-qrcode"></i> Quét mã QR</button>
+
+            <div id="khancap-quet-khung" style="display:none; margin-top:14px;">
+              <div style="position:relative; border-radius:14px; overflow:hidden; background:#000; aspect-ratio:1 / 1; max-height:56vh; margin:0 auto;">
+                <video id="khancap-quet-video" playsinline muted autoplay style="width:100%; height:100%; object-fit:cover; display:block;"></video>
+                <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;">
+                  <div style="width:64%; aspect-ratio:1 / 1; border:3px solid rgba(255,255,255,0.92); border-radius:18px; box-shadow:0 0 0 9999px rgba(0,0,0,0.38);"></div>
+                </div>
+              </div>
+              <div id="khancap-quet-trangthai" style="font-size:12.5px; color:#7f8c8d; margin-top:8px; min-height:18px;">Đưa mã QR vào giữa khung…</div>
+              <button onclick="khanCapDungQuetQR(true)" style="width:100%; margin-top:10px; border:none; background:#95a5a6; color:white; font-weight:bold; padding:11px; border-radius:10px; cursor:pointer; font-size:13px;">Đóng camera</button>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:10px; margin:16px 0 10px; color:#95a5a6; font-size:12px;">
+              <div style="flex:1; height:1px; background:#e6e6e6;"></div>
+              <div>hoặc nhập tay</div>
+              <div style="flex:1; height:1px; background:#e6e6e6;"></div>
+            </div>
+
             <div>
               <input id="khancap-ma-input" type="text" maxlength="4" inputmode="numeric" placeholder="0000" style="width:100%; box-sizing:border-box; padding:12px; text-align:center; font-size:22px; letter-spacing:6px; border:1px solid #ddd; border-radius:8px; margin-bottom:10px;">
               <button onclick="khanCapNhapTay()" style="width:100%; border:none; background:#2c3e50; color:white; font-weight:bold; padding:12px; border-radius:10px; cursor:pointer; font-size:14px;">Xác nhận điểm danh</button>
@@ -6931,6 +6959,9 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     var khanCapThoiDiemHetHan = 0;    // mốc thời gian (ms, theo đồng hồ máy người dùng) khi mã hết hạn — nguồn sự thật duy nhất cho số đếm, tránh lệch do setInterval không chính xác tuyệt đối
     var khanCapMaSoDangHien = "";
     var khanCapPhienDangXemId = null; // phiên đang mở trong modal "Danh sách" - dùng khi bấm Xuất file báo cáo
+    var khanCapPhienIdDangHien = "";  // phiên đang MỞ - dùng để tạo nội dung mã QR
+    var khanCapQRDaLuu = "";          // nội dung QR đã vẽ - tránh vẽ lại mỗi lượt poll 2 giây
+    var khanCapTaiThuVien = {};       // cache Promise nạp thư viện ngoài (jsQR, qrcode-generator)
 
     // Chức năng Giáo Lý: đang lên kế hoạch, tạm thời chỉ hiện thông báo cho HT biết.
     // Khi triển khai xong nội dung thật, thay nội dung hàm này bằng showPage('giaoly-page', null) tương tự openKhanCap().
@@ -6951,6 +6982,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     // tránh tốn pin/dữ liệu và gọi server thừa khi không còn xem nữa.
     function khanCapDonDep() {
       khanCapAdminDungPolling();
+      khanCapDungQuetQR(true); // rời trang/đăng xuất -> tắt camera để không tốn pin
     }
 
     function khanCapChonTab(tab) {
@@ -6960,6 +6992,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         if (elNoiDung) elNoiDung.style.display = (t === tab) ? 'block' : 'none';
         if (elNut) elNut.classList.toggle('kt-tab-active', t === tab);
       });
+      if (tab !== 'diemdanh') khanCapDungQuetQR(true); // đổi tab -> tắt camera
       if (tab === 'hienma') {
         khanCapAdminBatDauPolling();
       } else {
@@ -7007,17 +7040,21 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           if (boxHienMa) boxHienMa.style.display = 'none';
           if (boxBatDau) boxBatDau.style.display = 'block';
           khanCapMaSoDangHien = "";
+          khanCapPhienIdDangHien = "";
+          khanCapQRDaLuu = "";
           khanCapThoiDiemHetHan = 0;
           return;
         }
         if (boxBatDau) boxBatDau.style.display = 'none';
         if (boxHienMa) boxHienMa.style.display = 'block';
+        khanCapPhienIdDangHien = res.phienId || "";
         document.getElementById('khancap-ten-phien').innerText = res.tenPhien;
         var maDoi = (res.maSo !== khanCapMaSoDangHien);
         if (maDoi) {
           khanCapMaSoDangHien = res.maSo;
           document.getElementById('khancap-maso-text').innerText = res.maSo;
         }
+        khanCapVeQRAnh(res.maSo);
         // Quy đổi "còn lại bao lâu" thành 1 mốc tuyệt đối trên đồng hồ máy người dùng:
         //   lúc gửi request + nửa thời gian đi/về + số giây còn lại server báo.
         // Nếu server mới có trả hetHanMs/serverNowMs thì dùng mốc tuyệt đối (chính xác nhất),
@@ -7174,20 +7211,245 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       }).khanCapXuatBaoCaoPDF(currentUserToken, khanCapPhienDangXemId);
     }
 
-    // ---------- TAB "ĐIỂM DANH" (mọi Huynh Trưởng) — chỉ nhập tay mã số ----------
+    // ---------- MÃ QR Ở TAB "HIỆN MÃ" ----------
+    // Nạp thư viện ngoài đúng 1 lần (jsQR để quét, qrcode-generator để vẽ QR).
+    // Để trong thư mục vendor/ nên chạy được cả khi mạng yếu (đã có service worker).
+    function khanCapNapThuVien(duongDan, tenBienToanCuc) {
+      if (window[tenBienToanCuc]) return Promise.resolve(window[tenBienToanCuc]);
+      if (khanCapTaiThuVien[duongDan]) return khanCapTaiThuVien[duongDan];
+      khanCapTaiThuVien[duongDan] = new Promise(function (resolve, reject) {
+        var s = document.createElement('script');
+        s.src = duongDan;
+        s.async = true;
+        s.onload = function () {
+          if (window[tenBienToanCuc]) resolve(window[tenBienToanCuc]);
+          else reject(new Error('Thư viện ' + tenBienToanCuc + ' không khởi tạo được'));
+        };
+        s.onerror = function () {
+          delete khanCapTaiThuVien[duongDan]; // cho phép thử lại khi có mạng
+          reject(new Error('Không tải được ' + duongDan));
+        };
+        document.head.appendChild(s);
+      });
+      return khanCapTaiThuVien[duongDan];
+    }
+
+    function khanCapVeQRAnh(maSo) {
+      var hop = document.getElementById('khancap-qr-anh');
+      if (!hop) return;
+      if (!maSo || !khanCapPhienIdDangHien) { hop.innerHTML = ''; khanCapQRDaLuu = ''; return; }
+      // Nội dung QR: XUANREKC:1:<phienId>:<maSo> — app đọc ra mã số rồi gửi khanCapDiemDanh,
+      // server vẫn tự kiểm tra mã còn hiệu lực nên QR cũ không dùng lại được.
+      var noiDung = 'XUANREKC:1:' + khanCapPhienIdDangHien + ':' + maSo;
+      if (noiDung === khanCapQRDaLuu) return;
+      khanCapNapThuVien('vendor/qrcode-generator.js', 'qrcode').then(function (qrcode) {
+        try {
+          var qr = qrcode(0, 'M');
+          qr.addData(noiDung);
+          qr.make();
+          hop.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 6, scalable: true, alt: 'Mã QR điểm danh khẩn cấp' });
+          var svg = hop.querySelector('svg');
+          if (svg) { svg.style.width = '100%'; svg.style.height = 'auto'; svg.style.display = 'block'; }
+          khanCapQRDaLuu = noiDung;
+        } catch (e) {
+          hop.innerHTML = '<div style="font-size:11.5px; color:#95a5a6; padding:16px 6px;">Không vẽ được mã QR — Trưởng dùng mã số bên dưới.</div>';
+          khanCapQRDaLuu = '';
+        }
+      }).catch(function () {
+        hop.innerHTML = '<div style="font-size:11.5px; color:#95a5a6; padding:16px 6px;">Không tải được bộ vẽ mã QR (lần đầu cần mạng) — Trưởng dùng mã số bên dưới.</div>';
+        khanCapQRDaLuu = '';
+      });
+    }
+
+    // ---------- QUÉT MÃ QR NGAY TRONG TAB "ĐIỂM DANH" ----------
+    var khanCapQuet = {
+      dangMo: false, dangXuLy: false, stream: null,
+      canvas: null, ctx: null, raf: null,
+      lanCuoi: 0, choDen: 0, noiDungLoi: ''
+    };
+
+    function khanCapDatTrangThaiQuet(chu) {
+      var el = document.getElementById('khancap-quet-trangthai');
+      if (el) el.innerText = chu;
+    }
+
+    function khanCapMoTaLoiCamera(err) {
+      var ten = String((err && err.name) || '');
+      if (ten === 'NotAllowedError' || ten === 'PermissionDeniedError' || ten === 'SecurityError') {
+        return 'Trưởng chưa cho phép dùng camera. Bấm vào biểu tượng khoá/nút “Cho phép” trên thanh địa chỉ rồi thử lại. Nếu đang mở app trong khung Google Apps Script, hãy mở bằng link GitHub Pages để dùng camera.';
+      }
+      if (ten === 'NotFoundError' || ten === 'DevicesNotFoundError' || ten === 'OverconstrainedError') {
+        return 'Không tìm thấy camera trên thiết bị này. Trưởng nhập mã 4 chữ số bên dưới giúp.';
+      }
+      if (ten === 'NotReadableError' || ten === 'TrackStartError') {
+        return 'Camera đang bị ứng dụng khác chiếm dụng. Trưởng đóng ứng dụng đó rồi thử lại.';
+      }
+      if (err && /(jsqr|vendor\/jsqr)/i.test(String(err.message || ''))) {
+        return 'Không tải được bộ quét QR (lần đầu cần mạng). Trưởng nhập mã 4 chữ số bên dưới giúp.';
+      }
+      return (err && err.message) ? String(err.message) : 'Thiết bị không mở được camera.';
+    }
+
+    function khanCapMoQuetQR() {
+      var q = khanCapQuet;
+      if (q.dangMo) return;
+      var khung = document.getElementById('khancap-quet-khung');
+      var video = document.getElementById('khancap-quet-video');
+      var nut = document.getElementById('khancap-nut-quet');
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        showToast('Thiết bị/trình duyệt này không cho mở camera trong app. Trưởng nhập mã 4 chữ số bên dưới giúp.', 'error');
+        return;
+      }
+      q.dangMo = true;
+      q.dangXuLy = false;
+      q.choDen = 0;
+      q.noiDungLoi = '';
+      if (khung) khung.style.display = 'block';
+      if (nut) { nut.disabled = true; nut.innerHTML = '<i class="fas fa-qrcode"></i> Đang mở camera…'; }
+      khanCapDatTrangThaiQuet('Đang mở camera…');
+
+      navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }
+      }).then(function (stream) {
+        if (!q.dangMo) { // người dùng đã đóng trong lúc chờ cấp quyền
+          try { stream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {}
+          return null;
+        }
+        q.stream = stream;
+        if (video) {
+          video.srcObject = stream;
+          try { video.setAttribute('playsinline', 'true'); } catch (e) {}
+          video.muted = true;
+          var choPhat = video.play();
+          if (choPhat && choPhat.catch) choPhat.catch(function () {});
+        }
+        khanCapDatTrangThaiQuet('Đang chuẩn bị bộ quét mã…');
+        return khanCapNapThuVien('vendor/jsqr.js', 'jsQR');
+      }).then(function () {
+        if (!q.dangMo) return;
+        if (!q.canvas) {
+          q.canvas = document.createElement('canvas');
+          q.ctx = q.canvas.getContext('2d', { willReadFrequently: true });
+        }
+        if (nut) { nut.disabled = false; nut.innerHTML = '<i class="fas fa-qrcode"></i> Quét lại'; }
+        khanCapDatTrangThaiQuet('Đưa mã QR vào giữa khung…');
+        q.lanCuoi = 0;
+        khanCapVongQuetQR();
+      }).catch(function (err) {
+        khanCapDungQuetQR(true);
+        showToast('Không mở được camera: ' + khanCapMoTaLoiCamera(err), 'error');
+      });
+    }
+
+    function khanCapDungQuetQR(imLang) {
+      var q = khanCapQuet;
+      if (q.raf) { try { cancelAnimationFrame(q.raf); } catch (e) {} q.raf = null; }
+      if (q.stream) {
+        try { q.stream.getTracks().forEach(function (t) { try { t.stop(); } catch (e) {} }); } catch (e) {}
+        q.stream = null;
+      }
+      var video = document.getElementById('khancap-quet-video');
+      if (video) {
+        try { video.pause(); } catch (e) {}
+        try { video.srcObject = null; } catch (e) {}
+      }
+      q.dangMo = false;
+      q.dangXuLy = false;
+      q.noiDungLoi = '';
+      var khung = document.getElementById('khancap-quet-khung');
+      if (khung) khung.style.display = 'none';
+      var nut = document.getElementById('khancap-nut-quet');
+      if (nut) { nut.disabled = false; nut.innerHTML = '<i class="fas fa-qrcode"></i> Quét mã QR'; }
+      if (!imLang) khanCapDatTrangThaiQuet('Đưa mã QR vào giữa khung…');
+    }
+
+    // Quét ~8 lần/giây (đủ nhanh, không làm nóng máy), thu nhỏ khung hình trước khi giải mã.
+    function khanCapVongQuetQR() {
+      var q = khanCapQuet;
+      if (!q.dangMo) return;
+      q.raf = requestAnimationFrame(khanCapVongQuetQR);
+      var now = Date.now();
+      if (q.dangXuLy || now < q.choDen) return;
+      if (now - q.lanCuoi < 110) return;
+      var video = document.getElementById('khancap-quet-video');
+      if (!video || video.readyState < 2 || !video.videoWidth || !video.videoHeight) return;
+      q.lanCuoi = now;
+      var tiLe = Math.min(1, 720 / Math.max(video.videoWidth, video.videoHeight));
+      var rong = Math.max(1, Math.round(video.videoWidth * tiLe));
+      var cao = Math.max(1, Math.round(video.videoHeight * tiLe));
+      if (q.canvas.width !== rong || q.canvas.height !== cao) { q.canvas.width = rong; q.canvas.height = cao; }
+      var ketQua = null;
+      try {
+        q.ctx.drawImage(video, 0, 0, rong, cao);
+        var anh = q.ctx.getImageData(0, 0, rong, cao);
+        ketQua = window.jsQR(anh.data, rong, cao, { inversionAttempts: 'dontInvert' });
+      } catch (e) { return; }
+      if (ketQua && ketQua.data) khanCapNhanMaQR(ketQua.data);
+    }
+
+    function khanCapDocMaQR(noiDung) {
+      var s = String(noiDung || '').trim();
+      // Định dạng app tự sinh: XUANREKC:1:<phienId>:<maSo 4 chữ số>
+      var m = s.match(/^XUANREKC:\d+:([0-9a-fA-F-]{8,40}):(\d{4})$/);
+      if (m) return { phienId: m[1], maSo: m[2] };
+      // Dự phòng: QR chỉ chứa đúng 4 chữ số
+      if (/^\d{4}$/.test(s)) return { phienId: '', maSo: s };
+      return null;
+    }
+
+    function khanCapNhanMaQR(noiDung) {
+      var q = khanCapQuet;
+      if (!q.dangMo || q.dangXuLy) return;
+      var ma = khanCapDocMaQR(noiDung);
+      if (!ma) {
+        if (q.noiDungLoi !== noiDung) {
+          q.noiDungLoi = noiDung;
+          khanCapDatTrangThaiQuet('Mã QR này không phải mã điểm danh của Xứ Đoàn. Đưa đúng mã vào khung giúp Trưởng…');
+        }
+        return;
+      }
+      q.noiDungLoi = '';
+      q.dangXuLy = true;
+      khanCapDatTrangThaiQuet('Đã đọc mã ' + ma.maSo + ' — đang ghi nhận…');
+      if (navigator.vibrate) { try { navigator.vibrate(60); } catch (e) {} }
+      khanCapGuiDiemDanh(ma.maSo, 'qr', function (thanhCong) {
+        if (thanhCong) { khanCapDungQuetQR(true); return; }
+        var q2 = khanCapQuet;
+        q2.dangXuLy = false;
+        q2.choDen = Date.now() + 3500; // tránh gọi server liên tục khi mã cũ vẫn nằm trong khung
+        if (q2.dangMo) khanCapDatTrangThaiQuet('Mã vừa quét không dùng được — quét mã mới nhất trên màn hình Admin…');
+      });
+    }
+
+    // Chuyển app sang nền -> tắt camera (điện thoại có thể khoá camera khi ẩn tab).
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden && khanCapQuet.dangMo) khanCapDungQuetQR(true);
+    });
+
+    // ---------- TAB "ĐIỂM DANH" (mọi Huynh Trưởng) — quét QR hoặc nhập tay ----------
     function khanCapNhapTay() {
       var v = document.getElementById('khancap-ma-input').value.trim();
       if (!/^\d{4}$/.test(v)) { showToast('Mã số phải gồm đúng 4 chữ số!', 'error'); return; }
-      khanCapGuiDiemDanh(v);
+      khanCapGuiDiemDanh(v, 'tay');
     }
-    function khanCapGuiDiemDanh(maSo) {
+    function khanCapGuiDiemDanh(maSo, kieu, xong) {
+      var laQR = (kieu === 'qr');
       google.script.run.withSuccessHandler(function (res) {
-        if (!res.success) { showToast(res.error || 'Điểm danh thất bại!', 'error'); return; }
+        if (!res || !res.success) {
+          showToast((res && res.error) || 'Điểm danh thất bại!', 'error');
+          if (xong) xong(false, res || {});
+          return;
+        }
         var inputMa = document.getElementById('khancap-ma-input'); if (inputMa) inputMa.value = '';
         if (res.daDiemDanhTruoc) showToast('Trưởng đã điểm danh phiên "' + res.tenPhien + '" trước đó rồi!', 'info');
+        else if (laQR) showToast('Quét mã thành công! Đã điểm danh phiên "' + res.tenPhien + '".', 'success');
         else showToast('Điểm danh thành công cho phiên "' + res.tenPhien + '"!', 'success');
-      }).withFailureHandler(function (err) { showToast('Lỗi kết nối: ' + err, 'error'); })
-        .khanCapDiemDanh(currentUserToken, maSo);
+        if (xong) xong(true, res);
+      }).withFailureHandler(function (err) {
+        showToast('Lỗi kết nối: ' + err, 'error');
+        if (xong) xong(false, { error: 'Lỗi kết nối' });
+      }).khanCapDiemDanh(currentUserToken, maSo, laQR ? 'qr' : 'tay');
     }
 
     var currentUserFullname = ""; 
