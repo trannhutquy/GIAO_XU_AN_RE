@@ -12182,11 +12182,12 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 // Hiện ĐÚNG 1 LẦN ngay sau khi đăng nhập (kể cả tự đăng nhập lại) cho mỗi phiên bản, trên mỗi thiết bị.
 // Muốn giới thiệu bản mới: đổi "so" (ví dụ "2.1.0") + sửa nội dung "muc" -> mọi người sẽ thấy lại 1 lần.
 var APP_PHIEN_BAN = {
-  so: "2.8.5",
+  so: "2.8.6",
   ngay: "13/11/2026",
   tieuDe: "Xứ Đoàn Thánh Anrê",
   muc: [
-    { icon: "fa-qrcode", tieuDe: "Điểm danh khẩn cấp bằng quét mã QR", moTa: "Màn hình Admin hiện mã QR lớn tự đổi mỗi 20 giây. Huynh Trưởng mở tab “Điểm danh” → bấm “Quét mã QR” là điểm danh được ngay trong app, không cần qua tab hay app khác. Vẫn giữ cách nhập tay 4 chữ số khi không mở được camera." },
+    { icon: "fa-qrcode", tieuDe: "Điểm danh QR ngay trong app", moTa: "Huynh Trưởng mở “Điểm danh QR” trong Cài đặt → bật camera quét mã QR cá nhân của nhau (hoặc nhập mã bằng tay) rồi gửi một lần. Mỗi lượt quét được lưu vào nhật ký riêng và tự ghi “Có” vào bảng điểm danh nếu đã có cột của buổi hôm nay." },
+    { icon: "fa-user-graduate", tieuDe: "Giáo Lý Viên quét QR Thiếu Nhi trong app", moTa: "Tab Điểm danh của Giáo Lý Viên có thêm nút bật camera quét mã QR trên thẻ Thiếu Nhi; không mở được camera thì nhập mã TN bằng tay." },
     { icon: "fa-graduation-cap", tieuDe: "CTTT: gửi & duyệt bài ngay trong app", moTa: "Huynh Trưởng có phân quyền gửi bài lên CTTT theo 4 lĩnh vực (Nhân Bản, Phong trào, Kĩ năng chuyên môn, Sinh hoạt); Quyền Tối Cao duyệt để bài về tất cả các máy." },
     { icon: "fa-coins", tieuDe: "Sắp xếp lại trang Thu Quỹ", moTa: "Bố cục 4 bước rõ ràng: chọn tuần → thu quỹ → quản trị → báo cáo. Thêm lọc Chưa thu/Đã thu/Miễn thu và nút về tuần hiện tại." },
     { icon: "fa-images", tieuDe: "Ảnh banner quảng cáo", moTa: "Banner trang chủ dùng 3 ảnh mới của Xứ Đoàn, tự chuyển slide, tải nhanh và xem được cả khi mất mạng." },
