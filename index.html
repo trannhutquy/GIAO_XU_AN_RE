@@ -2715,7 +2715,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           <div onclick="openBaoCaoVangLe()"><i class="fas fa-file-pdf"></i> Báo Cáo Vắng Lễ TN</div>
           <div id="menu-lichsu-tn" onclick="openLichSuChinhSuaTN()" style="display:none;"><i class="fas fa-history"></i> Lịch sử chỉnh sửa TN</div>
           <div id="menu-admin-panel" onclick="openAdminPanel()" style="display:none;"><i class="fas fa-server"></i> Quản Trị</div>
-          <div id="menu-diem-danh" onclick="openDiemDanh()" style="display:none;"><i class="fas fa-qrcode"></i> Điểm danh</div>
+          <div id="menu-diem-danh" onclick="openDiemDanh()" style="display:none;"><i class="fas fa-qrcode"></i> Điểm danh QR</div>
           <div onclick="openKhanCap()"><i class="fas fa-triangle-exclamation"></i> Điểm danh khẩn cấp</div>
           <div id="menu-bao-tri" onclick="openBaoTriModal()" style="display:none;"><i class="fas fa-triangle-exclamation"></i> Bảo trì ứng dụng</div>
           <div onclick="openAboutUs()"><i class="fas fa-info-circle"></i> Về chúng tôi</div>
@@ -3972,7 +3972,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
             document.getElementById("nav-approval").style.display = "none";
             document.getElementById("menu-lichsu-tn").style.display = "none";
             document.getElementById("menu-admin-panel").style.display = "none";
-            document.getElementById("menu-diem-danh").style.display = "none";
+            document.getElementById("menu-diem-danh").style.display = "flex"; // Điểm danh QR: mọi Huynh Trưởng đều dùng được
             document.getElementById("desktop-btn-duyet").style.display = "none";
           }
           // Mục "Duyệt Dữ Liệu" trong khu Quản Trị: CHỈ tài khoản có Quyền Tối Cao
@@ -7173,7 +7173,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
          07:00-09:45 và 16:00-18:45 (server cũng kiểm tra lại).
        ============================================================ */
     var ddqrState = {
-      mo: false, buoi: "", khungGio: "", hetLuc: 0,
+      dangXem: false, mo: false, buoi: "", khungGio: "", hetLuc: 0,
       danhSachHT: [], mapHT: {}, daGui: [], cho: [],
       demNguocTimer: null,
       quet: {
@@ -7184,6 +7184,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     var ddqrAudioCtx = null;
 
     function ddqrMoTrang() {
+      ddqrState.dangXem = true;
       ddqrState.cho = [];
       ddqrState.daGui = [];
       ddqrState.mapHT = {};
@@ -7200,6 +7201,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       ddqrDatNutQuet(false);
       ddqrDatTrangThaiQuet("Đang tải danh sách Huynh Trưởng...");
       google.script.run.withSuccessHandler(function (res) {
+        if (!ddqrState.dangXem) return; // đã rời trang trong lúc chờ server
         if (!res || !res.success) {
           var loi = (res && res.error) || "Không tải được trang điểm danh!";
           if (kg) { kg.style.background = "#fdecea"; kg.style.color = "#b71c1c"; kg.innerText = loi; }
@@ -7227,11 +7229,13 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           ddqrDungQuet();
         }
       }).withFailureHandler(function (err) {
+        if (!ddqrState.dangXem) return;
         if (kg) { kg.style.background = "#fdecea"; kg.style.color = "#b71c1c"; kg.innerText = "Lỗi kết nối: " + err; }
       }).diemDanhQRMoTrang(currentUserToken);
     }
 
     function ddqrDonDep() {
+      ddqrState.dangXem = false;
       ddqrDungDemNguoc();
       ddqrDungQuet();
     }
