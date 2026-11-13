@@ -7444,18 +7444,22 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       s = s.replace(/^HT:/i, "").trim().toUpperCase();
       q.noiDungLoi = "";
       var tt = ddqrState.mapHT[s];
+      if (ddqrDaGui(s)) {
+        // Ưu tiên báo "đã điểm danh" kể cả khi danh sách HT chưa tải xong
+        var daRoi = null;
+        for (var i = 0; i < ddqrState.daGui.length; i++) {
+          if (String(ddqrState.daGui[i].ma || "").trim().toUpperCase() === s) { daRoi = ddqrState.daGui[i]; break; }
+        }
+        showToast(((daRoi && daRoi.ten) || (tt && tt.ten) || s) + " đã được điểm danh hôm nay rồi!", "info");
+        q.choDen = Date.now() + 2500;
+        return;
+      }
       if (!tt) {
         if (q.noiDungLoi !== s) {
           q.noiDungLoi = s;
           ddqrDatTrangThaiQuet("Mã " + s + " không có trong danh sách Huynh Trưởng.");
         }
         q.choDen = Date.now() + 2000;
-        return;
-      }
-      q.noiDungLoi = "";
-      if (ddqrDaGui(s)) {
-        showToast(tt.ten + " đã được điểm danh hôm nay rồi!", "info");
-        q.choDen = Date.now() + 2500;
         return;
       }
       if (ddqrCoTrongCho(s)) {
