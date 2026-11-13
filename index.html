@@ -5075,6 +5075,42 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       document.getElementById("ctttDuyetModalBg").style.display = "flex";
       ctttVeDanhSachDuyet();
       ctttTaiChoDuyet(true);
+      ctttTaiLuuTru();
+    }
+
+    // Lưu trữ CTTT đã dọn: mỗi Trưởng chỉ thấy/tải được PDF của chính mình.
+    function ctttTaiLuuTru() {
+      var box = document.getElementById("ctttBackupBox");
+      var list = document.getElementById("ctttBackupList");
+      if (!box || !list || !currentUserToken) return;
+      list.innerHTML = '<div style="font-size:12px;color:#8a94a0;"><i class="fas fa-circle-notch fa-spin"></i> Đang tải...</div>';
+      google.script.run.withSuccessHandler(function (res) {
+        var ds = (res && res.success && res.danhSach) ? res.danhSach : [];
+        if (!ds.length) { box.style.display = "none"; list.innerHTML = ""; return; }
+        box.style.display = "block";
+        list.innerHTML = ds.map(function (x) {
+          var ky = ctttEsc(x.ky);
+          return '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 11px;border:1px solid #f0d6d6;border-radius:10px;margin-bottom:8px;background:#fffafa;">' +
+            '<div style="font-size:13px;color:#2c3e50;"><b>Bài cũ hơn ' + ky + '</b>' +
+            '<div style="font-size:12px;color:#6b7280;">' + (x.soBai || 0) + ' bài</div></div>' +
+            '<button type="button" class="cttt-btn-ok" style="padding:7px 12px;font-size:12.5px;white-space:nowrap;" onclick="ctttTaiPDFLichSu(\'' + ky + '\', this)"><i class="fas fa-file-pdf"></i> Tải PDF</button>' +
+            '</div>';
+        }).join("");
+      }).withFailureHandler(function () { box.style.display = "none"; })
+        .ctttLayBackupCuaToi(currentUserToken);
+    }
+
+    function ctttTaiPDFLichSu(ky, btn) {
+      var goc = btn ? btn.innerHTML : "";
+      if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tạo...'; }
+      google.script.run.withSuccessHandler(function (kq) {
+        if (btn) { btn.disabled = false; btn.innerHTML = goc; }
+        if (!kq || kq.success === false) { showToast((kq && kq.error) || "Không tạo được file PDF!", "error"); return; }
+        hienThiKetQuaPDF(kq);
+      }).withFailureHandler(function () {
+        if (btn) { btn.disabled = false; btn.innerHTML = goc; }
+        showToast("Lỗi kết nối, vui lòng thử lại!", "error");
+      }).ctttXuatPDFLichSu(currentUserToken, ky);
     }
 
     function ctttDongDanhSachDuyet() {
@@ -12174,6 +12210,15 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       <button class="cttt-modal-close" onclick="ctttDongDanhSachDuyet()" aria-label="Đóng"><i class="fas fa-times"></i></button>
     </div>
     <div id="ctttDuyetList" class="cttt-pending-list"></div>
+    <div id="ctttBackupBox" style="display:none; margin-top:16px; padding-top:14px; border-top:1px dashed #e3b5b5;">
+      <div style="font-size:14px; font-weight:800; color:#2c3e50; margin-bottom:4px;">
+        <i class="fas fa-box-archive" style="color:#c62828;"></i> Lưu trữ đã dọn (6 tháng)
+      </div>
+      <div style="font-size:12px; color:#6b7280; line-height:1.45; margin-bottom:8px;">
+        Bài đã duyệt/từ chối cũ hơn 6 tháng được sao lưu trước khi tự dọn. Bấm để tải PDF lịch sử của bạn về máy.
+      </div>
+      <div id="ctttBackupList"></div>
+    </div>
   </div>
 </div>
 
@@ -12182,10 +12227,11 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 // Hiện ĐÚNG 1 LẦN ngay sau khi đăng nhập (kể cả tự đăng nhập lại) cho mỗi phiên bản, trên mỗi thiết bị.
 // Muốn giới thiệu bản mới: đổi "so" (ví dụ "2.1.0") + sửa nội dung "muc" -> mọi người sẽ thấy lại 1 lần.
 var APP_PHIEN_BAN = {
-  so: "2.8.6",
+  so: "2.8.7",
   ngay: "13/11/2026",
   tieuDe: "Xứ Đoàn Thánh Anrê",
   muc: [
+    { icon: "fa-box-archive", tieuDe: "Tự dọn bài CTTT cũ mỗi 6 tháng", moTa: "Bài gửi lên đã duyệt/từ chối quá 6 tháng được sao lưu rồi tự dọn; bài “Chờ duyệt” giữ nguyên. Mỗi Trưởng vào CTTT → “Bài đã gửi” → “Lưu trữ đã dọn” để tải PDF lịch sử của mình về máy." },
     { icon: "fa-qrcode", tieuDe: "Điểm danh QR ngay trong app", moTa: "Huynh Trưởng mở “Điểm danh QR” trong Cài đặt → bật camera quét mã QR cá nhân của nhau (hoặc nhập mã bằng tay) rồi gửi một lần. Mỗi lượt quét được lưu vào nhật ký riêng và tự ghi “Có” vào bảng điểm danh nếu đã có cột của buổi hôm nay." },
     { icon: "fa-user-graduate", tieuDe: "Giáo Lý Viên quét QR Thiếu Nhi trong app", moTa: "Tab Điểm danh của Giáo Lý Viên có thêm nút bật camera quét mã QR trên thẻ Thiếu Nhi; không mở được camera thì nhập mã TN bằng tay." },
     { icon: "fa-graduation-cap", tieuDe: "CTTT: gửi & duyệt bài ngay trong app", moTa: "Huynh Trưởng có phân quyền gửi bài lên CTTT theo 4 lĩnh vực (Nhân Bản, Phong trào, Kĩ năng chuyên môn, Sinh hoạt); Quyền Tối Cao duyệt để bài về tất cả các máy." },
