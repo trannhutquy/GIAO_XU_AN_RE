@@ -2571,8 +2571,22 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         <div class="card">
           <h3 style="margin-top:0;">Điểm danh buổi học hôm nay</h3>
           <div id="glv-diemdanh-siso" class="glv-sum"></div>
-          <button class="btn-action" onclick="glvMoAppDiemDanhQR()" style="margin-bottom:10px;"><i class="fas fa-qrcode"></i> Mở App Điểm Danh QR</button>
-          <p class="glv-note">Mở trang điểm danh QR ở tab mới – dùng chung với Huynh Trưởng.</p>
+          <button class="btn-action" id="glv-dd-nut-quet" onclick="glvMoAppDiemDanhQR()" style="margin-bottom:10px;"><i class="fas fa-qrcode"></i> Bật camera quét mã</button>
+          <p class="glv-note">Quét mã QR trên thẻ của Thiếu Nhi để điểm danh ngay trong app — không cần mở trang ngoài.</p>
+          <div id="glv-dd-quet-khung" style="display:none; margin-bottom:10px;">
+            <div style="position:relative; border-radius:12px; overflow:hidden; background:#000; aspect-ratio:1 / 1; max-height:46vh; margin:0 auto;">
+              <video id="glv-dd-quet-video" playsinline muted autoplay style="width:100%; height:100%; object-fit:cover; display:block;"></video>
+              <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;">
+                <div style="width:64%; aspect-ratio:1 / 1; border:3px solid rgba(255,255,255,0.92); border-radius:16px; box-shadow:0 0 0 9999px rgba(0,0,0,0.38);"></div>
+              </div>
+            </div>
+            <div id="glv-dd-quet-trangthai" style="font-size:12px; color:#7f8c8d; margin-top:8px; text-align:center; min-height:17px;">Đưa mã QR của Thiếu Nhi vào giữa khung…</div>
+            <button onclick="glvDungQuetQR()" style="width:100%; margin-top:8px; border:none; background:#95a5a6; color:white; font-weight:bold; padding:10px; border-radius:9px; cursor:pointer; font-size:13px;">Đóng camera</button>
+          </div>
+          <div style="display:flex; gap:8px; margin-bottom:10px;">
+            <input id="glv-dd-ma-tay" type="text" placeholder="Nhập mã TN (nếu không quét được)" style="flex:1; min-width:0; box-sizing:border-box; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:13px; text-transform:uppercase;">
+            <button onclick="glvDiemDanhMaTay()" style="border:none; background:#2c3e50; color:white; font-weight:bold; padding:10px 14px; border-radius:8px; cursor:pointer; font-size:13px;">Điểm danh</button>
+          </div>
           <div id="glv-diemdanh-danhsach"></div>
         </div>
       </div>
@@ -3083,6 +3097,60 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         <div id="kt-tab-quanly" class="kt-tab-content" style="display:none;">
           <button onclick="ktAdmMoModalTaoDe(null)" style="width:100%; border:none; background:#0277bd; color:white; font-weight:bold; padding:11px; border-radius:10px; cursor:pointer; font-size:13px; margin-bottom:14px;"><i class="fas fa-plus"></i> Tạo bài kiểm tra mới</button>
           <div id="kt-ds-quanly"></div>
+        </div>
+      </div>
+
+      <!-- ======================================================
+           ĐIỂM DANH QR (tích hợp trong app — không mở tab ngoài)
+           Huynh Trưởng quét mã QR cá nhân của nhau để điểm danh buổi
+           Thứ 3 / Thứ 5 / Chúa Nhật, sau đó bấm "Gửi dữ liệu".
+           ====================================================== -->
+      <div id="diemdanhqr-page" class="page">
+        <button class="desktop-only desktop-modal-close" onclick="closeDesktopOverlay('diemdanhqr-page')"><i class="fas fa-times"></i></button>
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:15px;">
+          <h2 style="margin:0;"><i class="fas fa-qrcode" style="color:#d32f2f;"></i> Điểm Danh QR</h2>
+          <button onclick="showPage('home', document.querySelector('.nav-item'))" style="border:none; background:#f1f3f5; padding:8px 12px; border-radius:8px; cursor:pointer; color:#2c3e50;"><i class="fas fa-arrow-left"></i></button>
+        </div>
+
+        <div class="card" style="padding:14px; margin-bottom:12px;">
+          <div id="ddqr-khunggio" style="border-radius:10px; padding:10px 12px; font-size:13px; font-weight:bold; text-align:center; background:#f8f9fa; color:#7f8c8d;">Đang kiểm tra khung giờ...</div>
+          <div id="ddqr-trangthai" style="font-size:12.5px; color:#7f8c8d; margin-top:8px; text-align:center; min-height:17px;"></div>
+          <button id="ddqr-nut-quet" onclick="ddqrBatDauQuet()" disabled style="width:100%; margin-top:10px; border:none; background:#d32f2f; color:white; font-weight:bold; padding:12px; border-radius:10px; cursor:pointer; font-size:14px; opacity:0.55;"><i class="fas fa-camera"></i> Bật camera quét mã</button>
+
+          <div id="ddqr-quet-khung" style="display:none; margin-top:14px;">
+            <div style="position:relative; border-radius:14px; overflow:hidden; background:#000; aspect-ratio:1 / 1; max-height:52vh; margin:0 auto;">
+              <video id="ddqr-quet-video" playsinline muted autoplay style="width:100%; height:100%; object-fit:cover; display:block;"></video>
+              <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;">
+                <div style="width:64%; aspect-ratio:1 / 1; border:3px solid rgba(255,255,255,0.92); border-radius:18px; box-shadow:0 0 0 9999px rgba(0,0,0,0.38);"></div>
+              </div>
+            </div>
+            <div id="ddqr-quet-trangthai" style="font-size:12.5px; color:#7f8c8d; margin-top:8px; text-align:center; min-height:18px;">Đưa mã QR cá nhân vào giữa khung…</div>
+            <button onclick="ddqrDungQuet()" style="width:100%; margin-top:8px; border:none; background:#95a5a6; color:white; font-weight:bold; padding:10px; border-radius:10px; cursor:pointer; font-size:13px;">Đóng camera</button>
+          </div>
+        </div>
+
+        <div class="card" style="padding:14px; margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <div style="font-size:14px; font-weight:bold; color:#2c3e50;">Đã quét: <span id="ddqr-dem" style="color:#d32f2f; font-size:18px;">0</span></div>
+            <div style="font-size:12px; color:#7f8c8d;">Đã gửi hôm nay: <b id="ddqr-dagui">0</b></div>
+          </div>
+
+          <div style="display:flex; gap:8px; margin-bottom:10px;">
+            <input id="ddqr-ma-tay" type="text" placeholder="Nhập mã HT (nếu không quét được)" style="flex:1; min-width:0; box-sizing:border-box; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:13px; text-transform:uppercase;">
+            <button onclick="ddqrThemMaTay()" style="border:none; background:#2c3e50; color:white; font-weight:bold; padding:10px 14px; border-radius:8px; cursor:pointer; font-size:13px;">Thêm</button>
+          </div>
+
+          <div id="ddqr-ds-cho" style="max-height:230px; overflow-y:auto; border:1px solid #eee; border-radius:10px; background:#fcfcfc;"></div>
+
+          <div style="display:flex; gap:8px; margin-top:12px;">
+            <button id="ddqr-nut-gui" onclick="ddqrGui()" disabled style="flex:2; border:none; background:#2e7d32; color:white; font-weight:bold; padding:12px; border-radius:10px; cursor:pointer; font-size:14px; opacity:0.55;">Gửi dữ liệu</button>
+            <button onclick="ddqrXoaCho()" style="flex:1; border:none; background:#f8f9fa; color:#c62828; border:1px solid #c62828; font-weight:bold; padding:12px; border-radius:10px; cursor:pointer; font-size:13px;">Xoá</button>
+          </div>
+        </div>
+
+        <div class="card" style="padding:14px;">
+          <div style="font-size:14px; font-weight:bold; color:#2c3e50; margin-bottom:8px;"><i class="fas fa-check-circle" style="color:#2ecc71;"></i> Đã gửi hôm nay</div>
+          <div id="ddqr-ds-dagui"></div>
         </div>
       </div>
 
@@ -4120,6 +4188,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       });
       glvCapNhatPill();
       window.scrollTo(0, 0);
+      if (tab !== "diemdanh") { try { glvDungQuetQR(); } catch (e) {} }
       if (tab === "dsachlop" && !glvDsachLopDaTai) { taiDanhSachThieuNhiGLV(); }
       if (tab === "diemdanh") { taiDiemDanhHomNayGLV(); }
     }
@@ -4233,17 +4302,165 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       }).layDiemDanhHomNayGLV(currentGLVToken);
     }
 
-    function glvMoAppDiemDanhQR() {
-      // Mở app Điểm Danh QR (đang deploy trên Vercel) ở tab mới - dùng chung với HT.
-      // Nếu trình duyệt chặn popup (một số bản iOS/Android), báo rõ để GLV biết
-      // cần cho phép mở tab mới thay vì bấm mà không thấy gì xảy ra.
-      var cuaSoMoi = window.open("https://bensieu.vercel.app/", "_blank");
-      if (cuaSoMoi) {
-        try { cuaSoMoi.opener = null; } catch (e) {}
-      } else {
-        try { showToast("Trình duyệt đã chặn tab mới. Vui lòng cho phép mở tab rồi thử lại.", "error"); }
-        catch (e2) { alert("Trình duyệt đã chặn tab mới. Vui lòng cho phép mở tab rồi thử lại."); }
+    // ---------------- QUÉT QR ĐIỂM DANH THIẾU NHI NGAY TRONG APP ----------------
+    // Mã QR trên thẻ Thiếu Nhi có dạng "TNGL:<Mã TN>". Quét xong gọi thẳng
+    // server diemDanhTheoQRGLV (đã có sẵn từ trước) - không mở trang ngoài nữa.
+    var glvQuet = {
+      dangMo: false, dangXuLy: false, stream: null,
+      canvas: null, ctx: null, raf: null,
+      lanCuoi: 0, choDen: 0, noiDungLoi: ''
+    };
+
+    function glvDatTrangThaiQuet(chu) {
+      var el = document.getElementById("glv-dd-quet-trangthai");
+      if (el) el.innerText = chu;
+    }
+
+    function glvDungQuetQR() {
+      var q = glvQuet;
+      if (!q) return;
+      if (q.raf) { try { cancelAnimationFrame(q.raf); } catch (e) {} q.raf = null; }
+      if (q.stream) {
+        try { q.stream.getTracks().forEach(function (t) { try { t.stop(); } catch (e) {} }); } catch (e) {}
+        q.stream = null;
       }
+      var video = document.getElementById("glv-dd-quet-video");
+      if (video) {
+        try { video.pause(); } catch (e) {}
+        try { video.srcObject = null; } catch (e) {}
+      }
+      q.dangMo = false;
+      q.dangXuLy = false;
+      q.noiDungLoi = "";
+      var khung = document.getElementById("glv-dd-quet-khung");
+      if (khung) khung.style.display = "none";
+      var nut = document.getElementById("glv-dd-nut-quet");
+      if (nut) { nut.disabled = false; nut.innerHTML = '<i class="fas fa-qrcode"></i> Bật camera quét mã'; }
+      glvDatTrangThaiQuet("Đưa mã QR của Thiếu Nhi vào giữa khung…");
+    }
+
+    function glvMoAppDiemDanhQR() {
+      var q = glvQuet;
+      if (q.dangMo) { glvDungQuetQR(); return; }
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        showToast("Thiết bị/trình duyệt này không cho mở camera trong app. Thầy/cô nhập mã TN bên dưới giúp.", "error");
+        return;
+      }
+      var khung = document.getElementById("glv-dd-quet-khung");
+      var video = document.getElementById("glv-dd-quet-video");
+      var nut = document.getElementById("glv-dd-nut-quet");
+      q.dangMo = true;
+      q.dangXuLy = false;
+      q.choDen = 0;
+      q.noiDungLoi = "";
+      if (khung) khung.style.display = "block";
+      if (nut) { nut.disabled = true; nut.innerHTML = '<i class="fas fa-qrcode"></i> Đang mở camera…'; }
+      glvDatTrangThaiQuet("Đang mở camera…");
+
+      navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 } }
+      }).then(function (stream) {
+        if (!q.dangMo) {
+          try { stream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {}
+          return null;
+        }
+        q.stream = stream;
+        if (video) {
+          video.srcObject = stream;
+          try { video.setAttribute("playsinline", "true"); } catch (e) {}
+          video.muted = true;
+          var choPhat = video.play();
+          if (choPhat && choPhat.catch) choPhat.catch(function () {});
+        }
+        glvDatTrangThaiQuet("Đang chuẩn bị bộ quét mã…");
+        return khanCapNapThuVien("vendor/jsqr.js", "jsQR");
+      }).then(function () {
+        if (!q.dangMo) return;
+        if (!q.canvas) {
+          q.canvas = document.createElement("canvas");
+          q.ctx = q.canvas.getContext("2d", { willReadFrequently: true });
+        }
+        if (nut) { nut.disabled = false; nut.innerHTML = '<i class="fas fa-qrcode"></i> Đóng camera'; }
+        glvDatTrangThaiQuet("Đưa mã QR của Thiếu Nhi vào giữa khung…");
+        q.lanCuoi = 0;
+        glvVongQuetQR();
+      }).catch(function (err) {
+        glvDungQuetQR();
+        showToast("Không mở được camera: " + khanCapMoTaLoiCamera(err), "error");
+      });
+    }
+
+    function glvVongQuetQR() {
+      var q = glvQuet;
+      if (!q.dangMo) return;
+      q.raf = requestAnimationFrame(glvVongQuetQR);
+      var now = Date.now();
+      if (q.dangXuLy || now < q.choDen) return;
+      if (now - q.lanCuoi < 110) return;
+      var video = document.getElementById("glv-dd-quet-video");
+      if (!video || video.readyState < 2 || !video.videoWidth || !video.videoHeight) return;
+      q.lanCuoi = now;
+      var tiLe = Math.min(1, 720 / Math.max(video.videoWidth, video.videoHeight));
+      var rong = Math.max(1, Math.round(video.videoWidth * tiLe));
+      var cao = Math.max(1, Math.round(video.videoHeight * tiLe));
+      if (q.canvas.width !== rong || q.canvas.height !== cao) { q.canvas.width = rong; q.canvas.height = cao; }
+      var ketQua = null;
+      try {
+        q.ctx.drawImage(video, 0, 0, rong, cao);
+        var anh = q.ctx.getImageData(0, 0, rong, cao);
+        ketQua = window.jsQR(anh.data, rong, cao, { inversionAttempts: "dontInvert" });
+      } catch (e) { return; }
+      if (ketQua && ketQua.data) glvNhanMaQR(ketQua.data);
+    }
+
+    function glvNhanMaQR(noiDung) {
+      var q = glvQuet;
+      if (!q.dangMo || q.dangXuLy) return;
+      var s = String(noiDung || "").trim();
+      if (!s) return;
+      var maTN = s.indexOf("TNGL:") === 0 ? s.substring(5).trim() : s;
+      if (!maTN || maTN.length > 40) {
+        if (q.noiDungLoi !== s) { q.noiDungLoi = s; glvDatTrangThaiQuet("Mã QR này không phải mã Thiếu Nhi của hệ thống."); }
+        q.choDen = Date.now() + 2000;
+        return;
+      }
+      q.noiDungLoi = "";
+      q.dangXuLy = true;
+      glvDatTrangThaiQuet("Đã đọc mã " + maTN + " — đang ghi nhận…");
+      if (navigator.vibrate) { try { navigator.vibrate(60); } catch (e) {} }
+      glvDiemDanhTheoChuoi("TNGL:" + maTN, "qr", function (thanhCong) {
+        var q2 = glvQuet;
+        q2.dangXuLy = false;
+        q2.choDen = Date.now() + 2500;
+        if (q2.dangMo) glvDatTrangThaiQuet(thanhCong ? "Đã điểm danh — mời quét em tiếp theo…" : "Chưa ghi được — quét lại hoặc nhập tay mã TN…");
+      });
+    }
+
+    function glvDiemDanhTheoChuoi(chuoiQR, kieu, xong) {
+      google.script.run.withSuccessHandler(function (res) {
+        if (!res || !res.success) {
+          var laDaRoi = !!(res && res.daDiemDanhRoi);
+          showToast((res && res.error) || "Điểm danh thất bại!", laDaRoi ? "info" : "error");
+          if (xong) xong(false, res || {});
+          return;
+        }
+        showToast("Đã điểm danh: " + (res.ten || res.maTN || "") + (res.gio ? (" (" + res.gio + ")") : ""), "success");
+        taiDiemDanhHomNayGLV();
+        if (xong) xong(true, res);
+      }).withFailureHandler(function (err) {
+        showToast("Lỗi kết nối: " + err, "error");
+        if (xong) xong(false, { error: "Lỗi kết nối" });
+      }).diemDanhTheoQRGLV(currentGLVToken, chuoiQR);
+    }
+
+    function glvDiemDanhMaTay() {
+      var input = document.getElementById("glv-dd-ma-tay");
+      if (!input) return;
+      var ma = String(input.value || "").trim().toUpperCase();
+      if (!ma) { showToast("Vui lòng nhập mã Thiếu Nhi!", "error"); return; }
+      input.value = "";
+      glvDiemDanhTheoChuoi("TNGL:" + ma, "tay");
     }
 
     function confirmEntry() {
@@ -5195,7 +5412,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     }
 
     // ĐIỀU HƯỚNG APP VÀ CÀI ĐẶT
-    var DESKTOP_OVERLAY_IDS = ['thieunhi-page', 'report', 'approval-page', 'quy-page', 'thidua-page', 'kiemtra-page', 'khancap-page'];
+    var DESKTOP_OVERLAY_IDS = ['thieunhi-page', 'report', 'approval-page', 'quy-page', 'thidua-page', 'kiemtra-page', 'khancap-page', 'diemdanhqr-page'];
     function isDesktopLayout() { return window.matchMedia('(min-width: 992px)').matches; }
     function showOverlayBackdrop() {
       var bd = document.getElementById('desktop-overlay-backdrop');
@@ -5211,7 +5428,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       setTimeout(function() { bd.classList.remove('hide'); }, 200);
     }
     function closeDesktopOverlayByBackdrop() {
-      var openOverlay = document.querySelector('#thieunhi-page.active, #report.active, #approval-page.active, #quy-page.active, #thidua-page.active, #kiemtra-page.active, #khancap-page.active');
+      var openOverlay = document.querySelector('#thieunhi-page.active, #report.active, #approval-page.active, #quy-page.active, #thidua-page.active, #kiemtra-page.active, #khancap-page.active, #diemdanhqr-page.active');
       if (openOverlay) closeDesktopOverlay(openOverlay.id);
     }
     function showPage(id, navEl) {
@@ -5370,6 +5587,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       dungPollNen();
       dungApprovalBadgePolling();
       khanCapDonDep();
+      try { ddqrDonDep(); } catch (eDD) {}
+      try { glvDungQuetQR(); } catch (eGLV) {}
       var elApprovalNav = document.getElementById("approval-badge-nav");
       var elApprovalDesktop = document.getElementById("approval-badge-desktop");
       if (elApprovalNav) elApprovalNav.style.display = "none";
@@ -6942,8 +7161,427 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     function reloadApp() { window.location.reload(); }
 
     function openDiemDanh() {
-      // Mở app Điểm Danh QR (đang deploy trên Vercel) ở tab mới, chỉ dành cho Admin
-      window.open("https://bensieu.vercel.app/", "_blank");
+      // Điểm danh QR đã tích hợp trong app — không mở bensieu.vercel.app nữa.
+      document.getElementById("settingsDropdown").style.display = "none";
+      showPage("diemdanhqr-page", null);
+    }
+
+    /* ============================================================
+       ĐIỂM DANH QR TRONG APP (dành cho Huynh Trưởng)
+       - Quét mã QR cá nhân của nhau, cộng dồn danh sách rồi gửi 1 lần.
+       - Chỉ mở trong khung giờ: Thứ 3/Thứ 5 16:00-18:45; Chúa Nhật
+         07:00-09:45 và 16:00-18:45 (server cũng kiểm tra lại).
+       ============================================================ */
+    var ddqrState = {
+      mo: false, buoi: "", khungGio: "", hetLuc: 0,
+      danhSachHT: [], mapHT: {}, daGui: [], cho: [],
+      demNguocTimer: null,
+      quet: {
+        dangMo: false, stream: null, canvas: null, ctx: null, raf: null,
+        lanCuoi: 0, choDen: 0, noiDungLoi: ""
+      }
+    };
+    var ddqrAudioCtx = null;
+
+    function ddqrMoTrang() {
+      ddqrState.cho = [];
+      ddqrState.daGui = [];
+      ddqrState.mapHT = {};
+      ddqrState.mo = false;
+      ddqrState.hetLuc = 0;
+      ddqrVeDsCho();
+      ddqrVeDaGui();
+      var kg = document.getElementById("ddqr-khunggio");
+      if (kg) {
+        kg.style.background = "#f8f9fa";
+        kg.style.color = "#7f8c8d";
+        kg.innerText = "Đang kiểm tra khung giờ...";
+      }
+      ddqrDatNutQuet(false);
+      ddqrDatTrangThaiQuet("Đang tải danh sách Huynh Trưởng...");
+      google.script.run.withSuccessHandler(function (res) {
+        if (!res || !res.success) {
+          var loi = (res && res.error) || "Không tải được trang điểm danh!";
+          if (kg) { kg.style.background = "#fdecea"; kg.style.color = "#b71c1c"; kg.innerText = loi; }
+          showToast(loi, "error");
+          return;
+        }
+        ddqrState.buoi = res.buoi || "";
+        ddqrState.khungGio = res.khungGio || "";
+        ddqrState.mo = !!res.mo;
+        ddqrState.hetLuc = res.mo ? (Date.now() + (Number(res.giayConLai) || 0) * 1000) : 0;
+        ddqrState.danhSachHT = res.danhSachHT || [];
+        ddqrState.mapHT = {};
+        ddqrState.danhSachHT.forEach(function (x) {
+          if (x && x.ma) ddqrState.mapHT[String(x.ma).trim().toUpperCase()] = x;
+        });
+        ddqrState.daGui = res.daGuiHomNay || [];
+        ddqrVeKhungGio();
+        ddqrVeDaGui();
+        ddqrVeDsCho();
+        if (ddqrState.mo) {
+          ddqrBatDauDemNguoc();
+          ddqrDatTrangThaiQuet("Sẵn sàng quét mã QR cá nhân của Trưởng.");
+        } else {
+          ddqrDungDemNguoc();
+          ddqrDungQuet();
+        }
+      }).withFailureHandler(function (err) {
+        if (kg) { kg.style.background = "#fdecea"; kg.style.color = "#b71c1c"; kg.innerText = "Lỗi kết nối: " + err; }
+      }).diemDanhQRMoTrang(currentUserToken);
+    }
+
+    function ddqrDonDep() {
+      ddqrDungDemNguoc();
+      ddqrDungQuet();
+    }
+
+    function ddqrDatNutQuet(bat) {
+      var nut = document.getElementById("ddqr-nut-quet");
+      if (!nut) return;
+      nut.disabled = !bat;
+      nut.style.opacity = bat ? "1" : "0.55";
+    }
+
+    function ddqrDatTrangThaiQuet(chu) {
+      var el = document.getElementById("ddqr-quet-trangthai");
+      if (el) el.innerText = chu;
+    }
+
+    function ddqrVeKhungGio() {
+      var el = document.getElementById("ddqr-khunggio");
+      if (!el) return;
+      if (ddqrState.mo) {
+        var conLai = Math.max(0, Math.ceil((ddqrState.hetLuc - Date.now()) / 1000));
+        var mm = Math.floor(conLai / 60), ss = conLai % 60;
+        el.style.background = "#e8f5e9";
+        el.style.color = "#1b5e20";
+        el.innerHTML = "Đang trong giờ điểm danh · <b>" + escapeHtml(ddqrState.buoi) + "</b> · còn <b>" +
+          mm + ":" + String(ss).padStart(2, "0") + "</b>";
+        ddqrDatNutQuet(true);
+      } else {
+        el.style.background = "#fdecea";
+        el.style.color = "#b71c1c";
+        if (ddqrState.buoi === "Ngoài lịch") {
+          el.innerText = "Hôm nay không có buổi điểm danh. Lịch: Thứ 3, Thứ 5 và Chúa Nhật.";
+        } else {
+          el.innerText = "Ngoài giờ điểm danh · Buổi " + ddqrState.buoi + " (" + ddqrState.khungGio + ")";
+        }
+        ddqrDatNutQuet(false);
+      }
+    }
+
+    function ddqrDungDemNguoc() {
+      if (ddqrState.demNguocTimer) {
+        clearInterval(ddqrState.demNguocTimer);
+        ddqrState.demNguocTimer = null;
+      }
+    }
+
+    function ddqrBatDauDemNguoc() {
+      ddqrDungDemNguoc();
+      ddqrState.demNguocTimer = setInterval(function () {
+        if (!ddqrState.mo) return;
+        if (Date.now() >= ddqrState.hetLuc) {
+          ddqrState.mo = false;
+          ddqrDungDemNguoc();
+          ddqrDungQuet();
+          ddqrVeKhungGio();
+          ddqrVeDsCho();
+          showToast("Đã hết khung giờ điểm danh.", "info");
+          return;
+        }
+        ddqrVeKhungGio();
+      }, 1000);
+    }
+
+    function ddqrBip() {
+      try {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        if (!ddqrAudioCtx) ddqrAudioCtx = new AC();
+        var ctx = ddqrAudioCtx;
+        if (ctx.state === "suspended") { try { ctx.resume(); } catch (e) {} }
+        var osc = ctx.createOscillator();
+        osc.type = "sine";
+        osc.frequency.value = 880;
+        osc.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.09);
+      } catch (e) {}
+    }
+
+    function ddqrBatDauQuet() {
+      var q = ddqrState.quet;
+      if (q.dangMo) { ddqrDungQuet(); return; }
+      if (!ddqrState.mo) {
+        showToast("Ngoài khung giờ điểm danh nên chưa mở được camera.", "error");
+        return;
+      }
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        showToast("Thiết bị/trình duyệt này không cho mở camera trong app. Trưởng nhập mã HT bên dưới giúp.", "error");
+        return;
+      }
+      var khung = document.getElementById("ddqr-quet-khung");
+      var video = document.getElementById("ddqr-quet-video");
+      var nut = document.getElementById("ddqr-nut-quet");
+      q.dangMo = true;
+      q.choDen = 0;
+      q.noiDungLoi = "";
+      if (khung) khung.style.display = "block";
+      if (nut) { nut.disabled = true; nut.innerHTML = '<i class="fas fa-qrcode"></i> Đang mở camera…'; }
+      ddqrDatTrangThaiQuet("Đang mở camera…");
+
+      navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 } }
+      }).then(function (stream) {
+        if (!q.dangMo) {
+          try { stream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {}
+          return null;
+        }
+        q.stream = stream;
+        if (video) {
+          video.srcObject = stream;
+          try { video.setAttribute("playsinline", "true"); } catch (e) {}
+          video.muted = true;
+          var choPhat = video.play();
+          if (choPhat && choPhat.catch) choPhat.catch(function () {});
+        }
+        ddqrDatTrangThaiQuet("Đang chuẩn bị bộ quét mã…");
+        return khanCapNapThuVien("vendor/jsqr.js", "jsQR");
+      }).then(function () {
+        if (!q.dangMo) return;
+        if (!q.canvas) {
+          q.canvas = document.createElement("canvas");
+          q.ctx = q.canvas.getContext("2d", { willReadFrequently: true });
+        }
+        if (nut) { nut.disabled = false; nut.innerHTML = '<i class="fas fa-camera"></i> Đóng camera'; }
+        ddqrDatTrangThaiQuet("Đưa mã QR cá nhân vào giữa khung…");
+        q.lanCuoi = 0;
+        ddqrVongQuet();
+      }).catch(function (err) {
+        ddqrDungQuet();
+        showToast("Không mở được camera: " + khanCapMoTaLoiCamera(err), "error");
+      });
+    }
+
+    function ddqrDungQuet() {
+      var q = ddqrState.quet;
+      if (q.raf) { try { cancelAnimationFrame(q.raf); } catch (e) {} q.raf = null; }
+      if (q.stream) {
+        try { q.stream.getTracks().forEach(function (t) { try { t.stop(); } catch (e) {} }); } catch (e) {}
+        q.stream = null;
+      }
+      var video = document.getElementById("ddqr-quet-video");
+      if (video) {
+        try { video.pause(); } catch (e) {}
+        try { video.srcObject = null; } catch (e) {}
+      }
+      q.dangMo = false;
+      q.noiDungLoi = "";
+      var khung = document.getElementById("ddqr-quet-khung");
+      if (khung) khung.style.display = "none";
+      var nut = document.getElementById("ddqr-nut-quet");
+      if (nut) { nut.disabled = !ddqrState.mo; nut.innerHTML = '<i class="fas fa-camera"></i> Bật camera quét mã'; }
+      ddqrDatTrangThaiQuet("Đưa mã QR cá nhân vào giữa khung…");
+    }
+
+    function ddqrVongQuet() {
+      var q = ddqrState.quet;
+      if (!q.dangMo) return;
+      q.raf = requestAnimationFrame(ddqrVongQuet);
+      var now = Date.now();
+      if (now < q.choDen) return;
+      if (now - q.lanCuoi < 110) return;
+      var video = document.getElementById("ddqr-quet-video");
+      if (!video || video.readyState < 2 || !video.videoWidth || !video.videoHeight) return;
+      q.lanCuoi = now;
+      var tiLe = Math.min(1, 720 / Math.max(video.videoWidth, video.videoHeight));
+      var rong = Math.max(1, Math.round(video.videoWidth * tiLe));
+      var cao = Math.max(1, Math.round(video.videoHeight * tiLe));
+      if (q.canvas.width !== rong || q.canvas.height !== cao) { q.canvas.width = rong; q.canvas.height = cao; }
+      var ketQua = null;
+      try {
+        q.ctx.drawImage(video, 0, 0, rong, cao);
+        var anh = q.ctx.getImageData(0, 0, rong, cao);
+        ketQua = window.jsQR(anh.data, rong, cao, { inversionAttempts: "dontInvert" });
+      } catch (e) { return; }
+      if (ketQua && ketQua.data) ddqrNhanMaQR(ketQua.data);
+    }
+
+    function ddqrCoTrongCho(ma) {
+      for (var i = 0; i < ddqrState.cho.length; i++) {
+        if (ddqrState.cho[i].ma === ma) return true;
+      }
+      return false;
+    }
+
+    function ddqrDaGui(ma) {
+      for (var i = 0; i < ddqrState.daGui.length; i++) {
+        if (String(ddqrState.daGui[i].ma || "").trim().toUpperCase() === ma) return true;
+      }
+      return false;
+    }
+
+    function ddqrNhanMaQR(noiDung) {
+      var q = ddqrState.quet;
+      if (!q.dangMo) return;
+      var s = String(noiDung || "").trim();
+      if (!s) return;
+      if (/^XUANREKC:/i.test(s)) {
+        if (q.noiDungLoi !== s) {
+          q.noiDungLoi = s;
+          ddqrDatTrangThaiQuet("Đây là mã điểm danh khẩn cấp, không phải mã QR cá nhân.");
+        }
+        q.choDen = Date.now() + 2000;
+        return;
+      }
+      s = s.replace(/^HT:/i, "").trim().toUpperCase();
+      q.noiDungLoi = "";
+      var tt = ddqrState.mapHT[s];
+      if (!tt) {
+        if (q.noiDungLoi !== s) {
+          q.noiDungLoi = s;
+          ddqrDatTrangThaiQuet("Mã " + s + " không có trong danh sách Huynh Trưởng.");
+        }
+        q.choDen = Date.now() + 2000;
+        return;
+      }
+      q.noiDungLoi = "";
+      if (ddqrDaGui(s)) {
+        showToast(tt.ten + " đã được điểm danh hôm nay rồi!", "info");
+        q.choDen = Date.now() + 2500;
+        return;
+      }
+      if (ddqrCoTrongCho(s)) {
+        q.choDen = Date.now() + 1200;
+        return;
+      }
+      ddqrState.cho.push({ ma: s, ten: tt.ten || "", chiDoan: tt.chiDoan || "", kenh: "qr" });
+      ddqrBip();
+      if (navigator.vibrate) { try { navigator.vibrate(60); } catch (e) {} }
+      ddqrDatTrangThaiQuet("Đã thêm: " + tt.ten + " (" + s + ")");
+      ddqrVeDsCho();
+    }
+
+    function ddqrThemMaTay() {
+      var input = document.getElementById("ddqr-ma-tay");
+      if (!input) return;
+      var ma = String(input.value || "").trim().toUpperCase().replace(/^HT:/i, "");
+      if (!ma) { showToast("Vui lòng nhập mã Huynh Trưởng!", "error"); return; }
+      if (!ddqrState.mo) { showToast("Ngoài khung giờ điểm danh nên chưa thêm được.", "error"); return; }
+      var tt = ddqrState.mapHT[ma];
+      if (!tt) { showToast("Không tìm thấy Huynh Trưởng với mã " + ma, "error"); return; }
+      if (ddqrDaGui(ma)) { showToast(tt.ten + " đã được điểm danh hôm nay rồi!", "info"); input.value = ""; return; }
+      if (ddqrCoTrongCho(ma)) { showToast(tt.ten + " đã có trong danh sách chờ gửi.", "info"); input.value = ""; return; }
+      ddqrState.cho.push({ ma: ma, ten: tt.ten || "", chiDoan: tt.chiDoan || "", kenh: "tay" });
+      input.value = "";
+      ddqrVeDsCho();
+      showToast("Đã thêm: " + tt.ten + " (" + ma + ")", "success");
+    }
+
+    function ddqrXoaMot(ma) {
+      ddqrState.cho = ddqrState.cho.filter(function (x) { return x.ma !== ma; });
+      ddqrVeDsCho();
+    }
+
+    function ddqrXoaCho() {
+      if (!ddqrState.cho.length) return;
+      if (!window.confirm("Xoá toàn bộ danh sách chưa gửi?")) return;
+      ddqrState.cho = [];
+      ddqrVeDsCho();
+      showToast("Đã xoá danh sách chờ gửi.", "info");
+    }
+
+    function ddqrVeDsCho() {
+      var box = document.getElementById("ddqr-ds-cho");
+      var dem = document.getElementById("ddqr-dem");
+      var nut = document.getElementById("ddqr-nut-gui");
+      if (dem) dem.innerText = String(ddqrState.cho.length);
+      if (nut) {
+        var choGui = ddqrState.cho.length > 0 && ddqrState.mo;
+        nut.disabled = !choGui;
+        nut.style.opacity = choGui ? "1" : "0.55";
+        nut.innerHTML = "Gửi dữ liệu";
+      }
+      if (!box) return;
+      if (!ddqrState.cho.length) {
+        box.innerHTML = '<div style="padding:18px 12px; text-align:center; color:#95a5a6; font-size:13px;">Chưa quét được ai.<br>Bật camera rồi quét mã QR cá nhân của Trưởng.</div>';
+        return;
+      }
+      var html = "";
+      for (var i = 0; i < ddqrState.cho.length; i++) {
+        var x = ddqrState.cho[i];
+        html += '<div style="display:flex; align-items:center; gap:8px; padding:9px 10px; border-bottom:1px solid #eee;">' +
+          '<div style="flex:1; min-width:0;">' +
+          '<div style="font-size:13.5px; font-weight:bold; color:#2c3e50; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + escapeHtml(x.ten || "(Không rõ tên)") + '</div>' +
+          '<div style="font-size:11.5px; color:#7f8c8d;">' + escapeHtml(x.ma) + (x.chiDoan ? (' · ' + escapeHtml(x.chiDoan)) : "") + (x.kenh === "tay" ? ' · nhập tay' : "") + '</div>' +
+          '</div>' +
+          '<button onclick="ddqrXoaMot(\'' + escapeHtml(x.ma).replace(/'/g, "\\'") + '\')" style="border:none; background:#fdecea; color:#c62828; width:30px; height:30px; border-radius:8px; cursor:pointer; flex-shrink:0;"><i class="fas fa-xmark"></i></button>' +
+          '</div>';
+      }
+      box.innerHTML = html;
+    }
+
+    function ddqrVeDaGui() {
+      var box = document.getElementById("ddqr-ds-dagui");
+      var dem = document.getElementById("ddqr-dagui");
+      if (dem) dem.innerText = String(ddqrState.daGui.length);
+      if (!box) return;
+      if (!ddqrState.daGui.length) {
+        box.innerHTML = '<div style="padding:6px 0; color:#95a5a6; font-size:12.5px;">Chưa có ai được điểm danh hôm nay.</div>';
+        return;
+      }
+      var html = "";
+      for (var i = ddqrState.daGui.length - 1; i >= 0; i--) {
+        var x = ddqrState.daGui[i];
+        html += '<div style="display:flex; justify-content:space-between; gap:8px; padding:7px 0; border-bottom:1px solid #f2f2f2; font-size:12.5px;">' +
+          '<span style="color:#2c3e50;"><i class="fas fa-check-circle" style="color:#2ecc71;"></i> ' + escapeHtml(x.ten || x.ma) + ' <span style="color:#95a5a6;">(' + escapeHtml(x.ma) + ')</span></span>' +
+          '<span style="color:#95a5a6; white-space:nowrap;">' + escapeHtml(x.gio || "") + '</span>' +
+          '</div>';
+      }
+      box.innerHTML = html;
+    }
+
+    function ddqrGui() {
+      if (!ddqrState.cho.length) return;
+      if (!ddqrState.mo) { showToast("Ngoài khung giờ điểm danh nên chưa gửi được.", "error"); return; }
+      var nut = document.getElementById("ddqr-nut-gui");
+      if (nut) { nut.disabled = true; nut.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...'; }
+      var dsMa = ddqrState.cho.map(function (x) { return x.ma; });
+      var coTay = ddqrState.cho.some(function (x) { return x.kenh === "tay"; });
+      google.script.run.withSuccessHandler(function (res) {
+        if (!res || !res.success) {
+          showToast((res && res.error) || "Gửi điểm danh thất bại!", "error");
+          ddqrVeDsCho();
+          return;
+        }
+        var daLuu = res.daLuu || [];
+        var trung = res.trung || [];
+        var khongThay = res.khongThay || [];
+        var xong = {};
+        daLuu.concat(trung).forEach(function (x) { xong[x.ma] = true; });
+        ddqrState.cho = ddqrState.cho.filter(function (x) { return !xong[x.ma]; });
+        daLuu.forEach(function (x) {
+          ddqrState.daGui.push({ ma: x.ma, ten: x.ten, chiDoan: x.chiDoan, gio: res.gio || "" });
+        });
+        trung.forEach(function (x) {
+          if (!ddqrDaGui(x.ma)) ddqrState.daGui.push({ ma: x.ma, ten: x.ten, chiDoan: x.chiDoan, gio: "" });
+        });
+        ddqrVeDsCho();
+        ddqrVeDaGui();
+        var msg = "Đã lưu " + daLuu.length + " Trưởng";
+        if (trung.length) msg += ", " + trung.length + " đã điểm danh trước đó";
+        if (khongThay.length) msg += ", " + khongThay.length + " mã không hợp lệ";
+        showToast(msg + ".", khongThay.length ? "info" : "success");
+        if (daLuu.length && !res.coCotHomNay) {
+          showToast("Bảng điểm danh chưa có cột ngày hôm nay — dữ liệu vẫn được lưu an toàn trong tab nhật ký DIEM_DANH_QR.", "info");
+        }
+      }).withFailureHandler(function (err) {
+        showToast("Lỗi kết nối: " + err, "error");
+        ddqrVeDsCho();
+      }).diemDanhQRGui(currentUserToken, dsMa, coTay ? "honhop" : "qr");
     }
 
     /* ============================================================
@@ -7425,6 +8063,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     // Chuyển app sang nền -> tắt camera (điện thoại có thể khoá camera khi ẩn tab).
     document.addEventListener('visibilitychange', function () {
       if (document.hidden && khanCapQuet.dangMo) khanCapDungQuetQR(true);
+      if (document.hidden && ddqrState.quet.dangMo) ddqrDungQuet();
+      if (document.hidden && glvQuet.dangMo) glvDungQuetQR();
     });
 
     // ---------- TAB "ĐIỂM DANH" (mọi Huynh Trưởng) — quét QR hoặc nhập tay ----------
@@ -7498,8 +8138,14 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       if(id === 'absence') {
         loadMyLeaveRequests();
       }
+      if (id === 'diemdanhqr-page') {
+        ddqrMoTrang();
+      }
       if(id !== 'khancap-page') {
         khanCapDonDep(); // rời trang -> dừng polling mã + tắt camera, tránh tốn tài nguyên khi không còn xem
+      }
+      if (id !== 'diemdanhqr-page') {
+        ddqrDonDep(); // rời trang Điểm danh QR -> tắt camera + đồng hồ đếm ngược
       }
     }
     
