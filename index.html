@@ -12225,21 +12225,16 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 <script id="xd-phienban">
 // ===== GIỚI THIỆU PHIÊN BẢN =====
 // Hiện ĐÚNG 1 LẦN ngay sau khi đăng nhập (kể cả tự đăng nhập lại) cho mỗi phiên bản, trên mỗi thiết bị.
-// Muốn giới thiệu bản mới: đổi "so" (ví dụ "2.1.0") + sửa nội dung "muc" -> mọi người sẽ thấy lại 1 lần.
+// QUY TẮC: "muc" CHỈ chứa các mục của BẢN HIỆN TẠI.
+// Khi ra bản mới: đổi "so" + "ngay", XOÁ HẾT mục cũ rồi chỉ thêm mục mới.
+// (Giới hạn cứng bên dưới: tối đa 4 mục, mục thừa sẽ bị bỏ — tránh danh sách phình dài.)
 var APP_PHIEN_BAN = {
-  so: "2.8.7",
-  ngay: "13/11/2026",
+  so: "2.8.8",
+  ngay: "14/11/2026",
   tieuDe: "Xứ Đoàn Thánh Anrê",
   muc: [
-    { icon: "fa-box-archive", tieuDe: "Tự dọn bài CTTT cũ mỗi 6 tháng", moTa: "Bài gửi lên đã duyệt/từ chối quá 6 tháng được sao lưu rồi tự dọn; bài “Chờ duyệt” giữ nguyên. Mỗi Trưởng vào CTTT → “Bài đã gửi” → “Lưu trữ đã dọn” để tải PDF lịch sử của mình về máy." },
-    { icon: "fa-qrcode", tieuDe: "Điểm danh QR ngay trong app", moTa: "Huynh Trưởng mở “Điểm danh QR” trong Cài đặt → bật camera quét mã QR cá nhân của nhau (hoặc nhập mã bằng tay) rồi gửi một lần. Mỗi lượt quét được lưu vào nhật ký riêng và tự ghi “Có” vào bảng điểm danh nếu đã có cột của buổi hôm nay." },
-    { icon: "fa-user-graduate", tieuDe: "Giáo Lý Viên quét QR Thiếu Nhi trong app", moTa: "Tab Điểm danh của Giáo Lý Viên có thêm nút bật camera quét mã QR trên thẻ Thiếu Nhi; không mở được camera thì nhập mã TN bằng tay." },
-    { icon: "fa-graduation-cap", tieuDe: "CTTT: gửi & duyệt bài ngay trong app", moTa: "Huynh Trưởng có phân quyền gửi bài lên CTTT theo 4 lĩnh vực (Nhân Bản, Phong trào, Kĩ năng chuyên môn, Sinh hoạt); Quyền Tối Cao duyệt để bài về tất cả các máy." },
-    { icon: "fa-coins", tieuDe: "Sắp xếp lại trang Thu Quỹ", moTa: "Bố cục 4 bước rõ ràng: chọn tuần → thu quỹ → quản trị → báo cáo. Thêm lọc Chưa thu/Đã thu/Miễn thu và nút về tuần hiện tại." },
-    { icon: "fa-images", tieuDe: "Ảnh banner quảng cáo", moTa: "Banner trang chủ dùng 3 ảnh mới của Xứ Đoàn, tự chuyển slide, tải nhanh và xem được cả khi mất mạng." },
-    { icon: "fa-church", tieuDe: "Tên mới: Xứ Đoàn Thánh Anrê", moTa: "Toàn bộ giao diện, màn hình đăng nhập, văn bản và báo cáo PDF đã chuyển sang tên mới." },
-    { icon: "fa-image", tieuDe: "Logo mới", moTa: "Logo Xứ Đoàn được thay bằng bộ nhận diện mới, đồng bộ trên điện thoại và máy tính." },
-    { icon: "fa-location-dot", tieuDe: "Cập nhật vị trí nhà thờ", moTa: "Mã QR cá nhân giờ chỉ hiện khi bạn đứng trong vòng 150m quanh nhà thờ Giáo xứ Thánh Anrê (vị trí mới)." }
+    { icon: "fa-box-archive", tieuDe: "Tự dọn bài CTTT cũ mỗi 6 tháng", moTa: "Bài đã duyệt/từ chối quá 6 tháng được sao lưu rồi tự dọn; bài “Chờ duyệt” giữ nguyên. Mỗi Trưởng vào CTTT → “Bài đã gửi” → “Lưu trữ đã dọn” để tải PDF lịch sử của mình về máy." },
+    { icon: "fa-broom", tieuDe: "Bản cập nhật gọn hơn", moTa: "Mỗi lần ra bản mới, cửa sổ này chỉ giới thiệu những thay đổi của bản đó — không còn cộng dồn các bản cũ." }
   ]
 };
 
@@ -12302,7 +12297,13 @@ var APP_PHIEN_BAN = {
     danhDauDaXem(); // đánh dấu ngay lúc hiện: dù tải lại trang giữa chừng cũng không hiện lại
     themCss();
     var p = APP_PHIEN_BAN, ds = "";
-    (p.muc || []).forEach(function (m) {
+    var muc = p.muc || [];
+    // Chặn danh sách phình dài: chỉ hiện tối đa 4 mục đầu của bản hiện tại.
+    if (muc.length > 4) {
+      try { console.warn("[xd-phienban] APP_PHIEN_BAN.muc có " + muc.length + " mục; chỉ hiện 4 mục đầu. Hãy xoá mục cũ."); } catch (e) {}
+      muc = muc.slice(0, 4);
+    }
+    muc.forEach(function (m) {
       ds += '<div class="xdpb-item"><div class="xdpb-i"><i class="fas ' + esc(m.icon || "fa-star") + '"></i></div>' +
             '<div><div class="xdpb-t">' + esc(m.tieuDe) + '</div><div class="xdpb-d">' + esc(m.moTa) + '</div></div></div>';
     });
