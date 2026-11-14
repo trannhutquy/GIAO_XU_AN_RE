@@ -157,6 +157,10 @@
     try {
       if (mo === "tb" && window.XDThongBao) window.XDThongBao.moLichSu();
       else if (mo === "don" && typeof showPage === "function" && typeof currentUserIsAdmin !== "undefined" && currentUserIsAdmin) showPage("approval-page", null);
+      else if (mo === "lich" && typeof showPage === "function") {
+        showPage("work-page", null);
+        try { if (typeof loadWorkAssignments === "function") loadWorkAssignments(); } catch (e2) {}
+      }
     } catch (e) {}
   }
   function datMo(mo) {
