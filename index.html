@@ -4557,9 +4557,15 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     }
 
     // 2. CHỨC NĂNG ĐẾM NGƯỢC & THÔNG BÁO
-    function loadAppConfigAndCountdown() {
-      google.script.run.withSuccessHandler(function(res) {
-        if(res.success) {
+    function loadAppConfigAndCountdown(pre) {
+      if (pre) { veAppConfig(pre); return; }
+      google.script.run.withSuccessHandler(veAppConfig).getAppConfigData();
+    }
+
+    // Vẽ thông báo chạy + đếm ngược sự kiện từ dữ liệu đã có (dùng chung cho
+    // lần gọi riêng và cho gói bootstrap lúc đăng nhập).
+    function veAppConfig(res) {
+        if(res && res.success) {
           document.getElementById("app-marquee-text").innerText = res.thongBao;
           if(countdownIntervalId) { clearInterval(countdownIntervalId); countdownIntervalId = null; }
 
@@ -4599,7 +4605,6 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
             setCountdownDigit("cd-seconds", s);
           }, 1000);
         }
-      }).getAppConfigData();
     }
 
     // ==========================================
@@ -4747,11 +4752,15 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     }
 
     // 3. CHỨC NĂNG HÀNH TRÌNH LỊCH SỬ
-    function loadHanhTrinhData() {
-      google.script.run.withSuccessHandler(function(res) {
+    function loadHanhTrinhData(pre) {
+      if (pre) { veHanhTrinh(pre); return; }
+      google.script.run.withSuccessHandler(veHanhTrinh).getHanhTrinhData();
+    }
+
+    function veHanhTrinh(res) {
         var container = document.getElementById("hanhtrinh-container");
-        if(res.success) {
-          if(res.data.length === 0) {
+        if(res && res.success) {
+          if(!res.data || res.data.length === 0) {
             container.innerHTML = '<div class="card" style="text-align:center;">Chưa có dữ liệu hành trình.</div>'; return;
           }
           var html = "";
@@ -4766,18 +4775,21 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           });
           container.innerHTML = html;
         } else {
-          container.innerHTML = `<div class="card" style="color:red; text-align:center;">Lỗi: ${res.error}</div>`;
+          container.innerHTML = `<div class="card" style="color:red; text-align:center;">Lỗi: ${(res && res.error) || "không tải được dữ liệu"}</div>`;
         }
-      }).getHanhTrinhData();
     }
 
     // 4. CHỨC NĂNG CTTT
-    function loadCTTTData() {
+    function loadCTTTData(pre) {
+      if (pre) { veCTTT(pre); return; }
       var container = document.getElementById("cttt-container");
       container.innerHTML = getLogoLoaderHtml("Đang tải dữ liệu CTTT...");
-      
-      google.script.run.withSuccessHandler(function(res) {
-        if(res.success) {
+      google.script.run.withSuccessHandler(veCTTT).getCTTTData(currentUserToken, currentUserUnit);
+    }
+
+    function veCTTT(res) {
+      var container = document.getElementById("cttt-container");
+        if(res && res.success) {
           globalCTTTData = res.data;
           if(globalCTTTData.length === 0) { container.innerHTML = '<div class="card" style="text-align:center;">Chưa có bài dạy.</div>'; return; }
           
@@ -4827,9 +4839,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           }
           container.innerHTML = html;
         } else {
-          container.innerHTML = `<div class="card" style="color:red; text-align:center;">Lỗi: ${res.error}</div>`;
+          container.innerHTML = `<div class="card" style="color:red; text-align:center;">Lỗi: ${(res && res.error) || "không tải được dữ liệu"}</div>`;
         }
-      }).getCTTTData(currentUserToken, currentUserUnit);
     }
 
     // ============================================
@@ -4985,13 +4996,23 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       bar.style.display = (coQuyenGui || coGiDeXem) ? "flex" : "none";
     }
 
-    function ctttTaiChoDuyet(hienThi) {
+    function ctttTaiChoDuyet(hienThi, pre) {
+      if (pre) { ctttApDungChoDuyet(pre, hienThi); return; }
       if (!currentUserToken) return;
       google.script.run.withSuccessHandler(function (res) {
         if (!res || !res.success) {
           if (hienThi) showToast((res && res.error) || "Không tải được danh sách duyệt.", "error");
           return;
         }
+        ctttApDungChoDuyet(res, hienThi);
+      }).withFailureHandler(function () {
+        if (hienThi) showToast("Lỗi kết nối, vui lòng thử lại!", "error");
+      }).ctttLayChoDuyet(currentUserToken);
+    }
+
+    // Áp dữ liệu "chờ duyệt CTTT" đã có sẵn (từ lần gọi riêng hoặc từ bootstrap).
+    function ctttApDungChoDuyet(res, hienThi) {
+        if (!res || !res.success) return;
         ctttState.laNguoiDuyet = !!res.laNguoiDuyet;
         ctttState.laNguoiGui = !!res.laNguoiGui;
         ctttState.soChoDuyet = res.soChoDuyet || 0;
@@ -4999,9 +5020,6 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         ctttState.danhSachChiDoan = res.danhSachChiDoan || [];
         ctttCapNhatThanhCongCu();
         if (hienThi) ctttVeDanhSachDuyet();
-      }).withFailureHandler(function () {
-        if (hienThi) showToast("Lỗi kết nối, vui lòng thử lại!", "error");
-      }).ctttLayChoDuyet(currentUserToken);
     }
 
     function ctttNgayChuNhatToi() {
@@ -5203,18 +5221,21 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     });
 
     // 5. CHỨC NĂNG LỊCH VẮNG LỄ
-    function initHTCalendar() {
+    function initHTCalendar(pre) {
+      if (pre) { apDungLichDiemDanh(pre); return; }
       document.getElementById("calendarGridBody").innerHTML = "<div style='grid-column:span 7; text-align:center; padding:15px;'>" + getLogoLoaderHtml("Đang kết nối lịch...") + "</div>";
-      google.script.run.withSuccessHandler(function(res) {
-        if(res.success) {
+      google.script.run.withSuccessHandler(apDungLichDiemDanh).getHTAttendanceCalendar(currentUserToken);
+    }
+
+    function apDungLichDiemDanh(res) {
+        if(res && res.success) {
           localAttendanceMap = {};
-          res.attendance.forEach(item => {
+          (res.attendance || []).forEach(item => {
             if(!localAttendanceMap[item.date]) localAttendanceMap[item.date] = [];
             localAttendanceMap[item.date].push(item);
           });
           renderHTCalendar();
         }
-      }).getHTAttendanceCalendar(currentUserToken);
     }
 
     function renderHTCalendar() {
@@ -5660,10 +5681,16 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     // ==========================================
 
     // Gọi ngay lập tức, sau đó lặp lại mỗi 30 giây trong lúc app đang mở
-    function batDauPollNen() {
+    function batDauPollNen(pre) {
       dungPollNen(); // Tránh tạo trùng nhiều vòng lặp nếu gọi lại nhiều lần
-      pollNen();
+      if (pre) apDungPollNen(pre); else pollNen();
       pollNenIntervalId = setInterval(pollNen, 30000);
+    }
+
+    function apDungPollNen(res) {
+      if (!res || !res.success) return;
+      if (res.approval) approvalXuLyBadge(res.approval);
+      if (res.tb && window.XDThongBao) XDThongBao.khiCoMoi(res.tb);
     }
 
     // TỐI ƯU: 1 lần gọi server duy nhất cho 2 việc nền (đơn chờ duyệt + thông báo chung).
