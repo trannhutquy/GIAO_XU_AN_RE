@@ -3991,18 +3991,13 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           // Ẩn màn hình đăng nhập trước
           document.getElementById("login-screen").style.display = "none";
           
-          // Tải ngầm dữ liệu dưới nền để tối ưu hóa hiệu năng
-          loadAppConfigAndCountdown();
-          loadHanhTrinhData();
+          // Tải ngầm dữ liệu dưới nền để tối ưu hóa hiệu năng.
+          // TẤT CẢ dữ liệu trang chủ đi trong 1 lần gọi xdBootstrap() duy nhất
+          // (thay cho 9 lần gọi song song như trước) -> giảm tải Apps Script
+          // khi đông người dùng cùng đăng nhập.
           initPromoSlider(); // KÍCH HOẠT SLIDER BANNER QUẢNG CÁO TỰ ĐỘNG & VUỐT CHẠM
-          initHTCalendar();
-          loadMyLeaveRequests();
-          loadCTTTData();
           ctttCapNhatThanhCongCu(); // hiện nút "Gửi bài lên CTTT" ngay cả khi mạng chậm
-          ctttTaiChoDuyet(false);
-          loadWorkAssignments(res.name);
-          loadHeaderDanhHieu(); // Hiện danh hiệu thi đua (VD: Huynh Trưởng Tốt) ngay cạnh tên ở header
-          batDauPollNen(); // Bắt đầu kiểm tra nền: đơn chờ duyệt + thông báo chung
+          taiDuLieuSauDangNhap();
           
           // Kiểm tra chế độ bảo trì (màn hình chặn) từ server. Nếu KHÔNG bảo trì,
           // vào thẳng app như bình thường. Nếu ĐANG bảo trì, hiện màn hình chặn;
@@ -4024,6 +4019,64 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
             })
             .layTrangThaiBaoTri();
           
+    }
+
+    // ==========================================
+    // TẢI DỮ LIỆU NGAY SAU ĐĂNG NHẬP — 1 LẦN GỌI DUY NHẤT
+    // Server xdBootstrap() gom: cấu hình/chạy chữ, hành trình, CTTT, danh sách
+    // chờ duyệt CTTT, lịch điểm danh, đơn xin phép của tôi, lịch trực, danh
+    // hiệu thi đua, thông báo nền. Mỗi phần lỗi riêng thì hàm vẽ tương ứng tự
+    // gọi lại server (xem: tham số "pre" trong từng hàm load...).
+    // ==========================================
+    function taiDuLieuSauDangNhap() {
+      if (!currentUserToken) return;
+      hienLoaderBootstrap();
+      google.script.run
+        .withSuccessHandler(function (res) {
+          if (!res || !res.success) { taiDuLieuDuPhong(); return; }
+          apDungBootstrap(res);
+        })
+        .withFailureHandler(function () { taiDuLieuDuPhong(); })
+        .xdBootstrap(currentUserToken);
+    }
+
+    // Hiện khung "đang tải" ngay lập tức (giống bản cũ) trong lúc chờ bootstrap,
+    // để người dùng thấy app có phản hồi chứ không phải màn hình trống.
+    function hienLoaderBootstrap() {
+      var el = document.getElementById("cttt-container");
+      if (el) el.innerHTML = getLogoLoaderHtml("Đang tải dữ liệu CTTT...");
+      el = document.getElementById("calendarGridBody");
+      if (el) el.innerHTML = "<div style='grid-column:span 7; text-align:center; padding:15px;'>" + getLogoLoaderHtml("Đang kết nối lịch...") + "</div>";
+      el = document.getElementById("work-container");
+      if (el) el.innerHTML = getLogoLoaderHtml("Đang tải lịch trực...");
+      el = document.getElementById("my-leave-container");
+      if (el) el.innerHTML = getLogoLoaderHtml("Đang tải đơn của bạn...");
+    }
+
+    function apDungBootstrap(res) {
+      loadAppConfigAndCountdown(res.cfg);
+      loadHanhTrinhData(res.hanhtrinh);
+      initHTCalendar(res.lichDiemDanh);
+      loadMyLeaveRequests(res.donCuaToi);
+      loadCTTTData(res.cttt);
+      ctttTaiChoDuyet(false, res.ctttDuyet);
+      loadWorkAssignments(currentUserFullname, res.lichTruc);
+      loadHeaderDanhHieu(res.danhHieu);
+      batDauPollNen(res.poll);
+    }
+
+    // Dự phòng: bootstrap lỗi (mất mạng, phiên hỏng...) thì tải từng phần
+    // y như bản cũ, để app không bị trắng dữ liệu.
+    function taiDuLieuDuPhong() {
+      loadAppConfigAndCountdown();
+      loadHanhTrinhData();
+      initHTCalendar();
+      loadMyLeaveRequests();
+      loadCTTTData();
+      ctttTaiChoDuyet(false);
+      loadWorkAssignments(currentUserFullname);
+      loadHeaderDanhHieu();
+      batDauPollNen();
     }
 
     function _hoanTatDangNhapGLV(res) {
@@ -5702,9 +5755,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       google.script.run
         .withSuccessHandler(function (res) {
           pollNenDangChay = false;
-          if (!res || !res.success) return;
-          if (res.approval) approvalXuLyBadge(res.approval);
-          if (res.tb && window.XDThongBao) XDThongBao.khiCoMoi(res.tb);
+          apDungPollNen(res);
         })
         .withFailureHandler(function () { pollNenDangChay = false; })
         .pollTongHop(currentUserToken, !!currentUserIsAdmin);
@@ -5756,11 +5807,20 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     // (VD: "Huynh Trưởng Tốt") cạnh tên ở header, giống hệt kiểu huy hiệu
     // dùng trong Bảng Xếp Hạng - không cần Huynh Trưởng phải mở trang Thi Đua
     // mới thấy được danh hiệu của mình.
-    function loadHeaderDanhHieu() {
+    function loadHeaderDanhHieu(pre) {
       var badge = document.getElementById("head-danhhieu");
       if (!badge || !currentUserToken) return;
+      if (pre) { veDanhHieu(pre); return; }
       google.script.run
-        .withSuccessHandler(function (res) {
+        .withSuccessHandler(veDanhHieu)
+        .withFailureHandler(function () { badge.style.display = "none"; })
+        .thiDuaLayDiemCuaToi(currentUserToken);
+    }
+
+    // Vẽ huy hiệu danh hiệu thi đua cạnh tên ở header.
+    function veDanhHieu(res) {
+          var badge = document.getElementById("head-danhhieu");
+          if (!badge) return;
           var danhHieu = "";
           if (res && res.success && res.danhHieu) {
             badge.style.background = res.mauDanhHieu;
@@ -5771,9 +5831,6 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
             badge.style.display = "none";
           }
           capNhatKhungAvatarTheoDanhHieu(danhHieu);
-        })
-        .withFailureHandler(function () { badge.style.display = "none"; })
-        .thiDuaLayDiemCuaToi(currentUserToken);
     }
 
     // Đổi khung viền quanh ảnh đại diện theo đúng danh hiệu thi đua:
@@ -8165,14 +8222,18 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 
     var currentUserFullname = ""; 
 
-    function loadWorkAssignments(fullname) {
+    function loadWorkAssignments(fullname, pre) {
       if(fullname) currentUserFullname = fullname;
+      if (pre) { veLichTruc(pre); return; }
       var container = document.getElementById("work-container");
       container.innerHTML = getLogoLoaderHtml("Đang tải lịch trực...");
+      google.script.run.withSuccessHandler(veLichTruc).getWorkAssignments(currentUserToken);
+    }
 
-      google.script.run.withSuccessHandler(function(res) {
-        if(res.success) {
-          if(res.data.length === 0) {
+    function veLichTruc(res) {
+      var container = document.getElementById("work-container");
+        if(res && res.success) {
+          if(!res.data || res.data.length === 0) {
             container.innerHTML = '<div class="card" style="text-align:center; color:#7f8c8d;">Trưởng không có lịch phân công nào trong thời gian này.</div>';
             return;
           }
@@ -8189,9 +8250,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           });
           container.innerHTML = html;
         } else {
-          container.innerHTML = `<div class="card" style="color:red;">Lỗi tra cứu: ${res.error}</div>`;
+          container.innerHTML = `<div class="card" style="color:red;">Lỗi tra cứu: ${(res && res.error) || "không tải được lịch trực"}</div>`;
         }
-      }).getWorkAssignments(currentUserToken);
     }
 
     var originalShowPage = showPage;
@@ -8294,14 +8354,19 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 <script>
   // 1. CHỨC NĂNG TẢI VÀ RENDER DANH SÁCH ĐƠN XIN PHÉP (DÀNH CHO QUẢN TRỊ)
   // HÀM TẢI "ĐƠN CỦA TÔI" (TAB VẮNG, DÀNH CHO CHÍNH HT)
-  function loadMyLeaveRequests() {
+  function loadMyLeaveRequests(pre) {
     var container = document.getElementById("my-leave-container");
     if (!container) return;
+    if (pre) { veDonCuaToi(pre); return; }
     container.innerHTML = getLogoLoaderHtml("Đang tải đơn của bạn...");
+    google.script.run.withSuccessHandler(veDonCuaToi).getMyLeaveRequests(currentUserToken);
+  }
 
-    google.script.run.withSuccessHandler(function(res) {
-      if (res.success) {
-        if (res.data.length === 0) {
+  function veDonCuaToi(res) {
+    var container = document.getElementById("my-leave-container");
+    if (!container) return;
+      if (res && res.success) {
+        if (!res.data || res.data.length === 0) {
           container.innerHTML = '<div class="card" style="text-align:center; font-size:13px; color:#7f8c8d;">Bạn chưa gửi đơn xin phép nào.</div>';
           return;
         }
@@ -8342,9 +8407,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         });
         container.innerHTML = html;
       } else {
-        container.innerHTML = `<div class="card" style="color:red; text-align:center;">Lỗi dữ liệu: ${res.error}</div>`;
+        container.innerHTML = `<div class="card" style="color:red; text-align:center;">Lỗi dữ liệu: ${(res && res.error) || "không tải được đơn"}</div>`;
       }
-    }).getMyLeaveRequests(currentUserToken);
   }
 
   function loadLeaveRequests() {
@@ -12256,12 +12320,12 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 // Khi ra bản mới: đổi "so" + "ngay", XOÁ HẾT mục cũ rồi chỉ thêm mục mới.
 // (Giới hạn cứng bên dưới: tối đa 4 mục, mục thừa sẽ bị bỏ — tránh danh sách phình dài.)
 var APP_PHIEN_BAN = {
-  so: "2.8.9",
-  ngay: "14/11/2026",
+  so: "2.9.0",
+  ngay: "16/11/2026",
   tieuDe: "Xứ Đoàn Thánh Anrê",
   muc: [
-    { icon: "fa-clock", tieuDe: "Hẹn giờ gửi thông báo chung", moTa: "Admin chọn ngày và giờ rồi bấm “Hẹn giờ gửi”: thông báo nằm chờ và tự gửi đúng giờ đã hẹn, không cần mở app. Có thể huỷ hẹn trước giờ gửi." },
-    { icon: "fa-calendar-check", tieuDe: "Báo khi có lịch trực mới", moTa: "Khi file Lịch Phân Công có dòng lịch mới từ hôm nay trở đi, Trưởng được phân công nhận thông báo trên điện thoại; bấm vào để mở ngay trang Lịch Trực Cá Nhân." }
+    { icon: "fa-bolt", tieuDe: "Đăng nhập và vào app nhanh hơn", moTa: "Dữ liệu trang chủ (thông báo, hành trình, CTTT, lịch điểm danh, đơn xin phép, lịch trực, danh hiệu) nay chỉ tải trong 1 lần thay vì 9 lần riêng — app vào nhanh hơn và đỡ quá tải khi đông người dùng cùng lúc." },
+    { icon: "fa-feather", tieuDe: "Ảnh nhẹ hơn, mở app nhanh hơn", moTa: "Banner và biểu tượng app được nén lại (nhỏ hơn khoảng 58%) mà chất lượng hiển thị gần như không đổi. Lần mở sau còn nhanh hơn nhờ bộ nhớ đệm ảnh." }
   ]
 };
 
