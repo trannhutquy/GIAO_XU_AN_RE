@@ -77,7 +77,7 @@
 
   // Hàm ĐỌC không tham số được đệm sẵn ở máy chủ biên (api/gas.js) -> gọi
   // bằng GET, không tốn lượt chạy Apps Script. Lỗi là tự gọi thẳng như cũ.
-  var EDGE = { layTrangThaiBaoTri: 1, getAppConfigData: 1, getHanhTrinhData: 1 };
+  var EDGE = { layTrangThaiBaoTri: 1, getAppConfigData: 1, getHanhTrinhData: 1, xdChung: 1 };
 
   function sendGas(fn, args, onOk, onErr, attempt) {
     var url = window.GAS_URL;

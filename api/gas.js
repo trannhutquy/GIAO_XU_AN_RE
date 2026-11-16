@@ -22,6 +22,9 @@ const GAS_URL =
 const CHO_PHEP = {
   // Trạng thái bảo trì: cần tươi để bật/tắt nhanh (tối đa ~30 giây là thấy).
   layTrangThaiBaoTri: { ttl: 15, swr: 15 },
+  // Gói dữ liệu CHUNG (thông báo chạy + hành trình) — ai cũng giống nhau nên
+  // giữ chung ở máy chủ biên là an toàn và tiết kiệm nhất.
+  xdChung: { ttl: 120, swr: 600 },
   // Thông báo chạy + đếm ngược sự kiện (Admin sửa trong CAU_HINH_APP).
   getAppConfigData: { ttl: 120, swr: 600 },
   // Hành trình: gần như chỉ thêm mỗi lần có chuyến mới.
