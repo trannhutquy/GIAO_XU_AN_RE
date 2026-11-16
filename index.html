@@ -5815,13 +5815,20 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     // 7. KIỂM TRA NỀN (ĐƠN CHỜ DUYỆT + THÔNG BÁO CHUNG)
     // ==========================================
 
-    // Gọi ngay lập tức, sau đó lặp lại mỗi 30 giây trong lúc app đang mở
+    // Gọi ngay lập tức, sau đó lặp lại trong lúc app đang mở.
+    //
+    // Nhịp poll: Admin 60 giây (cần thấy đơn chờ duyệt sớm). Người dùng thường
+    // 3 phút, vì thông báo mới đã được đẩy bằng push ngay khi Admin gửi — poll
+    // chỉ là lớp dự phòng để hiện trong app.
+    //
+    // Mỗi máy lệch nhau thêm 0–15 giây: 100 người mở app cùng một lúc vẫn không
+    // dội vào đúng một giây mỗi phút, tránh nghẽn giới hạn ~30 luồng chạy đồng
+    // thời của Apps Script.
     function batDauPollNen(pre) {
       dungPollNen(); // Tránh tạo trùng nhiều vòng lặp nếu gọi lại nhiều lần
       if (pre) apDungPollNen(pre); else pollNen();
-      // 60 giây/lần: đủ nhanh để thấy thông báo mới mà giảm một nửa số lần
-      // chạy Apps Script so với 30 giây (100 người dùng mở app là 100 lượt/phút).
-      pollNenIntervalId = setInterval(pollNen, 60000);
+      var nhip = (currentUserIsAdmin ? 60000 : 180000) + Math.floor(Math.random() * 15000);
+      pollNenIntervalId = setInterval(pollNen, nhip);
     }
 
     function apDungPollNen(res) {
@@ -12404,11 +12411,11 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 // Khi ra bản mới: đổi "so" + "ngay", XOÁ HẾT mục cũ rồi chỉ thêm mục mới.
 // (Giới hạn cứng bên dưới: tối đa 4 mục, mục thừa sẽ bị bỏ — tránh danh sách phình dài.)
 var APP_PHIEN_BAN = {
-  so: "2.9.3",
+  so: "2.9.4",
   ngay: "16/11/2026",
   tieuDe: "Xứ Đoàn Thánh Anrê",
   muc: [
-    { icon: "fa-server", tieuDe: "Tách dữ liệu chung để đỡ quá tải", moTa: "Thông báo chạy và hành trình của xứ đoàn nay chỉ tải một lần rồi dùng chung cho mọi người; mỗi Trưởng chỉ còn tải phần riêng của mình. Nhờ vậy khi cả xứ đoàn cùng mở app, máy chủ không bị dồn việc và app vào nhanh, ổn định hơn." }
+    { icon: "fa-gauge-high", tieuDe: "Đông người vẫn vào nhanh", moTa: "Dữ liệu chung của xứ đoàn nay chỉ tải một lần rồi dùng chung cho mọi người, nên khi cả xứ đoàn cùng mở app máy chủ không còn bị dồn việc. App cũng tự kiểm tra nền thưa hơn (mỗi 3 phút với Trưởng, 1 phút với Admin) để điện thoại đỡ tốn pin và dữ liệu." }
   ]
 };
 
