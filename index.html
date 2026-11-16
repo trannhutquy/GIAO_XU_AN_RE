@@ -5783,7 +5783,9 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     function batDauPollNen(pre) {
       dungPollNen(); // Tránh tạo trùng nhiều vòng lặp nếu gọi lại nhiều lần
       if (pre) apDungPollNen(pre); else pollNen();
-      pollNenIntervalId = setInterval(pollNen, 30000);
+      // 60 giây/lần: đủ nhanh để thấy thông báo mới mà giảm một nửa số lần
+      // chạy Apps Script so với 30 giây (100 người dùng mở app là 100 lượt/phút).
+      pollNenIntervalId = setInterval(pollNen, 60000);
     }
 
     function apDungPollNen(res) {
@@ -12366,11 +12368,11 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 // Khi ra bản mới: đổi "so" + "ngay", XOÁ HẾT mục cũ rồi chỉ thêm mục mới.
 // (Giới hạn cứng bên dưới: tối đa 4 mục, mục thừa sẽ bị bỏ — tránh danh sách phình dài.)
 var APP_PHIEN_BAN = {
-  so: "2.9.1",
+  so: "2.9.2",
   ngay: "16/11/2026",
   tieuDe: "Xứ Đoàn Thánh Anrê",
   muc: [
-    { icon: "fa-bolt", tieuDe: "Mở lại app là thấy dữ liệu ngay", moTa: "Từ lần mở thứ hai, dữ liệu trang chủ (thông báo, CTTT, lịch trực, đơn xin phép...) hiện ra ngay lập tức từ bộ nhớ của máy, sau đó tự cập nhật bản mới nhất ở phía sau — không còn phải nhìn khung chờ." }
+    { icon: "fa-server", tieuDe: "Giảm tải khi đông người dùng", moTa: "Trạng thái bảo trì, thông báo chạy và hành trình nay được giữ sẵn ở máy chủ biên, dùng chung cho mọi người — khi cả xứ đoàn cùng mở app, máy chủ chính không còn phải xử lý lại từng người. App cũng tự kiểm tra nền thưa hơn (60 giây/lần thay vì 30) để đỡ tốn pin và dữ liệu." }
   ]
 };
 

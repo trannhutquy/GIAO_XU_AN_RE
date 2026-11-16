@@ -1,6 +1,6 @@
 // Service worker: mở app TỨC THÌ từ bộ nhớ máy, tải bản mới ở nền, báo khi có bản mới,
 // và nhận THÔNG BÁO ĐẨY (Firebase Cloud Messaging) kể cả khi app đang đóng.
-var VERSION = "v26";
+var VERSION = "v27";
 var SHELL = "shell-" + VERSION;
 var STATIC = "static-" + VERSION;
 var SHELL_FILES = ["./", "index.html", "config.js", "gas-shim.js", "push.js", "manifest.webmanifest",
@@ -85,6 +85,8 @@ self.addEventListener("fetch", function (e) {
   var req = e.request, url = new URL(req.url);
   if (req.method !== "GET") return;                       // POST tới Apps Script: không đụng vào
   if (url.hostname.indexOf("google.com") !== -1 && url.pathname.indexOf("/macros/") === 0) return;
+  // Lớp đệm /api/gas: luôn ra mạng, KHÔNG lưu vào cache của app (cần dữ liệu tươi)
+  if (url.origin === location.origin && url.pathname.indexOf("/api/") === 0) return;
 
   if (url.origin === location.origin) {                   // file của app: trả bản cache NGAY, cập nhật ngầm
     // Mở app từ thông báo có dạng index.html?mo=don -> dùng chung 1 bản cache với index.html

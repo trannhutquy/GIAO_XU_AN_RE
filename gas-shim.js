@@ -5,6 +5,7 @@
  *   2. Gộp các lời gọi đọc giống hệt nhau đang chạy cùng lúc
  *   3. Tự thử lại 1 lần khi lỗi mạng/lỗi tạm thời (chỉ với hàm ĐỌC, không bao giờ với hàm GHI)
  *   4. Các vòng lặp nền (setInterval >= 2 giây) tự tạm dừng khi app chạy ngầm, chạy bù khi quay lại
+ *   5. Vài hàm đọc không tham số đi qua lớp đệm /api/gas (Vercel) để đỡ tốn lượt chạy Apps Script
  */
 (function () {
   "use strict";
@@ -74,7 +75,11 @@
   // ---------- gửi 1 request thật ----------
   var TRANSIENT_RE = /too many times|Service invoked|Exceeded maximum|timed out|Rate Limit|Service error|temporarily|bận/i;
 
-  function send(fn, args, onOk, onErr, attempt) {
+  // Hàm ĐỌC không tham số được đệm sẵn ở máy chủ biên (api/gas.js) -> gọi
+  // bằng GET, không tốn lượt chạy Apps Script. Lỗi là tự gọi thẳng như cũ.
+  var EDGE = { layTrangThaiBaoTri: 1, getAppConfigData: 1, getHanhTrinhData: 1 };
+
+  function sendGas(fn, args, onOk, onErr, attempt) {
     var url = window.GAS_URL;
     var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
     var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, TIMEOUT_MS) : null;
@@ -110,6 +115,34 @@
       var transient = err && err._t !== undefined ? err._t : true; // lỗi mạng (fetch reject) coi là tạm thời
       fail(err, transient);
     });
+  }
+
+  // Chọn đường: hàm có trong EDGE -> qua lớp đệm; còn lại -> Apps Script trực tiếp.
+  function send(fn, args, onOk, onErr, attempt) {
+    var khongThamSo = !args || args.length === 0;
+    if (!EDGE[fn] || !khongThamSo || !/^https?:$/.test(location.protocol)) {
+      return sendGas(fn, args, onOk, onErr, attempt);
+    }
+    var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, TIMEOUT_MS) : null;
+    function quayVeGas() {
+      if (timer) clearTimeout(timer);
+      sendGas(fn, args, onOk, onErr, attempt);
+    }
+    fetch(location.origin + "/api/gas?fn=" + encodeURIComponent(fn), {
+      method: "GET",
+      redirect: "follow",
+      signal: ctrl ? ctrl.signal : undefined
+    }).then(function (r) {
+      if (!r.ok) throw new Error("lop-dem " + r.status);
+      return r.text();
+    }).then(function (txt) {
+      if (timer) clearTimeout(timer);
+      var data;
+      try { data = JSON.parse(txt); } catch (e) { quayVeGas(); return; }
+      if (!data || !data.ok) { quayVeGas(); return; }
+      onOk(data.result);
+    }).catch(function () { quayVeGas(); });
   }
 
   // ---------- điều phối: cache / gộp / thử lại ----------
