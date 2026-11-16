@@ -20,8 +20,8 @@ const GAS_URL =
 // ttl  = số giây máy chủ biên giữ bản cũ
 // swr  = số giây được phép trả bản cũ trong lúc ngầm lấy bản mới
 const CHO_PHEP = {
-  // Trạng thái bảo trì: cần tươi để bật/tắt nhanh, nhưng 15 giây là đủ.
-  layTrangThaiBaoTri: { ttl: 15, swr: 45 },
+  // Trạng thái bảo trì: cần tươi để bật/tắt nhanh (tối đa ~30 giây là thấy).
+  layTrangThaiBaoTri: { ttl: 15, swr: 15 },
   // Thông báo chạy + đếm ngược sự kiện (Admin sửa trong CAU_HINH_APP).
   getAppConfigData: { ttl: 120, swr: 600 },
   // Hành trình: gần như chỉ thêm mỗi lần có chuyến mới.
