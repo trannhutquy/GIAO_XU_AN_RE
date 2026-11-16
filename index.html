@@ -4034,6 +4034,42 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       // khung chờ; sau đó vẫn lấy gói mới từ server và vẽ đè lên.
       var cu = docBootCache();
       if (cu) { apDungBootstrap(cu); } else { hienLoaderBootstrap(); }
+      taiGoiGop();
+    }
+
+    // Gói 1 = phần RIÊNG của tôi (cần token). Gói 2 = phần CHUNG (thông báo
+    // chạy + hành trình) lấy sau, vì phần này nằm sẵn ở lớp đệm /api/gas nên
+    // hầu như không tốn lượt chạy Apps Script nào.
+    function taiGoiGop() {
+      google.script.run
+        .withSuccessHandler(function (res) {
+          if (!res || !res.success) { taiGoiBootstrap(); return; }
+          taiPhanChung(res);
+        })
+        .withFailureHandler(function () { taiGoiBootstrap(); })
+        .xdCuaToi(currentUserToken);
+    }
+
+    function taiPhanChung(goiCuaToi) {
+      google.script.run
+        .withSuccessHandler(function (res) {
+          if (res && res.success) {
+            goiCuaToi.cfg = res.cfg;
+            goiCuaToi.hanhtrinh = res.hanhtrinh;
+            apDungBootstrap(goiCuaToi);
+            luuBootCache(goiCuaToi);
+          } else {
+            // Thiếu phần chung: loadAppConfigAndCountdown/loadHanhTrinhData
+            // sẽ tự gọi lại (cũng đi qua lớp đệm).
+            apDungBootstrap(goiCuaToi);
+          }
+        })
+        .withFailureHandler(function () { apDungBootstrap(goiCuaToi); })
+        .xdChung();
+    }
+
+    // Dự phòng cho bản Apps Script cũ (chưa có xdCuaToi): dùng gói gộp cũ.
+    function taiGoiBootstrap() {
       google.script.run
         .withSuccessHandler(function (res) {
           if (!res || !res.success) { taiDuLieuDuPhong(); return; }
