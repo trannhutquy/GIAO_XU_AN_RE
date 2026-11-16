@@ -3944,7 +3944,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         return (o && o.token && (o.loai === 'ht' || o.loai === 'glv')) ? o : null;
       } catch (e) { return null; }
     }
-    function xoaPhienLuu() { try { localStorage.removeItem(PHIEN_KEY); } catch (e) {} try { window.gasCacheClear && window.gasCacheClear(); } catch (e2) {} }
+    function xoaPhienLuu() { try { localStorage.removeItem(PHIEN_KEY); } catch (e) {} try { window.gasCacheClear && window.gasCacheClear(); } catch (e2) {} try { xoaBootCache(); } catch (e3) {} }
 
     function _hoanTatDangNhapHT(res, u) {
           currentUserMa = u; currentUserToken = res.token; currentUserUnit = res.unit; currentUserIsAdmin = res.isAdmin; currentUserIsSuperAdmin = !!res.isSuperAdmin;
@@ -4030,14 +4030,60 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     // ==========================================
     function taiDuLieuSauDangNhap() {
       if (!currentUserToken) return;
-      hienLoaderBootstrap();
+      // Mở lại app: vẽ ngay dữ liệu lần trước (nếu còn hạn) để không phải nhìn
+      // khung chờ; sau đó vẫn lấy gói mới từ server và vẽ đè lên.
+      var cu = docBootCache();
+      if (cu) { apDungBootstrap(cu); } else { hienLoaderBootstrap(); }
       google.script.run
         .withSuccessHandler(function (res) {
           if (!res || !res.success) { taiDuLieuDuPhong(); return; }
           apDungBootstrap(res);
+          luuBootCache(res);
         })
         .withFailureHandler(function () { taiDuLieuDuPhong(); })
         .xdBootstrap(currentUserToken);
+    }
+
+    // ---------- Bộ nhớ đệm gói bootstrap (theo từng tài khoản) ----------
+    // Chỉ để hiển thị nhanh lúc mở app; server luôn là nguồn đúng sau cùng.
+    var BOOT_CACHE_PREFIX = "xd_boot_";
+    var BOOT_CACHE_TOI_DA = 300 * 1024;            // gói > 300KB thì không lưu (tránh đầy localStorage)
+    var BOOT_CACHE_TUOI_MS = 12 * 60 * 60 * 1000;  // quá 12 giờ thì bỏ
+
+    function docBootCache() {
+      if (!currentUserToken) return null;
+      var key = BOOT_CACHE_PREFIX + currentUserToken;
+      try {
+        var raw = localStorage.getItem(key);
+        if (!raw) return null;
+        var o = JSON.parse(raw);
+        if (!o || !o.t || !o.d) return null;
+        if (Date.now() - o.t > BOOT_CACHE_TUOI_MS) { localStorage.removeItem(key); return null; }
+        return o.d;
+      } catch (e) { return null; }
+    }
+
+    function luuBootCache(res) {
+      if (!currentUserToken) return;
+      var key = BOOT_CACHE_PREFIX + currentUserToken;
+      try {
+        var s = JSON.stringify({ t: Date.now(), d: res });
+        if (s.length > BOOT_CACHE_TOI_DA) { localStorage.removeItem(key); return; }
+        localStorage.setItem(key, s);
+      } catch (e) {
+        try { localStorage.removeItem(key); } catch (e2) {}
+      }
+    }
+
+    // Xoá mọi gói đệm (đăng xuất / phiên hết hạn) — tránh máy dùng chung
+    // hiện dữ liệu của tài khoản trước.
+    function xoaBootCache() {
+      try {
+        for (var i = localStorage.length - 1; i >= 0; i--) {
+          var k = localStorage.key(i);
+          if (k && k.indexOf(BOOT_CACHE_PREFIX) === 0) localStorage.removeItem(k);
+        }
+      } catch (e) {}
     }
 
     // Hiện khung "đang tải" ngay lập tức (giống bản cũ) trong lúc chờ bootstrap,
