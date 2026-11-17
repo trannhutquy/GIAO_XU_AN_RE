@@ -1,6 +1,6 @@
-// Service worker: mở app TỨC THÌ từ bộ nhớ máy, tải bản mới ở nền, báo khi có bản mới,
-// và nhận THÔNG BÁO ĐẨY (Firebase Cloud Messaging) kể cả khi app đang đóng.
-var VERSION = "v31";
+// Service worker: má»Ÿ app Tá»¨C THÃŒ tá»« bá»™ nhá»› mÃ¡y, táº£i báº£n má»›i á»Ÿ ná»n, bÃ¡o khi cÃ³ báº£n má»›i,
+// vÃ  nháº­n THÃ”NG BÃO Äáº¨Y (Firebase Cloud Messaging) ká»ƒ cáº£ khi app Ä‘ang Ä‘Ã³ng.
+var VERSION = "v32";
 var SHELL = "shell-" + VERSION;
 var STATIC = "static-" + VERSION;
 var SHELL_FILES = ["./", "index.html", "config.js", "gas-shim.js", "push.js", "manifest.webmanifest",
@@ -10,13 +10,13 @@ var SHELL_FILES = ["./", "index.html", "config.js", "gas-shim.js", "push.js", "m
 var CDN_HOSTS = ["cdnjs.cloudflare.com", "cdn.jsdelivr.net", "fonts.googleapis.com", "fonts.gstatic.com"];
 var daBao = false;
 
-// ---------- Thông báo đẩy ----------
-// importScripts lỗi (chưa có file cấu hình / mất mạng lúc cài) thì bỏ qua, phần còn lại của app vẫn chạy.
+// ---------- ThÃ´ng bÃ¡o Ä‘áº©y ----------
+// importScripts lá»—i (chÆ°a cÃ³ file cáº¥u hÃ¬nh / máº¥t máº¡ng lÃºc cÃ i) thÃ¬ bá» qua, pháº§n cÃ²n láº¡i cá»§a app váº«n cháº¡y.
 try { importScripts("push-config.js", "firebase-app-compat.js", "firebase-messaging-compat.js"); } catch (e) {}
 
 function hienThongBao(d) {
   d = d || {};
-  return self.registration.showNotification(d.title || "Xứ Đoàn", {
+  return self.registration.showNotification(d.title || "Xá»© ÄoÃ n", {
     body: d.body || "",
     icon: "icons/icon-192.png",
     badge: "icons/icon-192.png",
@@ -30,7 +30,7 @@ try {
   var c = self.FIREBASE_CONFIG;
   if (self.firebase && c && c.apiKey && !/DAN_VAO/i.test(JSON.stringify(c))) {
     firebase.initializeApp(c);
-    // Tin gửi dạng "data": tự hiển thị ở đây khi không có cửa sổ app nào đang được nhìn
+    // Tin gá»­i dáº¡ng "data": tá»± hiá»ƒn thá»‹ á»Ÿ Ä‘Ã¢y khi khÃ´ng cÃ³ cá»­a sá»• app nÃ o Ä‘ang Ä‘Æ°á»£c nhÃ¬n
     firebase.messaging().onBackgroundMessage(function (payload) { return hienThongBao((payload && payload.data) || {}); });
   }
 } catch (e) {}
@@ -46,21 +46,21 @@ self.addEventListener("notificationclick", function (e) {
   }));
 });
 
-// ---------- Cache / cập nhật ----------
-// Bản mới cài xong sẽ Ở TRẠNG THÁI CHỜ, không tự chiếm quyền: app hiện thẻ nhắc,
-// người dùng bấm "Cập nhật ngay" thì gửi SKIP_WAITING -> kích hoạt -> trang tự tải lại.
+// ---------- Cache / cáº­p nháº­t ----------
+// Báº£n má»›i cÃ i xong sáº½ á»ž TRáº NG THÃI CHá»œ, khÃ´ng tá»± chiáº¿m quyá»n: app hiá»‡n tháº» nháº¯c,
+// ngÆ°á»i dÃ¹ng báº¥m "Cáº­p nháº­t ngay" thÃ¬ gá»­i SKIP_WAITING -> kÃ­ch hoáº¡t -> trang tá»± táº£i láº¡i.
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(SHELL).then(function (c) {
     return c.addAll(SHELL_FILES);
   }).then(function () {
-    // Báo cho trang đang mở biết đã có bản mới (kể cả khi trang bỏ lỡ sự kiện updatefound)
+    // BÃ¡o cho trang Ä‘ang má»Ÿ biáº¿t Ä‘Ã£ cÃ³ báº£n má»›i (ká»ƒ cáº£ khi trang bá» lá»¡ sá»± kiá»‡n updatefound)
     return self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(function (cs) {
       cs.forEach(function (c) { c.postMessage({ type: "update-ready" }); });
     });
   }));
 });
 
-// Trang gọi khi người dùng bấm "Cập nhật ngay"
+// Trang gá»i khi ngÆ°á»i dÃ¹ng báº¥m "Cáº­p nháº­t ngay"
 self.addEventListener("message", function (e) {
   if (e.data && e.data.type === "SKIP_WAITING") self.skipWaiting();
 });
@@ -83,13 +83,13 @@ function baoCoBanMoi() {
 
 self.addEventListener("fetch", function (e) {
   var req = e.request, url = new URL(req.url);
-  if (req.method !== "GET") return;                       // POST tới Apps Script: không đụng vào
+  if (req.method !== "GET") return;                       // POST tá»›i Apps Script: khÃ´ng Ä‘á»¥ng vÃ o
   if (url.hostname.indexOf("google.com") !== -1 && url.pathname.indexOf("/macros/") === 0) return;
-  // Lớp đệm /api/gas: luôn ra mạng, KHÔNG lưu vào cache của app (cần dữ liệu tươi)
+  // Lá»›p Ä‘á»‡m /api/gas: luÃ´n ra máº¡ng, KHÃ”NG lÆ°u vÃ o cache cá»§a app (cáº§n dá»¯ liá»‡u tÆ°Æ¡i)
   if (url.origin === location.origin && url.pathname.indexOf("/api/") === 0) return;
 
-  if (url.origin === location.origin) {                   // file của app: trả bản cache NGAY, cập nhật ngầm
-    // Mở app từ thông báo có dạng index.html?mo=don -> dùng chung 1 bản cache với index.html
+  if (url.origin === location.origin) {                   // file cá»§a app: tráº£ báº£n cache NGAY, cáº­p nháº­t ngáº§m
+    // Má»Ÿ app tá»« thÃ´ng bÃ¡o cÃ³ dáº¡ng index.html?mo=don -> dÃ¹ng chung 1 báº£n cache vá»›i index.html
     var key = (req.mode === "navigate" && url.search) ? new Request(url.origin + url.pathname) : req;
     e.respondWith(caches.open(SHELL).then(function (cache) {
       return cache.match(key).then(function (hit) {
@@ -107,7 +107,7 @@ self.addEventListener("fetch", function (e) {
     return;
   }
 
-  if (CDN_HOSTS.indexOf(url.hostname) !== -1) {           // thư viện/font: cache trước, cập nhật ngầm
+  if (CDN_HOSTS.indexOf(url.hostname) !== -1) {           // thÆ° viá»‡n/font: cache trÆ°á»›c, cáº­p nháº­t ngáº§m
     e.respondWith(caches.match(req).then(function (hit) {
       var net = fetch(req).then(function (res) {
         if (res && (res.ok || res.type === "opaque")) {

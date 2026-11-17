@@ -9139,6 +9139,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   var currentTNSheetName = "";
   var currentTNRowIndex = 0;
   var currentTNData = [];
+  var currentTNChiDoc = false;
 
   function moXemChiTietTN(maTN, hoTen) {
       var modal = document.getElementById('htDetailModal');
@@ -9157,6 +9158,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
             currentTNSheetName = res.sheetName;
             currentTNRowIndex = res.rowIndex;
             currentTNData = res.data;
+            currentTNChiDoc = !!res.chiDoc;
             renderTNViewMode();
           } else {
             body.innerHTML = `<div style="color:#e74c3c; text-align:center; padding:20px; font-weight:500;"><i class="fas fa-exclamation-triangle"></i> ${res.error}</div>`;
@@ -9181,10 +9183,10 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       html += '</div>';
       body.innerHTML = html;
 
-      document.getElementById('htModalFooter').innerHTML = `
-        <button onclick="batDauChinhSuaTN()" style="background:#3498db; color:white; border:none; padding:8px 18px; border-radius:6px; cursor:pointer; font-weight:600; font-size:14px;">Chỉnh sửa</button>
-        <button onclick="dongXemChiTietTN()" style="background:#7f8c8d; color:white; border:none; padding:8px 18px; border-radius:6px; cursor:pointer; font-weight:600; font-size:14px;">Đóng lại</button>
-      `;
+      document.getElementById('htModalFooter').innerHTML = (currentTNChiDoc
+        ? '<span style="color:#7f8c8d; font-size:12px; margin-right:auto; align-self:center;">Hồ sơ lấy từ CSDL Đoàn Sinh (chỉ xem)</span>'
+        : '<button onclick="batDauChinhSuaTN()" style="background:#3498db; color:white; border:none; padding:8px 18px; border-radius:6px; cursor:pointer; font-weight:600; font-size:14px;">Chỉnh sửa</button>') +
+        '<button onclick="dongXemChiTietTN()" style="background:#7f8c8d; color:white; border:none; padding:8px 18px; border-radius:6px; cursor:pointer; font-weight:600; font-size:14px;">Đóng lại</button>';
   }
 
   // CHUYỂN SANG CHẾ ĐỘ CHỈNH SỬA: mỗi dòng thành 1 ô nhập liệu
@@ -12942,14 +12944,14 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 // Khi ra bản mới: đổi "so" + "ngay", XOÁ HẾT mục cũ rồi chỉ thêm mục mới.
 // (Giới hạn cứng bên dưới: tối đa 4 mục, mục thừa sẽ bị bỏ — tránh danh sách phình dài.)
 var APP_PHIEN_BAN = {
-  so: "3.0.0",
+  so: "3.1.0",
   ngay: "17/11/2026",
   tieuDe: "Xứ Đoàn Thánh Anrê",
   muc: [
-    { icon: "fa-id-card", tieuDe: "Hồ sơ từng Thiếu Nhi cho Giáo Lý Viên", moTa: "Trong tab Thiếu nhi, bấm vào tên một em là mở hồ sơ: ngày sinh và tuổi, phụ huynh, địa chỉ, giáo họ, các ngày bí tích, hoàn cảnh… kèm ba nút Gọi / Zalo / SMS cho phụ huynh. Ô tìm kiếm gõ không dấu vẫn ra đúng em cần tìm." },
-    { icon: "fa-note-sticky", tieuDe: "Ghi chú riêng của Giáo Lý Viên", moTa: "Mỗi em có một ô ghi chú ngay trong hồ sơ để lưu điều cần nhớ: dị ứng, ở với ông bà, cần kèm thêm… Ghi chú lưu ở bảng riêng nên không sửa vào hồ sơ gốc của Ban Hành Giáo, và ghi rõ ai cập nhật lúc nào." },
-    { icon: "fa-clipboard-check", tieuDe: "Điểm danh cả lớp, lưu một lần", moTa: "Bổ sung cho quét mã QR: chọn Có mặt / Vắng có phép / Vắng cho từng em rồi bấm Lưu một lần cho cả buổi, kèm ô lý do vắng. Em không mang thẻ vẫn được điểm danh, và sửa lại được bất cứ lúc nào trong ngày." },
-    { icon: "fa-chart-simple", tieuDe: "Lịch sử điểm danh và chuyên cần", moTa: "Xem lại từng buổi, biết em nào chưa ghi, xoá được lượt quét nhầm. Danh sách lớp hiện tỉ lệ đi học của từng em và tự cảnh báo khi một em vắng ba buổi liền để kịp gọi phụ huynh." }
+    { icon: "fa-database", tieuDe: "Hồ sơ Đoàn Sinh lấy từ CSDL thật", moTa: "Hồ sơ từng em giờ đọc trực tiếp từ Cơ sở dữ liệu Đoàn Sinh của giáo xứ: đủ ngày sinh, cha mẹ, địa chỉ, giáo họ, các ngày bí tích, trường học… Ban Hành Giáo cập nhật trong file CSDL là app tự hiện theo, không phải nhập lại." },
+    { icon: "fa-users", tieuDe: "Danh sách Thiếu Nhi cho Huynh Trưởng", moTa: "Mục Thiếu Nhi của Huynh Trưởng và trang Thu quỹ cũng lấy từ cùng CSDL đó. Trưởng phụ trách lớp nào thấy đúng lớp ấy; Admin và Ban Thường Vụ xem được toàn Xứ Đoàn." },
+    { icon: "fa-shirt", tieuDe: "Sĩ số lớp Giáo Lý theo CSDL", moTa: "Danh sách lớp của Giáo Lý Viên tự khớp theo mã lớp hoặc tên lớp, nên dù CSDL ghi “Lớp Ấu 1” hay “Ấu 1” vẫn nhận đúng. Em đã ghi “Nghỉ học” thì tự ẩn khỏi danh sách điểm danh." },
+    { icon: "fa-lock", tieuDe: "Hồ sơ chỉ xem, không sửa nhầm", moTa: "App chỉ đọc file CSDL gốc nên không thể làm sai dữ liệu của Ban Hành Giáo. Ghi chú riêng của Giáo Lý Viên vẫn lưu ở bảng riêng như trước." }
   ]
 };
 
