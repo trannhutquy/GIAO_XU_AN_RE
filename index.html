@@ -4652,7 +4652,6 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           }
           html += '</div>';
         });
-        if (hs.sdtPH && dsLienHe.length === 1 && !hs.sdtCha && !hs.sdtMe) { /* đã có nút ở trên */ }
       }
 
       // --- Thông tin khác ---
@@ -4905,12 +4904,21 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       }).glvLayLichSuDiemDanh(currentGLVToken, ngay || "");
     }
 
+    function glvXoaLuotTheoViTri(i) {
+      var ls = glvState.ls;
+      if (!ls || !ls.danhSach || !ls.danhSach[i]) return;
+      var x = ls.danhSach[i];
+      glvXoaLuot(x.maTN, ls.ngay);
+    }
+
     function glvXoaLuot(maTN, ngay) {
       if (!confirm("Xoá lượt điểm danh của em này trong ngày " + ngay + "?")) return;
       google.script.run.withSuccessHandler(function (res) {
         if (!res || !res.success) { alert((res && res.error) || "Không xoá được lượt điểm danh."); return; }
         glvDsachLopDaTai = false;
-        taiDiemDanhHomNayGLV();
+        // Xoá buổi hôm nay thì nạp lại cả màn điểm danh; buổi cũ thì chỉ tải lại lịch sử
+        if (!glvState.ngay || ngay === glvState.ngay) taiDiemDanhHomNayGLV();
+        else glvTaiLichSu(ngay);
       }).withFailureHandler(function (err) {
         alert("Lỗi kết nối: " + err);
       }).glvXoaLuotDiemDanh(currentGLVToken, maTN, ngay);
