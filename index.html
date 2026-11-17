@@ -10589,6 +10589,20 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     tienQuyChiDoanChart: null, tienQuyHTChart: null, onDinhChart: null, dashLoaded: false
   };
 
+  // Mỗi tab Quản trị chỉ tự tải lại sau 60 giây: bấm qua lại giữa các tab
+  // không phải chờ máy chủ. Nút làm mới / thao tác ghi vẫn gọi thẳng như cũ.
+  var admTabCache = {};
+
+  function admNenTaiTab(name) {
+    if (admTabCache.__token !== currentUserToken) {
+      admTabCache = { __token: currentUserToken };
+    }
+    var lan = admTabCache[name] || 0;
+    if (Date.now() - lan < 60000) return false;
+    admTabCache[name] = Date.now();
+    return true;
+  }
+
   function openAdminPanel() {
     if (!currentUserToken) { showToast && showToast("Vui lòng đăng nhập lại!", "error"); return; }
     document.getElementById("adminPanelScreen").classList.add("open");
@@ -10621,14 +10635,14 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     document.getElementById("admTabBtnGLV").classList.toggle("active", name === "glv");
     document.getElementById("admTabBtnLopGL").classList.toggle("active", name === "lopgl");
     document.getElementById("admTabBtnTNGL").classList.toggle("active", name === "tngl");
-    if (name === "forgot") { admLoadYeuCauQuenMK(); admLoadYeuCauQuenMKGLV(); }
-    if (name === "yeucau") admLoadYeuCauThayDoi();
-    if (name === "thidua") admThiDuaKhoiTao();
-    if (name === "thongbao") admTbTai();
-    if (name === "chucvu") admChucVuKhoiTao();
-    if (name === "glv") admGLVKhoiTao();
-    if (name === "lopgl") admLopGLKhoiTao();
-    if (name === "tngl") admTNGLKhoiTao();
+    if (name === "forgot" && admNenTaiTab("forgot")) { admLoadYeuCauQuenMK(); admLoadYeuCauQuenMKGLV(); }
+    if (name === "yeucau" && admNenTaiTab("yeucau")) admLoadYeuCauThayDoi();
+    if (name === "thidua" && admNenTaiTab("thidua")) admThiDuaKhoiTao();
+    if (name === "thongbao" && admNenTaiTab("thongbao")) admTbTai();
+    if (name === "chucvu" && admNenTaiTab("chucvu")) admChucVuKhoiTao();
+    if (name === "glv" && admNenTaiTab("glv")) admGLVKhoiTao();
+    if (name === "lopgl" && admNenTaiTab("lopgl")) admLopGLKhoiTao();
+    if (name === "tngl" && admNenTaiTab("tngl")) admTNGLKhoiTao();
   }
 
   // ---------------- THI ĐUA: ĐỀ XUẤT CHẤM ĐIỂM + ADMIN BẦU CHỌN ĐA SỐ ----------------
@@ -11798,36 +11812,65 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   }
 
   // ---------------- DASHBOARD ----------------
-  function admLoadDashboard() {
+  // Tải tab Tổng quan. Bản mới của Apps Script có admLayThongKeNhanh (chỉ 4 thẻ
+  // + 2 biểu đồ nhẹ) nên phần đầu hiện nhanh; tiền quỹ tải riêng ngay sau đó.
+  // Nếu Apps Script chưa cập nhật (chưa có hàm mới) thì tự quay về hàm cũ.
+  function admLoadDashboard(dungBanCu) {
+    var hamNay = dungBanCu ? "admLayThongKeDashboard" : "admLayThongKeNhanh";
     google.script.run
       .withSuccessHandler(function (res) {
-        if (!res || !res.success) {
-          document.getElementById("admStatsGrid").innerHTML = '<div class="adm-empty" style="grid-column:1/-1;color:#ff4d6d;">' + (res && res.error ? res.error : "Lỗi tải dữ liệu") + '</div>';
-          return;
-        }
-        admState.dashLoaded = true;
-        var d = res.data;
-        var cards = [
-          { icon: "fa-user-tie", val: d.tongHT, label: "Huynh Trưởng" },
-          { icon: "fa-user-shield", val: d.tongAdmin, label: "Tài khoản Admin" },
-          { icon: "fa-children", val: d.tongThieuNhi, label: "Thiếu Nhi" },
-          { icon: "fa-file-circle-exclamation", val: d.tongDonNghi, label: "Đơn Xin Nghỉ" }
-        ];
-        document.getElementById("admStatsGrid").innerHTML = cards.map(function (c) {
-          return '<div class="adm-stat-card"><div class="adm-stat-icon"><i class="fas ' + c.icon + '"></i></div>' +
-            '<div class="adm-stat-value">' + c.val + '</div><div class="adm-stat-label">' + c.label + '</div></div>';
-        }).join('');
-
-        admRenderChart('admChartChiDoan', 'doughnut', d.chiDoanHT, 'chiDoanChart');
-        admRenderChart('admChartLop', 'bar', d.lopThieuNhi, 'lopChart');
-        admRenderChart('admChartTienQuyChiDoan', 'bar', d.tienQuyChiDoan, 'tienQuyChiDoanChart', true);
-        admRenderChart('admChartTienQuyHT', 'bar', d.tienQuyHT, 'tienQuyHTChart', true);
-        admLoadOnDinh();
+        if (!res || !res.success) { admBaoLoiThongKe((res && res.error) || "Lỗi tải dữ liệu"); return; }
+        admVeThongKe(res.data);
       })
       .withFailureHandler(function (err) {
-        document.getElementById("admStatsGrid").innerHTML = '<div class="adm-empty" style="grid-column:1/-1;color:#ff4d6d;">Lỗi kết nối: ' + err + '</div>';
+        if (!dungBanCu) { admLoadDashboard(true); return; }
+        admBaoLoiThongKe("Lỗi kết nối: " + err);
       })
-      .admLayThongKeDashboard(currentUserToken);
+      [hamNay](currentUserToken);
+  }
+
+  function admBaoLoiThongKe(loi) {
+    document.getElementById("admStatsGrid").innerHTML =
+      '<div class="adm-empty" style="grid-column:1/-1;color:#ff4d6d;">' + loi + '</div>';
+  }
+
+  function admVeThongKe(d) {
+    admState.dashLoaded = true;
+    d = d || {};
+    var cards = [
+      { icon: "fa-user-tie", val: d.tongHT, label: "Huynh Trưởng" },
+      { icon: "fa-user-shield", val: d.tongAdmin, label: "Tài khoản Admin" },
+      { icon: "fa-children", val: d.tongThieuNhi, label: "Thiếu Nhi" },
+      { icon: "fa-file-circle-exclamation", val: d.tongDonNghi, label: "Đơn Xin Nghỉ" }
+    ];
+    document.getElementById("admStatsGrid").innerHTML = cards.map(function (c) {
+      return '<div class="adm-stat-card"><div class="adm-stat-icon"><i class="fas ' + c.icon + '"></i></div>' +
+        '<div class="adm-stat-value">' + c.val + '</div><div class="adm-stat-label">' + c.label + '</div></div>';
+    }).join('');
+
+    admRenderChart('admChartChiDoan', 'doughnut', d.chiDoanHT, 'chiDoanChart');
+    admRenderChart('admChartLop', 'bar', d.lopThieuNhi, 'lopChart');
+
+    // Bản Apps Script cũ trả luôn tiền quỹ trong gói này; bản mới trả riêng.
+    if (d.tienQuyChiDoan || d.tienQuyHT) admVeTienQuy({ success: true, data: d });
+    else admLoadQuyTongQuan();
+
+    admLoadOnDinh();
+  }
+
+  // 2 biểu đồ tiền quỹ (phải đọc thêm bảng quỹ nên nặng hơn) — tải sau, không
+  // bắt người dùng chờ mới thấy 4 thẻ số liệu và 2 biểu đồ phía trên.
+  function admLoadQuyTongQuan() {
+    google.script.run
+      .withSuccessHandler(function (res) { admVeTienQuy(res); })
+      .withFailureHandler(function () { admVeTienQuy(null); })
+      .admLayQuyTongQuan(currentUserToken);
+  }
+
+  function admVeTienQuy(res) {
+    var d = (res && res.success && res.data) || {};
+    admRenderChart('admChartTienQuyChiDoan', 'bar', d.tienQuyChiDoan, 'tienQuyChiDoanChart', true);
+    admRenderChart('admChartTienQuyHT', 'bar', d.tienQuyHT, 'tienQuyHTChart', true);
   }
 
   function admFormatTien(v) {
@@ -12411,11 +12454,12 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 // Khi ra bản mới: đổi "so" + "ngay", XOÁ HẾT mục cũ rồi chỉ thêm mục mới.
 // (Giới hạn cứng bên dưới: tối đa 4 mục, mục thừa sẽ bị bỏ — tránh danh sách phình dài.)
 var APP_PHIEN_BAN = {
-  so: "2.9.4",
-  ngay: "16/11/2026",
+  so: "2.9.5",
+  ngay: "17/11/2026",
   tieuDe: "Xứ Đoàn Thánh Anrê",
   muc: [
-    { icon: "fa-gauge-high", tieuDe: "Đông người vẫn vào nhanh", moTa: "Dữ liệu chung của xứ đoàn nay chỉ tải một lần rồi dùng chung cho mọi người, nên khi cả xứ đoàn cùng mở app máy chủ không còn bị dồn việc. App cũng tự kiểm tra nền thưa hơn (mỗi 3 phút với Trưởng, 1 phút với Admin) để điện thoại đỡ tốn pin và dữ liệu." }
+    { icon: "fa-gauge-high", tieuDe: "Mở Quản trị nhẹ và nhanh hơn", moTa: "Bốn thẻ số liệu và biểu đồ chính hiện ra trước, hai biểu đồ tiền quỹ tải sau nên không phải chờ lâu. Bấm qua lại giữa các tab Quản trị cũng không tải lại từ đầu trong vòng một phút — riêng nút làm mới vẫn cập nhật ngay." },
+    { icon: "fa-database", tieuDe: "Đỡ ghi vào bảng tính", moTa: "Các thao tác đọc quen thuộc (đăng nhập, mở app, mở Quản trị) không còn ghi thêm một dòng nhật ký mỗi lần chạy. Nhờ vậy khi đông người dùng cùng lúc, máy chủ không bị nghẽn ở khâu ghi và app phản hồi nhanh hơn. Lỗi vẫn được ghi đầy đủ để Ban Quản Trị kiểm tra." }
   ]
 };
 
