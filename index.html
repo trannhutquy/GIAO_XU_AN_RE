@@ -10271,10 +10271,10 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     var tuanKey = quyFormatDateKey(quyState.tuan);
     google.script.run.withSuccessHandler(function (res) {
       if (!res || !res.success) { cont.innerHTML = '<p style="text-align:center; color:#e74c3c;">' + (res && res.error ? res.error : "Lỗi tải dữ liệu") + '</p>'; return; }
-      if (res.chuaLienKet) {
-        // CSDL Thiếu Nhi chưa liên kết: quản trị tự chuyển sang tab Huynh Trưởng,
-        // HT thường hiện thông báo thân thiện thay vì lỗi đỏ.
-        if (quyState.loai === 'TN' && (currentUserIsAdmin || currentUserIsSuperAdmin)) {
+      if (res.chuaLienKet || res.chuaXepLop) {
+        // Chưa có CSDL: quản trị tự chuyển sang tab Huynh Trưởng. Trưởng chưa xếp lớp
+        // thì chỉ hiện thông báo thân thiện.
+        if (res.chuaLienKet && quyState.loai === 'TN' && (currentUserIsAdmin || currentUserIsSuperAdmin)) {
           quyState.loai = 'HT';
           quyChonTab('HT', true);
           quyTaiDanhSach();
