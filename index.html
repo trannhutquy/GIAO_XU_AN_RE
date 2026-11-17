@@ -2351,6 +2351,77 @@ body.dark-mode .glv-tn-item,
 body.dark-mode .glv-dd-item { border-color: #3a3b42; }
 body.dark-mode #glv-side-lop { color: #ff8a80; }
 
+/* ===== HỒ SƠ THIẾU NHI + ĐIỂM DANH CẢ LỚP ===== */
+.glv-search { width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 13px; margin-bottom: 10px; }
+body.dark-mode .glv-search { background: #26272c; border-color: #3a3b42; color: #e4e6eb; }
+.glv-tn-item.tap { cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 8px; transition: background .15s; }
+.glv-tn-item.tap:hover { background: #fafafa; }
+body.dark-mode .glv-tn-item.tap:hover { background: #2a2b31; }
+.glv-tn-main { min-width: 0; }
+.glv-tn-cc { font-size: 11px; color: #5b6270; margin-top: 3px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.glv-tn-cc b { color: #d32f2f; }
+.glv-badge-warn { background: #fff3e0; color: #e65100; border-radius: 99px; padding: 1px 8px; font-size: 10.5px; font-weight: 600; }
+.glv-chev { color: #b0b4bb; font-size: 12px; }
+
+/* Hồ sơ dạng tấm trượt từ đáy */
+.glv-sheet { position: fixed; inset: 0; z-index: 450; display: none; align-items: flex-end; justify-content: center; background: rgba(0,0,0,0.45); }
+.glv-sheet.open { display: flex; }
+.glv-sheet-box { background: #fff; width: 100%; max-width: 520px; max-height: 92vh; overflow-y: auto; border-radius: 20px 20px 0 0; padding: 16px 16px 24px; box-sizing: border-box; animation: glvSheetUp .26s cubic-bezier(.16,1,.3,1); }
+@keyframes glvSheetUp { from { transform: translateY(42px); opacity: .6; } to { transform: none; opacity: 1; } }
+body.dark-mode .glv-sheet-box { background: #23252b; color: #e4e6eb; }
+.glv-hs-name { font-size: 17px; font-weight: 800; color: #2c3e50; line-height: 1.3; }
+body.dark-mode .glv-hs-name { color: #fff; }
+.glv-hs-sub { font-size: 12px; color: #8a8f98; margin-top: 2px; }
+.glv-hs-x { border: none; background: #f1f2f4; color: #555; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 14px; flex-shrink: 0; }
+body.dark-mode .glv-hs-x { background: #33353c; color: #ddd; }
+.glv-hs-sec { margin-top: 16px; font-size: 11px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; color: #d32f2f; }
+.glv-hs-row { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px dashed #eee; font-size: 13px; }
+body.dark-mode .glv-hs-row { border-bottom-color: #33353c; }
+.glv-hs-row .lb { flex: 0 0 42%; color: #6b7280; }
+body.dark-mode .glv-hs-row .lb { color: #9aa0aa; }
+.glv-hs-row .gt { flex: 1; font-weight: 600; color: #2c3e50; text-align: right; word-break: break-word; }
+body.dark-mode .glv-hs-row .gt { color: #e4e6eb; }
+.glv-hs-contact { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px dashed #eee; }
+body.dark-mode .glv-hs-contact { border-bottom-color: #33353c; }
+.glv-hs-contact .who { min-width: 0; font-size: 13px; font-weight: 600; }
+.glv-hs-contact .sdt { font-size: 12px; color: #6b7280; font-weight: 400; }
+.glv-hs-btns { display: flex; gap: 6px; flex-shrink: 0; }
+.glv-hs-btns a, .glv-hs-btns button { border: none; border-radius: 9px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; font-size: 13px; cursor: pointer; text-decoration: none; }
+.glv-bt-go { background: #e8f5e9; color: #2e7d32; }
+.glv-bt-zalo { background: #e3f2fd; color: #1565c0; }
+.glv-bt-sms { background: #fff3e0; color: #ef6c00; }
+.glv-cc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+.glv-cc-cell { background: #f7f8fa; border-radius: 12px; padding: 9px 6px; text-align: center; }
+body.dark-mode .glv-cc-cell { background: #2a2b31; }
+.glv-cc-cell b { display: block; font-size: 17px; color: #2c3e50; }
+body.dark-mode .glv-cc-cell b { color: #fff; }
+.glv-cc-cell span { font-size: 10.5px; color: #6b7280; text-transform: uppercase; letter-spacing: .3px; }
+.glv-cc-bar { height: 8px; border-radius: 99px; background: #eceff3; overflow: hidden; margin: 10px 0 4px; }
+body.dark-mode .glv-cc-bar { background: #33353c; }
+.glv-cc-bar i { display: block; height: 100%; background: linear-gradient(90deg,#43a047,#66bb6a); }
+.glv-cc-note { font-size: 11.5px; color: #6b7280; }
+.glv-hs-note { width: 100%; box-sizing: border-box; min-height: 64px; padding: 9px 11px; border: 1px solid #ddd; border-radius: 10px; font-size: 13px; font-family: inherit; resize: vertical; }
+body.dark-mode .glv-hs-note { background: #2a2b31; border-color: #3a3b42; color: #e4e6eb; }
+.glv-mini-btn { border: 1px solid #ddd; background: #fff; border-radius: 9px; padding: 7px 10px; font-size: 12px; cursor: pointer; color: #2c3e50; }
+body.dark-mode .glv-mini-btn { background: #2a2b31; border-color: #3a3b42; color: #e4e6eb; }
+.glv-dd-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px dashed #eee; }
+body.dark-mode .glv-dd-row { border-bottom-color: #33353c; }
+.glv-dd-row .ten { flex: 1; min-width: 0; font-size: 13px; font-weight: 600; }
+.glv-dd-row .ten small { display: block; font-weight: 400; color: #8a8f98; font-size: 11px; }
+.glv-seg { display: flex; gap: 4px; flex-shrink: 0; }
+.glv-seg button { border: 1px solid #ddd; background: #fff; border-radius: 8px; width: 34px; height: 30px; font-size: 11px; cursor: pointer; color: #6b7280; }
+body.dark-mode .glv-seg button { background: #2a2b31; border-color: #3a3b42; color: #9aa0aa; }
+.glv-seg button.on-co { background: #43a047; border-color: #43a047; color: #fff; }
+.glv-seg button.on-vang { background: #e53935; border-color: #e53935; color: #fff; }
+.glv-seg button.on-phep { background: #fb8c00; border-color: #fb8c00; color: #fff; }
+.glv-ls-item { display: flex; justify-content: space-between; gap: 8px; padding: 7px 0; border-bottom: 1px dashed #eee; font-size: 13px; }
+body.dark-mode .glv-ls-item { border-bottom-color: #33353c; }
+.glv-ls-item .tt { font-size: 11.5px; font-weight: 700; }
+.glv-tt-co { color: #2e7d32; }
+.glv-tt-vang { color: #c62828; }
+.glv-tt-phep { color: #ef6c00; }
+.glv-ls-x { border: none; background: transparent; color: #c62828; cursor: pointer; font-size: 12px; }
+
 /* Sidebar chỉ dùng trên laptop */
 #glv-sidebar { display: none; }
 
@@ -2563,6 +2634,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       <div id="glv-tab-dsachlop" style="display:none;">
         <div class="card">
           <h3 style="margin-top:0;">Danh sách Thiếu Nhi trong lớp</h3>
+          <input id="glv-tn-search" class="glv-search" type="text" placeholder="Tìm theo tên hoặc mã Thiếu Nhi…" oninput="glvLocDanhSachTN()">
           <div id="glv-dsachlop-noidung"></div>
         </div>
       </div>
@@ -2589,6 +2661,29 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           </div>
           <div id="glv-diemdanh-danhsach"></div>
         </div>
+
+        <!-- ĐIỂM DANH CẢ LỚP: dùng cho em không mang thẻ / mất thẻ -->
+        <div class="card">
+          <h3 style="margin-top:0;">Điểm danh cả lớp</h3>
+          <div id="glv-cabuoi-siso" class="glv-sum"></div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">
+            <button class="glv-mini-btn" onclick="glvChonTatCa('co')"><i class="fas fa-check"></i> Tất cả có mặt</button>
+            <button class="glv-mini-btn" onclick="glvChonTatCa('')"><i class="fas fa-eraser"></i> Bỏ chọn</button>
+          </div>
+          <div id="glv-cabuoi-danhsach"></div>
+          <div id="glv-cabuoi-lydo-khung" style="display:none; margin-top:10px;">
+            <input id="glv-cabuoi-lydo" type="text" placeholder="Lý do vắng chung (không bắt buộc)…" style="width:100%; box-sizing:border-box; padding:9px 11px; border:1px solid #ddd; border-radius:9px; font-size:13px;">
+          </div>
+          <button class="btn-action" id="glv-cabuoi-luu" onclick="glvLuuDiemDanhCaLop()" style="margin-top:10px;"><i class="fas fa-floppy-disk"></i> Lưu điểm danh buổi này</button>
+          <p class="glv-note">Chọn trạng thái cho từng em rồi bấm Lưu một lần — chỉ ghi Sheet 1–2 lần cho cả buổi. Có thể sửa lại bất cứ lúc nào trong ngày.</p>
+        </div>
+
+        <!-- LỊCH SỬ ĐIỂM DANH: xem lại + xoá lượt ghi nhầm -->
+        <div class="card">
+          <h3 style="margin-top:0;">Lịch sử điểm danh</h3>
+          <select id="glv-ls-ngay" onchange="glvTaiLichSu(this.value)" style="width:100%; box-sizing:border-box; padding:9px 11px; border:1px solid #ddd; border-radius:9px; font-size:13px; margin-bottom:10px;"></select>
+          <div id="glv-ls-noidung"></div>
+        </div>
       </div>
 
       <div id="glv-tab-tiendo" style="display:none;">
@@ -2605,6 +2700,20 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       <div id="glv-nav-dsachlop" class="nav-item" onclick="glvChuyenTab('dsachlop', this)"><i class="fas fa-child"></i><p>Thiếu nhi</p></div>
       <div id="glv-nav-diemdanh" class="nav-item" onclick="glvChuyenTab('diemdanh', this)"><i class="fas fa-qrcode"></i><p>Điểm danh</p></div>
       <div id="glv-nav-tiendo" class="nav-item" onclick="glvChuyenTab('tiendo', this)"><i class="fas fa-book-open"></i><p>Tiến độ</p></div>
+    </div>
+  </div>
+
+  <!-- HỒ SƠ THIẾU NHI (mở từ danh sách lớp) -->
+  <div id="glv-hoso-modal" class="glv-sheet" onclick="if(event.target===this) glvDongHoSo()">
+    <div class="glv-sheet-box">
+      <div style="display:flex; gap:10px; align-items:flex-start;">
+        <div style="flex:1; min-width:0;">
+          <div id="glv-hs-ten" class="glv-hs-name">Đang tải…</div>
+          <div id="glv-hs-phu" class="glv-hs-sub"></div>
+        </div>
+        <button class="glv-hs-x" onclick="glvDongHoSo()" aria-label="Đóng"><i class="fas fa-xmark"></i></button>
+      </div>
+      <div id="glv-hs-noidung"></div>
     </div>
   </div>
 
@@ -4360,6 +4469,14 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       }
     }
 
+    // Trạng thái dùng chung cho các tab GLV (không đọc lại Sheet nhiều lần)
+    var glvState = {
+      tenLop: "", tongBuoi: 0,
+      list: [], q: "",
+      ddLop: [], ngay: "", ls: null,
+      hoSoDangMo: ""
+    };
+
     function taiDanhSachThieuNhiGLV() {
       var box = document.getElementById("glv-dsachlop-noidung");
       box.innerHTML = getEmptyStateHtml("Đang tải danh sách Thiếu Nhi...", "fa-circle-notch fa-spin");
@@ -4373,25 +4490,229 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           box.innerHTML = getEmptyStateHtml("Bạn chưa được phân công phụ trách lớp nào, hoặc lớp chưa được Admin tạo trong hệ thống.", "fa-hourglass-half");
           return;
         }
-        if (!res.list || !res.list.length) {
+        glvState.tenLop = res.tenLop || "";
+        glvState.tongBuoi = res.tongBuoi || 0;
+        glvState.list = res.list || [];
+        if (!glvState.list.length) {
           box.innerHTML = getEmptyStateHtml("Lớp \"" + escapeHtml(res.tenLop) + "\" hiện chưa có Thiếu Nhi nào trong sổ bộ.", "fa-child");
           return;
         }
-        var html = '<div class="glv-sum">Lớp <b>' + escapeHtml(res.tenLop) + '</b> - Sĩ số: <b>' + res.list.length + '</b> em</div>';
-        res.list.forEach(function (tn) {
-          html += '<div class="glv-tn-item">';
-          html += '<div class="glv-tn-name">' + escapeHtml(tn.ten) + ' <span class="glv-tn-ma">(' + escapeHtml(tn.maTN) + ')</span></div>';
-          var chiTiet = [];
-          if (tn.ngaySinh) chiTiet.push('Ngày sinh: ' + escapeHtml(tn.ngaySinh));
-          if (tn.tenPH) chiTiet.push('PH: ' + escapeHtml(tn.tenPH));
-          if (tn.sdtPH) chiTiet.push('SĐT: ' + escapeHtml(tn.sdtPH));
-          if (chiTiet.length) html += '<div class="glv-tn-meta">' + chiTiet.join(' · ') + '</div>';
-          html += '</div>';
-        });
-        box.innerHTML = html;
+        glvVeDsachTN();
       }).withFailureHandler(function (err) {
         box.innerHTML = getEmptyStateHtml("Lỗi kết nối: " + err, "fa-triangle-exclamation");
       }).layDanhSachThieuNhiLopGLV(currentGLVToken);
+    }
+
+    // Tìm theo tên hoặc mã (bỏ dấu, không phân biệt hoa thường)
+    function glvBoDau(s) {
+      return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[đĐ]/g, "d").toLowerCase();
+    }
+
+    function glvLocDanhSachTN() {
+      var el = document.getElementById("glv-tn-search");
+      glvState.q = el ? el.value : "";
+      glvVeDsachTN();
+    }
+
+    function glvVeDsachTN() {
+      var box = document.getElementById("glv-dsachlop-noidung");
+      if (!box) return;
+      var q = glvBoDau(glvState.q).trim();
+      var ds = glvState.list.filter(function (tn) {
+        if (!q) return true;
+        return glvBoDau(tn.ten).indexOf(q) !== -1 || glvBoDau(tn.maTN).indexOf(q) !== -1;
+      });
+      var tongBuoi = glvState.tongBuoi || 0;
+      var html = '<div class="glv-sum">Lớp <b>' + escapeHtml(glvState.tenLop) + '</b> - Sĩ số: <b>' +
+        glvState.list.length + '</b> em</div>';
+      if (!ds.length) {
+        html += '<div class="glv-dd-empty">Không tìm thấy Thiếu Nhi nào khớp "' + escapeHtml(glvState.q) + '".</div>';
+        box.innerHTML = html;
+        return;
+      }
+      ds.forEach(function (tn) {
+        var i = glvState.list.indexOf(tn);
+        html += '<div class="glv-tn-item tap" onclick="moHoSoTN(' + i + ')">';
+        html += '<div class="glv-tn-main">';
+        html += '<div class="glv-tn-name">' + escapeHtml(tn.ten) + ' <span class="glv-tn-ma">(' + escapeHtml(tn.maTN) + ')</span></div>';
+        var meta = [];
+        if (tn.ngaySinh) meta.push(escapeHtml(tn.ngaySinh));
+        if (tn.tenPH) meta.push(escapeHtml(tn.tenPH));
+        if (tn.sdtPH) meta.push(escapeHtml(tn.sdtPH));
+        if (meta.length) html += '<div class="glv-tn-meta">' + meta.join(' · ') + '</div>';
+        if (tongBuoi) {
+          var di = tn.soCoMat || 0;
+          var pct = Math.round(di * 100 / tongBuoi);
+          html += '<div class="glv-tn-cc">Chuyên cần: <b>' + di + '/' + tongBuoi + '</b> (' + pct + '%)';
+          if (tn.vangLienTiep >= 3) {
+            html += ' <span class="glv-badge-warn"><i class="fas fa-triangle-exclamation"></i> vắng ' + tn.vangLienTiep + ' buổi liền</span>';
+          }
+          html += '</div>';
+        }
+        html += '</div><i class="fas fa-chevron-right glv-chev"></i></div>';
+      });
+      box.innerHTML = html;
+    }
+
+    // ---------------- HỒ SƠ TỪNG EM ----------------
+    function moHoSoTN(viTri) {
+      var tn = glvState.list[viTri];
+      if (!tn) return;
+      glvState.hoSoDangMo = tn.maTN;
+      var m = document.getElementById("glv-hoso-modal");
+      document.getElementById("glv-hs-ten").innerText = tn.ten || "Thiếu Nhi";
+      document.getElementById("glv-hs-phu").innerText = "Mã: " + (tn.maTN || "");
+      document.getElementById("glv-hs-noidung").innerHTML =
+        getEmptyStateHtml("Đang tải hồ sơ...", "fa-circle-notch fa-spin");
+      if (m) m.classList.add("open");
+      document.body.style.overflow = "hidden";
+      google.script.run.withSuccessHandler(function (res) {
+        if (glvState.hoSoDangMo !== tn.maTN) return;
+        var box = document.getElementById("glv-hs-noidung");
+        if (!res || !res.success) {
+          box.innerHTML = getEmptyStateHtml((res && res.error) || "Lỗi tải hồ sơ.", "fa-triangle-exclamation");
+          return;
+        }
+        glvVeHoSoTN(res);
+      }).withFailureHandler(function (err) {
+        var box = document.getElementById("glv-hs-noidung");
+        if (box) box.innerHTML = getEmptyStateHtml("Lỗi kết nối: " + err, "fa-triangle-exclamation");
+      }).glvLayHoSoTN(currentGLVToken, tn.maTN);
+    }
+
+    function glvDongHoSo() {
+      var m = document.getElementById("glv-hoso-modal");
+      if (m) m.classList.remove("open");
+      glvState.hoSoDangMo = "";
+      document.body.style.overflow = "";
+    }
+
+    function glvVeHoSoTN(res) {
+      var hs = res.hoSo || {};
+      var cc = res.chuyenCan || {};
+      var box = document.getElementById("glv-hs-noidung");
+      document.getElementById("glv-hs-ten").innerText = hs.ten || "Thiếu Nhi";
+      document.getElementById("glv-hs-phu").innerText =
+        "Mã: " + (hs.maTN || "") + (hs.khoi ? " · " + hs.khoi : "") + (hs.maLop ? " · Lớp " + hs.maLop : "");
+
+      var html = "";
+      var ngaySinh = hs.ngaySinh || "";
+      var tuoi = "";
+      var m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(ngaySinh);
+      if (m) {
+        var d = new Date(+m[3], +m[2] - 1, +m[1]);
+        var now = new Date();
+        var t = now.getFullYear() - d.getFullYear();
+        if (now.getMonth() < d.getMonth() || (now.getMonth() === d.getMonth() && now.getDate() < d.getDate())) t--;
+        if (t > 0 && t < 100) tuoi = t + " tuổi";
+      }
+
+      // --- Chuyên cần ---
+      var tong = cc.tongBuoi || 0;
+      var di = cc.coMat || 0;
+      var pct = tong ? Math.round(di * 100 / tong) : 0;
+      html += '<div class="glv-hs-sec" style="margin-top:4px;">Chuyên cần ' + tong + ' buổi</div>';
+      html += '<div class="glv-cc-grid">' +
+        '<div class="glv-cc-cell"><b>' + di + '</b><span>có mặt</span></div>' +
+        '<div class="glv-cc-cell"><b>' + (cc.vang || 0) + '</b><span>vắng</span></div>' +
+        '<div class="glv-cc-cell"><b>' + (cc.vangPhep || 0) + '</b><span>vắng phép</span></div>' +
+        '</div>';
+      html += '<div class="glv-cc-bar"><i style="width:' + pct + '%"></i></div>';
+      html += '<div class="glv-cc-note">Tỉ lệ đi học: <b>' + pct + '%</b>' +
+        (cc.vangLienTiep >= 3 ? ' · <span class="glv-tt-vang">vắng ' + cc.vangLienTiep + ' buổi liền, nên gọi phụ huynh</span>' : '') +
+        '</div>';
+      if (cc.ganNhat && cc.ganNhat.length) {
+        html += '<div class="glv-hs-sec">Buổi gần nhất</div>';
+        cc.ganNhat.slice().reverse().forEach(function (g) {
+          var nhan = g.trangThai === "vang" ? "Vắng" : (g.trangThai === "phep" ? "Vắng có phép" : "Có mặt");
+          var lop = g.trangThai === "co" ? "glv-tt-co" : (g.trangThai === "phep" ? "glv-tt-phep" : "glv-tt-vang");
+          html += '<div class="glv-ls-item"><span>' + escapeHtml(g.ngay) + '</span><span class="tt ' + lop + '">' + nhan + '</span></div>';
+        });
+      }
+
+      // --- Liên hệ phụ huynh ---
+      var dsLienHe = [];
+      if (hs.tenCha) dsLienHe.push({ vai: "Cha", ten: hs.tenCha, sdt: hs.sdtCha });
+      if (hs.tenMe) dsLienHe.push({ vai: "Mẹ", ten: hs.tenMe, sdt: hs.sdtMe });
+      if (!hs.tenCha && !hs.tenMe && hs.tenPH) dsLienHe.push({ vai: "Phụ huynh", ten: hs.tenPH, sdt: hs.sdtPH });
+      if (hs.nguoiGiamHo) dsLienHe.push({ vai: "Giám hộ", ten: hs.nguoiGiamHo, sdt: hs.sdtGiamHo });
+      if (dsLienHe.length) {
+        html += '<div class="glv-hs-sec">Liên hệ phụ huynh</div>';
+        dsLienHe.forEach(function (l) {
+          var sdt = String(l.sdt || "").replace(/[^\d+]/g, "");
+          html += '<div class="glv-hs-contact"><div class="who">' + escapeHtml(l.vai + ": " + (l.ten || "")) +
+            (sdt ? '<div class="sdt">' + escapeHtml(l.sdt) + '</div>' : '') + '</div>';
+          if (sdt) {
+            html += '<div class="glv-hs-btns">' +
+              '<a class="glv-bt-go" href="tel:' + escapeHtml(sdt) + '" title="Gọi"><i class="fas fa-phone"></i></a>' +
+              '<a class="glv-bt-zalo" href="https://zalo.me/' + escapeHtml(sdt.replace(/^\+/, "")) + '" target="_blank" rel="noopener" title="Zalo"><i class="fas fa-comment"></i></a>' +
+              '<a class="glv-bt-sms" href="sms:' + escapeHtml(sdt) + '?body=' + encodeURIComponent('Xin chào ' + (l.ten || "") + ", giáo lý viên lớp " + (glvState.tenLop || "") + " xin liên hệ về việc học giáo lý của em " + (hs.ten || "") + ".") + '" title="SMS"><i class="fas fa-message"></i></a>' +
+              '</div>';
+          }
+          html += '</div>';
+        });
+        if (hs.sdtPH && dsLienHe.length === 1 && !hs.sdtCha && !hs.sdtMe) { /* đã có nút ở trên */ }
+      }
+
+      // --- Thông tin khác ---
+      var dong = [];
+      if (ngaySinh) dong.push(["Ngày sinh", ngaySinh + (tuoi ? " (" + tuoi + ")" : "")]);
+      if (hs.gioiTinh) dong.push(["Giới tính", hs.gioiTinh]);
+      if (hs.noiSinh) dong.push(["Nơi sinh", hs.noiSinh]);
+      if (hs.nienKhoa) dong.push(["Niên khóa", hs.nienKhoa]);
+      if (hs.truong) dong.push(["Trường", hs.truong]);
+      if (hs.lopVanHoa) dong.push(["Lớp văn hóa", hs.lopVanHoa]);
+      if (hs.diaChi) dong.push(["Địa chỉ", hs.diaChi]);
+      if (hs.giaoHo) dong.push(["Giáo họ / Khu", hs.giaoHo]);
+      if (hs.ngayRuaToi) dong.push(["Rửa tội", hs.ngayRuaToi]);
+      if (hs.ngayRLE) dong.push(["Rước lễ lần đầu", hs.ngayRLE]);
+      if (hs.ngayThemSuc) dong.push(["Thêm sức", hs.ngayThemSuc]);
+      if (hs.tenDoDau) dong.push(["Tên đỡ đầu", hs.tenDoDau]);
+      if (hs.trangThai) dong.push(["Trạng thái", hs.trangThai]);
+      if (hs.hoanCanh) dong.push(["Hoàn cảnh", hs.hoanCanh]);
+      (hs.chiTiet || []).forEach(function (x) { dong.push([x.nhan, x.giaTri]); });
+      if (dong.length) {
+        html += '<div class="glv-hs-sec">Thông tin hồ sơ</div>';
+        dong.forEach(function (r) {
+          html += '<div class="glv-hs-row"><div class="lb">' + escapeHtml(r[0]) + '</div><div class="gt">' + escapeHtml(r[1]) + '</div></div>';
+        });
+      }
+
+      // --- Ghi chú của GLV ---
+      html += '<div class="glv-hs-sec">Ghi chú của Giáo Lý Viên</div>';
+      html += '<textarea id="glv-hs-ghichu" class="glv-hs-note" maxlength="500" placeholder="Ví dụ: ở với bà ngoại, cần kèm thêm môn Kinh Thánh, dị ứng…">' +
+        escapeHtml(hs.ghiChuGV || "") + '</textarea>';
+      html += '<div style="display:flex; gap:8px; align-items:center; margin-top:8px;">' +
+        '<button class="glv-mini-btn" onclick="glvLuuGhiChuTN()" style="background:#d32f2f; color:#fff; border-color:#d32f2f;"><i class="fas fa-floppy-disk"></i> Lưu ghi chú</button>' +
+        '<span id="glv-hs-ghichu-msg" style="font-size:12px; color:#2e7d32;"></span></div>';
+
+      if (hs.nguon === "so_bo") {
+        html += '<p class="glv-note" style="margin-top:14px;">Hồ sơ đang lấy từ sổ bộ Giáo Lý. Khi Ban Hành Giáo liên kết Cơ sở dữ liệu Đoàn Sinh, hồ sơ sẽ tự hiện đầy đủ hơn (giáo họ, ngày rửa tội, trường học…).</p>';
+      }
+      box.innerHTML = html;
+    }
+
+    function glvLuuGhiChuTN() {
+      var ma = glvState.hoSoDangMo;
+      var ta = document.getElementById("glv-hs-ghichu");
+      var msg = document.getElementById("glv-hs-ghichu-msg");
+      if (!ma || !ta) return;
+      if (msg) { msg.style.color = "#6b7280"; msg.innerText = "Đang lưu..."; }
+      google.script.run.withSuccessHandler(function (res) {
+        if (!msg) return;
+        if (!res || !res.success) {
+          msg.style.color = "#c62828";
+          msg.innerText = (res && res.error) || "Lỗi lưu ghi chú.";
+          return;
+        }
+        msg.style.color = "#2e7d32";
+        msg.innerText = "Đã lưu lúc " + (res.luc || "");
+      }).withFailureHandler(function (err) {
+        if (!msg) return;
+        msg.style.color = "#c62828";
+        msg.innerText = "Lỗi kết nối: " + err;
+      }).glvLuuGhiChuTN(currentGLVToken, ma, ta.value);
     }
 
     // ---------------- ĐIỂM DANH BUỔI HỌC ----------------
@@ -4400,41 +4721,199 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     function taiDiemDanhHomNayGLV() {
       var siso = document.getElementById("glv-diemdanh-siso");
       var ds = document.getElementById("glv-diemdanh-danhsach");
+      var cbsiso = document.getElementById("glv-cabuoi-siso");
+      var cbds = document.getElementById("glv-cabuoi-danhsach");
       // Xoá nội dung cũ trước khi tải: tránh trường hợp lỗi/mất mạng mà danh sách
       // của lần mở trước vẫn còn nằm đó, gây hiểu nhầm là số liệu mới.
       siso.classList.remove("glv-err");
       siso.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Đang tải...';
       ds.innerHTML = "";
+      if (cbsiso) cbsiso.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Đang tải...';
+      if (cbds) cbds.innerHTML = "";
       google.script.run.withSuccessHandler(function (res) {
         if (!res || !res.success) {
           siso.classList.add("glv-err");
           siso.innerText = (res && res.error) || "Lỗi tải dữ liệu.";
           ds.innerHTML = "";
+          if (cbsiso) { cbsiso.classList.add("glv-err"); cbsiso.innerText = (res && res.error) || "Lỗi tải dữ liệu."; }
           return;
         }
         if (!res.coLop) {
           siso.innerText = "Bạn chưa được phân công phụ trách lớp nào.";
           ds.innerHTML = "";
+          if (cbsiso) cbsiso.innerText = "Bạn chưa được phân công phụ trách lớp nào.";
           return;
         }
         siso.innerHTML =
           'Lớp <b>' + escapeHtml(res.tenLop) + '</b> - Đã điểm danh: <b class="glv-count">' + res.daDiemDanh.length + '</b> / ' + res.tongSiSo + ' em';
         if (!res.daDiemDanh.length) {
           ds.innerHTML = '<div class="glv-dd-empty">Chưa có em nào được điểm danh hôm nay.</div>';
-          return;
+        } else {
+          var html = '';
+          res.daDiemDanh.forEach(function (tn) {
+            var nhan = tn.trangThai === "vang" ? "Vắng" : (tn.trangThai === "phep" ? "Vắng có phép" : "Có mặt");
+            var lop = tn.trangThai === "co" ? "glv-tt-co" : (tn.trangThai === "phep" ? "glv-tt-phep" : "glv-tt-vang");
+            html += '<div class="glv-dd-item">';
+            html += '<span class="glv-dd-ten"><i class="fas fa-circle-check" style="color:#2ecc71;"></i> ' + escapeHtml(tn.ten) + ' <span class="glv-dd-ma">(' + escapeHtml(tn.maTN) + ')</span> <span class="tt ' + lop + '" style="font-size:11.5px;">· ' + nhan + '</span></span>';
+            html += '<span class="glv-dd-gio">' + escapeHtml(tn.gio) + '</span></div>';
+          });
+          ds.innerHTML = html;
         }
-        var html = '';
-        res.daDiemDanh.forEach(function (tn) {
-          html += '<div class="glv-dd-item">';
-          html += '<span class="glv-dd-ten"><i class="fas fa-check-circle" style="color:#2ecc71;"></i> ' + escapeHtml(tn.ten) + ' <span class="glv-dd-ma">(' + escapeHtml(tn.maTN) + ')</span></span>';
-          html += '<span class="glv-dd-gio">' + escapeHtml(tn.gio) + '</span></div>';
+
+        // Điểm danh cả lớp: nạp danh sách + trạng thái đã ghi hôm nay
+        glvState.ngay = res.ngay || "";
+        glvState.ddLop = (res.dsLop || []).map(function (x) {
+          return { maTN: x.maTN, ten: x.ten, trangThai: x.trangThai || "", lyDo: x.lyDo || "", gio: x.gio || "" };
         });
-        ds.innerHTML = html;
+        glvVeDiemDanhCaLop();
+        glvTaiLichSu("");
       }).withFailureHandler(function (err) {
         siso.classList.add("glv-err");
         siso.innerText = "Lỗi kết nối: " + err;
         ds.innerHTML = "";
+        if (cbsiso) { cbsiso.classList.add("glv-err"); cbsiso.innerText = "Lỗi kết nối: " + err; }
       }).layDiemDanhHomNayGLV(currentGLVToken);
+    }
+
+    // ---------------- ĐIỂM DANH CẢ LỚP (3 trạng thái, lưu 1 lần) ----------------
+    function glvVeDiemDanhCaLop() {
+      var siso = document.getElementById("glv-cabuoi-siso");
+      var box = document.getElementById("glv-cabuoi-danhsach");
+      if (!box) return;
+      var ds = glvState.ddLop || [];
+      if (!ds.length) {
+        if (siso) siso.innerHTML = 'Chưa tải được danh sách lớp.';
+        box.innerHTML = '';
+        return;
+      }
+      var co = 0, vang = 0, phep = 0, chua = 0;
+      ds.forEach(function (x) {
+        if (x.trangThai === "co") co++;
+        else if (x.trangThai === "vang") vang++;
+        else if (x.trangThai === "phep") phep++;
+        else chua++;
+      });
+      if (siso) {
+        siso.innerHTML = 'Sĩ số <b>' + ds.length + '</b> · <b class="glv-tt-co">' + co + ' có mặt</b> · ' +
+          '<b class="glv-tt-vang">' + vang + ' vắng</b> · <b class="glv-tt-phep">' + phep + ' vắng phép</b>' +
+          (chua ? ' · <span style="color:#8a8f98;">' + chua + ' chưa chọn</span>' : '');
+      }
+      var html = '';
+      ds.forEach(function (x, i) {
+        var nhan = x.trangThai === "co" ? "Có mặt" : (x.trangThai === "vang" ? "Vắng" : (x.trangThai === "phep" ? "Vắng có phép" : "Chưa chọn"));
+        html += '<div class="glv-dd-row">';
+        html += '<div class="ten">' + escapeHtml(x.ten) + '<small>' + escapeHtml(x.maTN) + ' · ' + nhan +
+          (x.gio ? ' lúc ' + escapeHtml(x.gio) : '') + '</small></div>';
+        html += '<div class="glv-seg">' +
+          '<button class="' + (x.trangThai === "co" ? "on-co" : "") + '" onclick="glvChonTrangThai(' + i + ',\'co\')" title="Có mặt"><i class="fas fa-check"></i></button>' +
+          '<button class="' + (x.trangThai === "phep" ? "on-phep" : "") + '" onclick="glvChonTrangThai(' + i + ',\'phep\')" title="Vắng có phép"><i class="fas fa-file-lines"></i></button>' +
+          '<button class="' + (x.trangThai === "vang" ? "on-vang" : "") + '" onclick="glvChonTrangThai(' + i + ',\'vang\')" title="Vắng"><i class="fas fa-xmark"></i></button>' +
+          '</div></div>';
+      });
+      box.innerHTML = html;
+      var khung = document.getElementById("glv-cabuoi-lydo-khung");
+      if (khung) khung.style.display = (vang + phep) ? "block" : "none";
+    }
+
+    function glvChonTrangThai(i, tt) {
+      var x = glvState.ddLop[i];
+      if (!x) return;
+      x.trangThai = (x.trangThai === tt) ? "" : tt;
+      glvVeDiemDanhCaLop();
+    }
+
+    function glvChonTatCa(tt) {
+      (glvState.ddLop || []).forEach(function (x) { x.trangThai = tt; });
+      glvVeDiemDanhCaLop();
+    }
+
+    function glvLuuDiemDanhCaLop() {
+      var ds = (glvState.ddLop || []).filter(function (x) { return !!x.trangThai; });
+      var nut = document.getElementById("glv-cabuoi-luu");
+      var siso = document.getElementById("glv-cabuoi-siso");
+      if (!ds.length) {
+        if (siso) siso.innerHTML = '<span class="glv-err">Chưa chọn trạng thái cho em nào.</span>';
+        return;
+      }
+      var lyDo = "";
+      var inp = document.getElementById("glv-cabuoi-lydo");
+      if (inp) lyDo = inp.value.trim();
+      var gui = ds.map(function (x) {
+        return { maTN: x.maTN, trangThai: x.trangThai, lyDo: (x.trangThai === "co" ? "" : lyDo) };
+      });
+      if (nut) { nut.disabled = true; nut.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Đang lưu...'; }
+      google.script.run.withSuccessHandler(function (res) {
+        if (nut) { nut.disabled = false; nut.innerHTML = '<i class="fas fa-floppy-disk"></i> Lưu điểm danh buổi này'; }
+        if (!res || !res.success) {
+          if (siso) siso.innerHTML = '<span class="glv-err">' + escapeHtml((res && res.error) || "Lỗi lưu điểm danh.") + '</span>';
+          return;
+        }
+        glvVeDiemDanhCaLop();
+        glvTaiLichSu(glvState.ngay);
+      }).withFailureHandler(function (err) {
+        if (nut) { nut.disabled = false; nut.innerHTML = '<i class="fas fa-floppy-disk"></i> Lưu điểm danh buổi này'; }
+        if (siso) siso.innerHTML = '<span class="glv-err">Lỗi kết nối: ' + escapeHtml(err) + '</span>';
+      }).glvLuuDiemDanhCaBuoi(currentGLVToken, gui);
+    }
+
+    // ---------------- LỊCH SỬ ĐIỂM DANH ----------------
+    function glvTaiLichSu(ngay) {
+      var sel = document.getElementById("glv-ls-ngay");
+      var box = document.getElementById("glv-ls-noidung");
+      if (!box) return;
+      box.innerHTML = getEmptyStateHtml("Đang tải lịch sử...", "fa-circle-notch fa-spin");
+      google.script.run.withSuccessHandler(function (res) {
+        if (!res || !res.success) {
+          box.innerHTML = getEmptyStateHtml((res && res.error) || "Lỗi tải lịch sử.", "fa-triangle-exclamation");
+          return;
+        }
+        if (!res.coLop) {
+          box.innerHTML = getEmptyStateHtml("Bạn chưa được phân công phụ trách lớp nào.", "fa-hourglass-half");
+          return;
+        }
+        if (sel) {
+          var opts = (res.dsNgay || []).map(function (n) {
+            return '<option value="' + escapeHtml(n) + '"' + (n === res.ngay ? ' selected' : '') + '>' + escapeHtml(n) + '</option>';
+          }).join("");
+          sel.innerHTML = opts || '<option value="">Chưa có buổi nào</option>';
+        }
+        if (!res.dsNgay || !res.dsNgay.length) {
+          box.innerHTML = '<div class="glv-dd-empty">Chưa có lượt điểm danh nào được ghi.</div>';
+          return;
+        }
+        var html = '<div class="glv-sum" style="margin-bottom:6px;">Buổi <b>' + escapeHtml(res.ngay) + '</b> - đã ghi <b>' +
+          (res.danhSach || []).length + '</b> em' +
+          ((res.chuaGhi || []).length ? ', <b style="color:#8a8f98;">' + res.chuaGhi.length + ' chưa ghi</b>' : '') + '</div>';
+        if (!(res.danhSach || []).length) html += '<div class="glv-dd-empty">Buổi này chưa ghi em nào.</div>';
+        glvState.ls = res;
+        (res.danhSach || []).forEach(function (x, i) {
+          var nhan = x.trangThai === "vang" ? "Vắng" : (x.trangThai === "phep" ? "Vắng có phép" : "Có mặt");
+          var lop = x.trangThai === "co" ? "glv-tt-co" : (x.trangThai === "phep" ? "glv-tt-phep" : "glv-tt-vang");
+          html += '<div class="glv-ls-item"><span>' + escapeHtml(x.ten) +
+            (x.lyDo ? ' <small style="color:#8a8f98;">(' + escapeHtml(x.lyDo) + ')</small>' : '') + '</span>' +
+            '<span style="display:flex; gap:8px; align-items:center;"><span class="tt ' + lop + '">' + nhan + '</span>' +
+            '<button class="glv-ls-x" title="Xoá lượt ghi nhầm" onclick="glvXoaLuotTheoViTri(' + i + ')"><i class="fas fa-trash-can"></i></button></span></div>';
+        });
+        if ((res.chuaGhi || []).length) {
+          html += '<div class="glv-hs-sec">Chưa ghi</div>';
+          html += '<div style="font-size:12.5px; color:#6b7280;">' +
+            res.chuaGhi.map(function (x) { return escapeHtml(x.ten); }).join(' · ') + '</div>';
+        }
+        box.innerHTML = html;
+      }).withFailureHandler(function (err) {
+        box.innerHTML = getEmptyStateHtml("Lỗi kết nối: " + err, "fa-triangle-exclamation");
+      }).glvLayLichSuDiemDanh(currentGLVToken, ngay || "");
+    }
+
+    function glvXoaLuot(maTN, ngay) {
+      if (!confirm("Xoá lượt điểm danh của em này trong ngày " + ngay + "?")) return;
+      google.script.run.withSuccessHandler(function (res) {
+        if (!res || !res.success) { alert((res && res.error) || "Không xoá được lượt điểm danh."); return; }
+        glvDsachLopDaTai = false;
+        taiDiemDanhHomNayGLV();
+      }).withFailureHandler(function (err) {
+        alert("Lỗi kết nối: " + err);
+      }).glvXoaLuotDiemDanh(currentGLVToken, maTN, ngay);
     }
 
     // ---------------- QUÉT QR ĐIỂM DANH THIẾU NHI NGAY TRONG APP ----------------
