@@ -4847,6 +4847,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           if (siso) siso.innerHTML = '<span class="glv-err">' + escapeHtml((res && res.error) || "Lỗi lưu điểm danh.") + '</span>';
           return;
         }
+        glvDsachLopDaTai = false; // lần sau mở tab Thiếu nhi sẽ tính lại chuyên cần
         glvVeDiemDanhCaLop();
         glvTaiLichSu(glvState.ngay);
       }).withFailureHandler(function (err) {
