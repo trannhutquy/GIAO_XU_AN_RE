@@ -12941,12 +12941,14 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 // Khi ra bản mới: đổi "so" + "ngay", XOÁ HẾT mục cũ rồi chỉ thêm mục mới.
 // (Giới hạn cứng bên dưới: tối đa 4 mục, mục thừa sẽ bị bỏ — tránh danh sách phình dài.)
 var APP_PHIEN_BAN = {
-  so: "2.9.5",
+  so: "3.0.0",
   ngay: "17/11/2026",
   tieuDe: "Xứ Đoàn Thánh Anrê",
   muc: [
-    { icon: "fa-gauge-high", tieuDe: "Mở Quản trị nhẹ và nhanh hơn", moTa: "Bốn thẻ số liệu và biểu đồ chính hiện ra trước, hai biểu đồ tiền quỹ tải sau nên không phải chờ lâu. Bấm qua lại giữa các tab Quản trị cũng không tải lại từ đầu trong vòng một phút — riêng nút làm mới vẫn cập nhật ngay." },
-    { icon: "fa-database", tieuDe: "Đỡ ghi vào bảng tính", moTa: "Các thao tác đọc quen thuộc (đăng nhập, mở app, mở Quản trị) không còn ghi thêm một dòng nhật ký mỗi lần chạy. Nhờ vậy khi đông người dùng cùng lúc, máy chủ không bị nghẽn ở khâu ghi và app phản hồi nhanh hơn. Lỗi vẫn được ghi đầy đủ để Ban Quản Trị kiểm tra." }
+    { icon: "fa-id-card", tieuDe: "Hồ sơ từng Thiếu Nhi cho Giáo Lý Viên", moTa: "Trong tab Thiếu nhi, bấm vào tên một em là mở hồ sơ: ngày sinh và tuổi, phụ huynh, địa chỉ, giáo họ, các ngày bí tích, hoàn cảnh… kèm ba nút Gọi / Zalo / SMS cho phụ huynh. Ô tìm kiếm gõ không dấu vẫn ra đúng em cần tìm." },
+    { icon: "fa-note-sticky", tieuDe: "Ghi chú riêng của Giáo Lý Viên", moTa: "Mỗi em có một ô ghi chú ngay trong hồ sơ để lưu điều cần nhớ: dị ứng, ở với ông bà, cần kèm thêm… Ghi chú lưu ở bảng riêng nên không sửa vào hồ sơ gốc của Ban Hành Giáo, và ghi rõ ai cập nhật lúc nào." },
+    { icon: "fa-clipboard-check", tieuDe: "Điểm danh cả lớp, lưu một lần", moTa: "Bổ sung cho quét mã QR: chọn Có mặt / Vắng có phép / Vắng cho từng em rồi bấm Lưu một lần cho cả buổi, kèm ô lý do vắng. Em không mang thẻ vẫn được điểm danh, và sửa lại được bất cứ lúc nào trong ngày." },
+    { icon: "fa-chart-simple", tieuDe: "Lịch sử điểm danh và chuyên cần", moTa: "Xem lại từng buổi, biết em nào chưa ghi, xoá được lượt quét nhầm. Danh sách lớp hiện tỉ lệ đi học của từng em và tự cảnh báo khi một em vắng ba buổi liền để kịp gọi phụ huynh." }
   ]
 };
 
