@@ -11443,7 +11443,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     var view = document.querySelector("#adminPanelScreen .adm-view.active");
     if (!view) return;
     var dang = false, capNhatNen = false, loi = "", trong = "";
-    var nodes = view.querySelectorAll(".adm-empty, .adm-status-inline, [id$='Empty'], [id$='DangTai']");
+    var nodes = view.querySelectorAll(".adm-empty, .adm-status-inline, #admSelectDB, #tbLichSu, [id$='Empty'], [id$='DangTai'], [id$='List']");
     for (var i = 0; i < nodes.length; i++) {
       var el = nodes[i];
       if (window.getComputedStyle(el).display === "none") continue;
@@ -11530,6 +11530,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   }
 
   function admShowView(name) {
+    admCurrentView = name;
     document.getElementById("admViewDash").classList.toggle("active", name === "dash");
     document.getElementById("admViewExplorer").classList.toggle("active", name === "explorer");
     document.getElementById("admViewForgot").classList.toggle("active", name === "forgot");
@@ -11562,6 +11563,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     if (name === "lopgl" && admNenTaiTab("lopgl")) admLopGLKhoiTao();
     if (name === "baiday" && admNenTaiTab("baiday")) admGLKhoiTao();
     if (name === "tngl" && admNenTaiTab("tngl")) admTNGLKhoiTao();
+    admStatusXemLai();
   }
 
   // ---------------- BÀI DẠY & LỊCH TRÌNH (Admin soạn - GLV chỉ xem) ----------------
