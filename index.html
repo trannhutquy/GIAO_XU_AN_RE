@@ -10079,7 +10079,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     <!-- ===== TAB LỚP GIÁO LÝ ===== -->
     <div class="adm-view" id="admViewLopGL">
       <div style="font-size:12px; color:var(--adm-sub); margin:0 0 10px; line-height:1.5;">
-        Tạo/sửa các lớp Giáo Lý (khối, niên khóa, phòng học, lịch học). Để 1 Giáo Lý Viên nhìn thấy đúng lớp mình phụ trách, <b>Tên lớp</b> đặt ở đây phải trùng khớp với "Lớp Giáo Lí" đang gán cho GLV đó ở tab "Giáo Lý Viên".
+        Danh sách lớp được lấy tự động từ cột <b>Lớp</b> trong CSDL gốc (BAO ĐỒNG, THÊM SỨC...). Admin chỉ cần đặt khối, niên khóa, phòng học, lịch học cho từng lớp. Để GLV nhìn thấy đúng lớp mình phụ trách, <b>Tên lớp</b> phải trùng khớp với "Lớp Giáo Lí" đang gán cho GLV đó ở tab "Giáo Lý Viên".
       </div>
       <div class="adm-explorer-toolbar">
         <input class="adm-input" id="admLopGLTimKiem" placeholder="Tìm theo mã lớp / tên lớp..." oninput="admLopGLVeBang()" style="max-width:260px;">
@@ -12298,7 +12298,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   }
 
   // ---------------- QUẢN LÝ LỚP GIÁO LÝ ----------------
-  var admLopGLState = { ds: [] };
+  var admLopGLState = { ds: [], nguon: "" };
 
   function admLopGLKhoiTao() {
     var table = document.getElementById("admLopGLTable");
@@ -12313,6 +12313,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           return;
         }
         admLopGLState.ds = res.list || [];
+        admLopGLState.nguon = res.nguon || "";
         admLopGLVeBang();
       })
       .withFailureHandler(function (err) { empty.innerHTML = '<i class="fas fa-triangle-exclamation" style="font-size:26px; display:block; margin-bottom:8px; color:#ff4d6d;"></i>Lỗi kết nối: ' + err; })
@@ -12334,10 +12335,14 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       return;
     }
     empty.style.display = "none"; table.style.display = "table";
+    var coCsdl = admLopGLState.nguon === "csdl";
     tbody.innerHTML = "";
     ds.forEach(function (l) {
       var tr = document.createElement("tr");
       var tdMa = document.createElement("td"); tdMa.innerText = l.maLop;
+      if (coCsdl && l.coTrongApp === false) {
+        tdMa.title = "Lớp lấy từ CSDL gốc (chưa có thông tin riêng trong app)";
+      }
       var tdTen = document.createElement("td"); tdTen.innerText = l.ten;
       var tdKhoi = document.createElement("td"); tdKhoi.innerText = l.khoi || "";
       var tdNK = document.createElement("td"); tdNK.innerText = l.nienKhoa || "";
@@ -12350,10 +12355,15 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       btnSua.className = "adm-btn adm-btn-outline"; btnSua.innerText = "Sửa";
       btnSua.style.marginRight = "6px";
       btnSua.addEventListener("click", function () { admLopGLMoModalSua(l); });
-      var btnXoa = document.createElement("button");
-      btnXoa.className = "adm-btn adm-btn-danger"; btnXoa.innerText = "Xóa";
-      btnXoa.addEventListener("click", function () { admLopGLXoa(l.maLop, l.ten); });
-      tdThaoTac.appendChild(btnSua); tdThaoTac.appendChild(btnXoa);
+      tdThaoTac.appendChild(btnSua);
+      // Lớp lấy từ CSDL gốc không cho Xoá (xoá chỉ xoá thông tin app, không xoá được lớp trong CSDL)
+      if (!coCsdl || l.coTrongApp !== false) {
+        var btnXoa = document.createElement("button");
+        btnXoa.className = "adm-btn adm-btn-danger"; btnXoa.innerText = "Xóa";
+        btnXoa.style.marginLeft = "6px";
+        btnXoa.addEventListener("click", function () { admLopGLXoa(l.maLop, l.ten); });
+        tdThaoTac.appendChild(btnXoa);
+      }
 
       tr.appendChild(tdMa); tr.appendChild(tdTen); tr.appendChild(tdKhoi); tr.appendChild(tdNK); tr.appendChild(tdPhong); tr.appendChild(tdLich); tr.appendChild(tdThaoTac);
       tbody.appendChild(tr);
