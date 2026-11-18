@@ -11438,7 +11438,10 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           if (!nho && empty) empty.textContent = (res && res.error) || "Lỗi tải dữ liệu.";
           return;
         }
+        // Lưu cả khóa đã yêu cầu lẫn khóa sau khi chọn lớp được áp dụng,
+        // để bấm "Làm mới" / mở lại tab là trúng cache ngay.
         admGLState.boNho[khoa] = { duLieu: res, t: Date.now() };
+        admGLState.boNho[admGLKhoaNho(currentUserToken, res.maLop)] = { duLieu: res, t: Date.now() };
         admGLApDuDuLieu(res);
       })
       .withFailureHandler(function (err) {
