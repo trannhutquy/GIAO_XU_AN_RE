@@ -10204,23 +10204,43 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     <!-- ===== TAB BÀI DẠY & LỊCH TRÌNH (Admin soạn, GLV chỉ xem) ===== -->
     <div class="adm-view" id="admViewBaiDay">
       <div class="adm-view-note">
-        Soạn bài, gán cho từng lớp (để trống = dùng chung) và lập lịch Chúa Nhật trong niên khoá
-        <b id="admGLNamHocHien">01/09 → 31/08</b>. Tuần nghỉ dạy / nghỉ học giáo lý / GLV xin phép
-        thì bài tự dồn sang Chúa Nhật kế tiếp. Bên GLV chỉ xem danh sách bài &amp; tiến độ.
+        <b>Cách dùng:</b> chọn <b>Lớp đang xem</b> để xem bài và lịch riêng của lớp đó (bài “dùng chung” vẫn hiện kèm).
+        Chọn <b>ngày bắt đầu năm học</b> rồi bấm <b>Cập nhật</b> để lập lịch Chúa Nhật (mặc định 01/09 → 31/08 năm sau).
+        Tuần nghỉ làm bài tự dồn sang Chúa Nhật kế tiếp — dùng bộ lọc để kiểm tra.
       </div>
       <div class="adm-explorer-toolbar">
-        <div class="adm-tool-group" data-label="Lọc">
-          <select id="admGLLopChon" class="adm-input" onchange="admGLTai()" style="max-width:190px;"></select>
-          <input type="date" id="admGLNamHoc" class="adm-input" style="max-width:160px;">
+        <div class="adm-tool-group" data-label="Lớp đang xem">
+          <select id="admGLLopChon" class="adm-input" onchange="admGLTai()" style="max-width:200px;" title="Chọn một lớp để xem bài/lịch riêng của lớp đó"></select>
+        </div>
+        <div class="adm-tool-group" data-label="Niên khoá">
+          <input type="date" id="admGLNamHoc" class="adm-input" style="max-width:150px;" title="Ngày bắt đầu năm học, định dạng DD/MM/YYYY">
+          <button class="adm-btn adm-btn-outline adm-btn-sm" onclick="admGLLuuNamHoc()">Cập nhật</button>
+        </div>
+        <div class="adm-tool-group" data-label="Tìm bài">
+          <input id="admGLTimBai" class="adm-input" placeholder="Tên hoặc mã bài..." oninput="admGLVe()" style="max-width:165px;">
+          <select id="admGLLocBai" class="adm-input" onchange="admGLVe()" style="max-width:140px;">
+            <option value="tatca">Tất cả bài</option>
+            <option value="colich">Có lịch</option>
+            <option value="chuaxep">Chưa xếp lịch</option>
+            <option value="bidon">Bị dồn</option>
+          </select>
+        </div>
+        <div class="adm-tool-group" data-label="Lịch tuần">
+          <select id="admGLLocTuan" class="adm-input" onchange="admGLVe()" style="max-width:150px;">
+            <option value="tatca">Tất cả tuần</option>
+            <option value="cobai">Tuần có bài</option>
+            <option value="nghi">Tuần nghỉ</option>
+            <option value="trong">Tuần trống</option>
+          </select>
         </div>
         <div class="adm-tool-group" data-label="Thao tác">
-          <button class="adm-btn adm-btn-outline adm-btn-sm" onclick="admGLLuuNamHoc()">Lưu năm học</button>
-          <button class="adm-btn adm-btn-outline adm-btn-sm" onclick="admGLTai()">Làm mới</button>
+          <button class="adm-btn adm-btn-outline adm-btn-sm" onclick="admGLTai()">Tải lại</button>
           <button class="adm-btn adm-btn-primary adm-btn-sm" onclick="admGLMoBai()">+ Thêm bài</button>
         </div>
         <span id="admGLDangTai" class="adm-status-inline" style="display:none;"><i class="fas fa-circle-notch fa-spin"></i> Đang cập nhật…</span>
       </div>
       <div id="admGLThongKe" style="font-size:12.5px; margin:10px 0; color:var(--adm-sub);"></div>
+      <div id="admGLTomTat" class="adm-view-note" style="margin:0 0 10px; padding:7px 12px;"></div>
       <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:flex-start;">
         <div class="adm-view-section" style="flex:1 1 300px; min-width:280px;">
           <h4><i class="fas fa-book"></i>&nbsp; Kho bài dạy</h4>
@@ -11569,7 +11589,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   // ---------------- BÀI DẠY & LỊCH TRÌNH (Admin soạn - GLV chỉ xem) ----------------
   // Apps Script cần ~3 giây cho mỗi lượt gọi. Giữ dữ liệu theo token+lớp trong
   // bộ nhớ: mở lại tab / đổi tab khác quay về là hiện ngay, rồi mới cập nhật nền.
-  var admGLState = { duLieu: null, maLop: "", boNho: {} };
+  var admGLState = { duLieu: null, maLop: "", boNho: {}, loc: { tuKhoa: "", bai: "tatca", tuan: "tatca" } };
 
   function admGLKhoiTao() { admGLTai(); }
 
