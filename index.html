@@ -13201,13 +13201,14 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 // Khi ra bản mới: đổi "so" + "ngay", XOÁ HẾT mục cũ rồi chỉ thêm mục mới.
 // (Giới hạn cứng bên dưới: tối đa 4 mục, mục thừa sẽ bị bỏ — tránh danh sách phình dài.)
 var APP_PHIEN_BAN = {
-  so: "3.2.0",
+  so: "3.3.0",
   ngay: "18/11/2026",
   tieuDe: "Xứ Đoàn Thánh Anrê",
   muc: [
-    { icon: "fa-database", tieuDe: "Đã nối CSDL Đoàn Sinh chính thức", moTa: "App giờ đọc đúng file CSDL thật của giáo xứ (nhiều trang tính theo lớp). Mã Thiếu Nhi ở cột X, tên lớp giáo lý lấy theo tên từng trang tính, nên GLV và Huynh Trưởng cùng thấy đúng mã, đúng lớp." },
-    { icon: "fa-users", tieuDe: "Bỏ em đã nghỉ học", moTa: "Các em có ghi “ĐÃ NGHĨ HỌC” được tự động ẩn khỏi danh sách điểm danh và sĩ số. Dữ liệu gốc vẫn giữ nguyên, app không ghi ngược vào file CSDL." },
-    { icon: "fa-qrcode", tieuDe: "Mã QR thẻ đồng bộ", moTa: "Trang Admin in QR thẻ dùng ngay mã CSDL thật, trùng mã lúc quét điểm danh — không còn lệch giữa sổ bộ và CSDL." }
+    { icon: "fa-book-open", tieuDe: "Kho bài dạy Giáo Lý", moTa: "Giáo Lý Viên có thêm mục “Tiến độ”: soạn bài dạy (tên bài, chủ đề, mục tiêu, nội dung, tài liệu), bài để trống mã lớp sẽ dùng chung cho mọi lớp. Có thể sửa, xoá bài do mình tạo." },
+    { icon: "fa-chart-line", tieuDe: "Theo dõi tiến độ từng lớp", moTa: "Màn hình tiến độ tính tự động tỉ lệ bài đã dạy theo nhật ký thực tế của lớp mình. Bài đã dạy hiện dấu tick xanh, bấm “Làm mới” là cập nhật ngay." },
+    { icon: "fa-calendar-day", tieuDe: "Nhật ký buổi học", moTa: "Ghi lại từng buổi dạy: ngày, bài dạy, nội dung đã dạy và ghi chú thêm. Nhật ký chỉ ghi cho lớp được phân công, không làm ảnh hưởng đến CSDL gốc của giáo xứ." },
+    { icon: "fa-database", tieuDe: "Vẫn dùng chung CSDL Đoàn Sinh", moTa: "Hồ sơ, sĩ số và mã QR thẻ tiếp tục lấy từ CSDL thật; em đã nghỉ học tự ẩn. App chỉ đọc CSDL gốc, không ghi ngược lại." }
   ]
 };
 
