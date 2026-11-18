@@ -10140,6 +10140,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         <input type="date" id="admGLNamHoc" class="adm-input" style="max-width:165px;">
         <button class="adm-btn adm-btn-outline" onclick="admGLLuuNamHoc()">Lưu năm học</button>
         <button class="adm-btn adm-btn-outline" onclick="admGLTai()">Làm mới</button>
+        <span id="admGLDangTai" style="font-size:11.5px; color:#888; display:none;"><i class="fas fa-circle-notch fa-spin"></i> Đang cập nhật…</span>
         <button class="adm-btn adm-btn-primary" onclick="admGLMoBai()">+ Thêm bài</button>
       </div>
       <div id="admGLThongKe" style="font-size:12.5px; margin:10px 0; color:var(--adm-sub);"></div>
@@ -11339,7 +11340,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     document.getElementById("adminPanelScreen").classList.add("open");
     document.getElementById("settingsDropdown").style.display = "none";
     if (!admState.dashLoaded) admLoadDashboard();
-    if (admState.dbList.length === 0) admLoadDBList();
+    // Danh sách file CSDL chỉ cần khi mở tab Explorer — khỏi gọi thêm 1 lượt
+    // Apps Script (~3 giây) ngay lúc mở panel.
   }
   function closeAdminPanel() {
     document.getElementById("adminPanelScreen").classList.remove("open");
@@ -11368,6 +11370,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     document.getElementById("admTabBtnLopGL").classList.toggle("active", name === "lopgl");
     document.getElementById("admTabBtnBaiDay").classList.toggle("active", name === "baiday");
     document.getElementById("admTabBtnTNGL").classList.toggle("active", name === "tngl");
+    if (name === "explorer" && admState.dbList.length === 0) admLoadDBList();
     if (name === "forgot" && admNenTaiTab("forgot")) { admLoadYeuCauQuenMK(); admLoadYeuCauQuenMKGLV(); }
     if (name === "yeucau" && admNenTaiTab("yeucau")) admLoadYeuCauThayDoi();
     if (name === "thidua" && admNenTaiTab("thidua")) admThiDuaKhoiTao();
@@ -11380,38 +11383,67 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   }
 
   // ---------------- BÀI DẠY & LỊCH TRÌNH (Admin soạn - GLV chỉ xem) ----------------
-  var admGLState = { duLieu: null, maLop: "" };
+  // Apps Script cần ~3 giây cho mỗi lượt gọi. Giữ dữ liệu theo token+lớp trong
+  // bộ nhớ: mở lại tab / đổi tab khác quay về là hiện ngay, rồi mới cập nhật nền.
+  var admGLState = { duLieu: null, maLop: "", boNho: {} };
 
   function admGLKhoiTao() { admGLTai(); }
+
+  function admGLKhoaNho(token, maLop) {
+    return String(token || "") + "|" + String(maLop || "").trim().toUpperCase();
+  }
+
+  function admGLBaoDangTai(dang) {
+    var e = document.getElementById("admGLDangTai");
+    if (e) e.style.display = dang ? "inline" : "none";
+  }
+
+  function admGLApDuDuLieu(res) {
+    admGLState.duLieu = res;
+    admGLState.maLop = res.maLop || "";
+    var sel = document.getElementById("admGLLopChon");
+    if (sel) {
+      var op = '<option value="">-- Dùng chung (mọi lớp) --</option>';
+      (res.dsLop || []).forEach(function (l) {
+        op += '<option value="' + escapeHtml(l.maLop) + '">' + escapeHtml(l.ten || l.maLop) + '</option>';
+      });
+      sel.innerHTML = op;
+      sel.value = res.maLop || "";
+    }
+    var ngay = document.getElementById("admGLNamHoc");
+    if (ngay) ngay.value = res.namHocBatDau || "";
+    admGLVe();
+  }
 
   function admGLTai() {
     var sel = document.getElementById("admGLLopChon");
     var ma = sel ? sel.value : "";
     var empty = document.getElementById("admGLEmpty");
-    if (empty) empty.textContent = "Đang tải dữ liệu…";
+    var khoa = admGLKhoaNho(currentUserToken, ma);
+    var nho = admGLState.boNho[khoa];
+
+    if (nho && nho.duLieu) {
+      admGLApDuDuLieu(nho.duLieu);
+      if (empty) empty.style.display = "none";
+    } else if (empty) {
+      empty.style.display = "";
+      empty.textContent = "Đang tải dữ liệu…";
+    }
+    admGLBaoDangTai(true);
+
     google.script.run
       .withSuccessHandler(function (res) {
+        admGLBaoDangTai(false);
         if (!res || !res.success) {
-          if (empty) empty.textContent = (res && res.error) || "Lỗi tải dữ liệu.";
+          if (!nho && empty) empty.textContent = (res && res.error) || "Lỗi tải dữ liệu.";
           return;
         }
-        admGLState.duLieu = res;
-        admGLState.maLop = res.maLop || "";
-        var cur = res.maLop || "";
-        if (sel) {
-          var op = '<option value="">-- Dùng chung (mọi lớp) --</option>';
-          (res.dsLop || []).forEach(function (l) {
-            op += '<option value="' + escapeHtml(l.maLop) + '">' + escapeHtml(l.ten || l.maLop) + '</option>';
-          });
-          sel.innerHTML = op;
-          sel.value = cur;
-        }
-        var ngay = document.getElementById("admGLNamHoc");
-        if (ngay) ngay.value = res.namHocBatDau || "";
-        admGLVe();
+        admGLState.boNho[khoa] = { duLieu: res, t: Date.now() };
+        admGLApDuDuLieu(res);
       })
       .withFailureHandler(function (err) {
-        if (empty) empty.textContent = "Lỗi kết nối: " + err;
+        admGLBaoDangTai(false);
+        if (!nho && empty) empty.textContent = "Lỗi kết nối: " + err;
       })
       .admGiaoLyLayDuLieu(currentUserToken, ma);
   }
