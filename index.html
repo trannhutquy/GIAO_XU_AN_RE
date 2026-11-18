@@ -11778,7 +11778,11 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           '<button class="adm-btn adm-btn-outline" style="padding:3px 7px;" onclick="admGLMoTuan(\'' + escapeHtml(t.ngay) + '\')">Sửa tuần</button>' +
           '</td></tr>';
       });
-      tuanBody.innerHTML = h2;
+      if (!dsTuan.length) {
+        tuanBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#888;">Không có tuần nào khớp bộ lọc.</td></tr>';
+      } else {
+        tuanBody.innerHTML = h2;
+      }
     }
   }
 
