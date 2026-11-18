@@ -2495,6 +2495,7 @@ body.dark-mode .glv-ls-item { border-bottom-color: #33353c; }
      Sidebar có z-index 4000; để z-index mặc định 300/450 thì khi mở modal
      bị che mất phần bên trái và vẫn bấm được vào sidebar phía sau. */
   #glv-td-bai-modal, #glv-td-nk-modal, .glv-sheet { z-index: 6000 !important; }
+  #glv-td-bai-modal, #glv-td-nk-modal, .glv-sheet,
   #glv-td-bai-modal .modal-content,
   #glv-td-nk-modal .modal-content { box-sizing: border-box; }
   @media (min-width: 992px) {
@@ -13212,7 +13213,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 // Khi ra bản mới: đổi "so" + "ngay", XOÁ HẾT mục cũ rồi chỉ thêm mục mới.
 // (Giới hạn cứng bên dưới: tối đa 4 mục, mục thừa sẽ bị bỏ — tránh danh sách phình dài.)
 var APP_PHIEN_BAN = {
-  so: "3.3.0",
+  so: "3.3.1",
   ngay: "18/11/2026",
   tieuDe: "Xứ Đoàn Thánh Anrê",
   muc: [
