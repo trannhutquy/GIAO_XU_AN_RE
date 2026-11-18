@@ -11930,6 +11930,15 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
             return;
           }
           admTNGLState.ds = res.list || [];
+          admTNGLState.chiDoc = res.chiDoc === true;
+          var ghiChu = document.getElementById("admTNGLGhiChu");
+          if (ghiChu) {
+            if (res.nguon === "csdl") {
+              ghiChu.innerHTML = 'Đang lấy danh sách trực tiếp từ <b>CSDL Đoàn Sinh</b> của giáo xứ (' + admTNGLState.ds.length + ' em). Mã QR thẻ in từ đây trùng mã dùng để điểm danh. Dữ liệu <b>chỉ đọc</b>; muốn sửa thông tin em, xin liên hệ Ban Quản Trị CSDL.';
+            } else {
+              ghiChu.innerHTML = 'Chưa mở được CSDL Đoàn Sinh, đang dùng <b>sổ bộ dự phòng</b>. Gán mỗi em vào 1 lớp qua cột "Lớp".';
+            }
+          }
           admTNGLVeBang();
         })
         .withFailureHandler(function (err) { empty.innerHTML = '<i class="fas fa-triangle-exclamation" style="font-size:26px; display:block; margin-bottom:8px; color:#ff4d6d;"></i>Lỗi kết nối: ' + err; })
@@ -11976,14 +11985,19 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       btnQR.className = "adm-btn adm-btn-outline"; btnQR.innerText = "QR";
       btnQR.style.marginRight = "6px";
       btnQR.addEventListener("click", function () { admTNGLXemQR(t.maTN, t.ten); }.bind(null));
-      var btnSua = document.createElement("button");
-      btnSua.className = "adm-btn adm-btn-outline"; btnSua.innerText = "Sửa";
-      btnSua.style.marginRight = "6px";
-      btnSua.addEventListener("click", function () { admTNGLMoModalSua(t); });
-      var btnXoa = document.createElement("button");
-      btnXoa.className = "adm-btn adm-btn-danger"; btnXoa.innerText = "Xóa";
-      btnXoa.addEventListener("click", function () { admTNGLXoa(t.maTN, t.ten); });
-      tdThaoTac.appendChild(btnQR); tdThaoTac.appendChild(btnSua); tdThaoTac.appendChild(btnXoa);
+      tdThaoTac.appendChild(btnQR);
+      // Dòng lấy từ CSDL gốc là chỉ đọc: vẫn in được QR nhưng không sửa/xoá tại app.
+      var chiDoc = (t.chiDoc === true) || (admTNGLState.chiDoc === true);
+      if (!chiDoc) {
+        var btnSua = document.createElement("button");
+        btnSua.className = "adm-btn adm-btn-outline"; btnSua.innerText = "Sửa";
+        btnSua.style.marginRight = "6px";
+        btnSua.addEventListener("click", function () { admTNGLMoModalSua(t); });
+        var btnXoa = document.createElement("button");
+        btnXoa.className = "adm-btn adm-btn-danger"; btnXoa.innerText = "Xóa";
+        btnXoa.addEventListener("click", function () { admTNGLXoa(t.maTN, t.ten); });
+        tdThaoTac.appendChild(btnSua); tdThaoTac.appendChild(btnXoa);
+      }
 
       tr.appendChild(tdMa); tr.appendChild(tdTen); tr.appendChild(tdLop); tr.appendChild(tdNgaySinh); tr.appendChild(tdPH); tr.appendChild(tdSdtPH); tr.appendChild(tdThaoTac);
       tbody.appendChild(tr);
