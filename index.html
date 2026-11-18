@@ -9745,6 +9745,57 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   .adm-btn-outline { background: transparent; border: 1px solid var(--adm-border); color: var(--adm-text); }
   .adm-btn-danger { background: var(--adm-danger); color: white; }
   .adm-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .adm-btn { transition: transform .15s ease, box-shadow .15s ease, background .15s ease, border-color .15s ease; }
+  .adm-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.35); }
+  .adm-btn:active:not(:disabled) { transform: translateY(0); }
+  .adm-btn:focus-visible { outline: 2px solid var(--adm-blue); outline-offset: 2px; }
+  .adm-btn-outline:hover:not(:disabled) { background: rgba(18,224,255,.08); border-color: var(--adm-blue-dim); }
+  .adm-btn-sm { padding: 5px 9px; font-size: 11.5px; border-radius: 7px; }
+
+  /* Thanh trạng thái dùng chung cho mọi tab: luôn biết app đang tải / đã sẵn sàng / lỗi */
+  .adm-statusbar {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+    padding: 7px 18px; font-size: 12px; color: var(--adm-sub);
+    background: rgba(10,19,48,.86); border-bottom: 1px solid var(--adm-border);
+  }
+  .adm-status-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex: none;
+    background: var(--adm-green); box-shadow: 0 0 8px rgba(35,224,138,.8);
+  }
+  .adm-status-dot.loading { background: var(--adm-blue); box-shadow: 0 0 9px rgba(18,224,255,.9); animation: admStatusPulse 1s ease-in-out infinite; }
+  .adm-status-dot.updating { background: #ffc857; box-shadow: 0 0 9px rgba(255,200,87,.8); animation: admStatusPulse 1.4s ease-in-out infinite; }
+  .adm-status-dot.error { background: var(--adm-danger); box-shadow: 0 0 9px rgba(255,77,109,.8); }
+  .adm-status-dot.idle { background: #6c7a99; box-shadow: none; }
+  @keyframes admStatusPulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.75); } }
+  #admStatusText { color: var(--adm-text); font-weight: 700; }
+  .adm-status-detail { opacity: .85; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 46vw; }
+  #admStatusRefresh { margin-left: auto; }
+
+  /* Gom nhóm nút theo tác vụ, vùng xem có khung riêng dễ đọc */
+  .adm-explorer-toolbar {
+    align-items: center; background: rgba(8,16,41,.55); border: 1px solid var(--adm-border);
+    border-radius: 12px; padding: 8px; margin-bottom: 12px;
+  }
+  .adm-tool-group {
+    display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    padding: 4px 7px; border-radius: 9px; background: rgba(255,255,255,.025);
+    border: 1px solid rgba(255,255,255,.06);
+  }
+  .adm-tool-group + .adm-tool-group { border-left: 1px solid var(--adm-border); border-radius: 0 9px 9px 0; }
+  .adm-tool-group::before {
+    content: attr(data-label); font-size: 10px; font-weight: 700; letter-spacing: .4px;
+    color: var(--adm-sub); text-transform: uppercase; opacity: .75; margin-right: 2px;
+  }
+  .adm-view-section {
+    background: rgba(13,26,61,.55); border: 1px solid var(--adm-border);
+    border-radius: 12px; padding: 12px;
+  }
+  .adm-view-section h4 { font-size: 13px; margin: 0 0 9px; color: var(--adm-blue); }
+  .adm-view-note {
+    font-size: 12px; color: var(--adm-sub); line-height: 1.5; margin: 0 0 12px;
+    padding: 9px 12px; border-radius: 10px; background: rgba(18,224,255,.05);
+    border-left: 3px solid var(--adm-blue-dim);
+  }
 
   .adm-table-wrap { overflow: auto; border: 1px solid var(--adm-border); border-radius: 12px; max-height: 60vh; }
   table.adm-table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
@@ -9786,6 +9837,13 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   <div class="adm-topbar">
     <div class="adm-title">QUẢN TRỊ</div>
     <div class="adm-close-btn" onclick="closeAdminPanel()"><i class="fas fa-times"></i></div>
+  </div>
+
+  <div class="adm-statusbar" id="admStatusBar">
+    <span class="adm-status-dot" id="admStatusDot"></span>
+    <span id="admStatusText">Sẵn sàng</span>
+    <span class="adm-status-detail" id="admStatusDetail">Dữ liệu đã sẵn sàng.</span>
+    <button class="adm-btn adm-btn-sm adm-btn-outline" id="admStatusRefresh" onclick="admTaiLaiTabHienTai()" title="Tải lại tab đang mở, bỏ qua dữ liệu đã lưu tạm"><i class="fas fa-rotate-right"></i> Làm mới tab này</button>
   </div>
 
   <div class="adm-tabs-wrap">
@@ -9846,14 +9904,20 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     <!-- ===== TAB DUYỆT DỮ LIỆU ===== -->
     <div class="adm-view" id="admViewExplorer">
       <div class="adm-explorer-toolbar">
-        <select class="adm-select" id="admSelectDB" onchange="admOnDBChange()"><option>Đang tải danh sách file...</option></select>
-        <select class="adm-select" id="admSelectSheet" onchange="admOnSheetChange()" disabled><option>Chọn file trước</option></select>
+        <div class="adm-tool-group" data-label="Nguồn">
+          <select class="adm-select" id="admSelectDB" onchange="admOnDBChange()"><option>Đang tải danh sách file...</option></select>
+          <select class="adm-select" id="admSelectSheet" onchange="admOnSheetChange()" disabled><option>Chọn file trước</option></select>
+        </div>
       </div>
       <div class="adm-explorer-toolbar">
-        <input class="adm-input" id="admSearchInput" placeholder="Tìm kiếm trong bảng..." onkeyup="admFilterTable()" disabled>
-        <button class="adm-btn adm-btn-outline" onclick="admOnSheetChange()" id="admBtnRefresh" disabled>Làm mới</button>
-        <button class="adm-btn adm-btn-primary" onclick="admOpenRowModal('add')" id="admBtnAdd" disabled>Thêm dòng</button>
-        <button class="adm-btn adm-btn-danger" onclick="admDeleteSelected()" id="admBtnDelSelected" disabled>Xóa đã chọn (<span id="admSelCount">0</span>)</button>
+        <div class="adm-tool-group" data-label="Tìm">
+          <input class="adm-input" id="admSearchInput" placeholder="Tìm kiếm trong bảng..." onkeyup="admFilterTable()" disabled>
+        </div>
+        <div class="adm-tool-group" data-label="Thao tác">
+          <button class="adm-btn adm-btn-outline adm-btn-sm" onclick="admOnSheetChange()" id="admBtnRefresh" disabled>Làm mới</button>
+          <button class="adm-btn adm-btn-primary adm-btn-sm" onclick="admOpenRowModal('add')" id="admBtnAdd" disabled>Thêm dòng</button>
+          <button class="adm-btn adm-btn-danger adm-btn-sm" onclick="admDeleteSelected()" id="admBtnDelSelected" disabled>Xóa đã chọn (<span id="admSelCount">0</span>)</button>
+        </div>
       </div>
       <div class="adm-info-bar" id="admInfoBar"></div>
       <div class="adm-table-wrap">
