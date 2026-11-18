@@ -11920,14 +11920,19 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   }
 
   function admGLLuuNamHoc() {
-    var nd = document.getElementById("admGLNamHoc").value;
-    if (!nd) { showToast("Vui lòng chọn ngày bắt đầu năm học.", "error"); return; }
+    var nd = (document.getElementById("admGLNamHoc") || {}).value || "";
+    var nk = (document.getElementById("admGLNamHocKet") || {}).value || "";
+    if (!nd) { showToast("Vui lòng chọn Từ ngày.", "error"); return; }
+    if (!nk) { showToast("Vui lòng chọn Đến ngày.", "error"); return; }
+    if (nk < nd) { showToast("Đến ngày phải sau Từ ngày.", "error"); return; }
     google.script.run.withSuccessHandler(function (res) {
-      if (!res || !res.success) { showToast((res && res.error) || "Không lưu được năm học.", "error"); return; }
-      showToast("Đã cập nhật năm học.");
+      if (!res || !res.success) { showToast((res && res.error) || "Không lưu được niên khoá.", "error"); return; }
+      showToast("Đã cập nhật niên khoá từ " + nd + " đến " + nk + ".");
+      // Xoá cache để mọi tab của Admin đều lấy lịch mới theo khoảng vừa chọn.
+      admGLState.boNho = {};
       admGLTai();
     }).withFailureHandler(function (err) { showToast("Lỗi kết nối: " + err, "error"); })
-      .admGiaoLyLuuNamHoc(currentUserToken, nd);
+      .admGiaoLyLuuNamHoc(currentUserToken, nd, nk);
   }
 
   // ---------------- THI ĐUA: ĐỀ XUẤT CHẤM ĐIỂM + ADMIN BẦU CHỌN ĐA SỐ ----------------
