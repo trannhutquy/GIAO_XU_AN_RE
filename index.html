@@ -12492,7 +12492,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         .admLayDanhSachTNGiaoLy(currentUserToken, maLopLoc);
     }).withFailureHandler(function (err) {
       empty.innerHTML = '<i class="fas fa-triangle-exclamation" style="font-size:26px; display:block; margin-bottom:8px; color:#ff4d6d;"></i>Lỗi kết nối: ' + err;
-    }).admLayDanhSachLopGiaoLy(currentUserToken);
+    }).admLayDanhSachLopGiaoLy(currentUserToken, "csdl");
   }
 
   function admTNGLTenLop(maLop) {
