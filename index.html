@@ -10205,7 +10205,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     <div class="adm-view" id="admViewBaiDay">
       <div class="adm-view-note">
         <b>Cách dùng:</b> chọn <b>Lớp đang xem</b> để xem bài và lịch riêng của lớp đó (bài “dùng chung” vẫn hiện kèm).
-        Chọn <b>ngày bắt đầu năm học</b> rồi bấm <b>Cập nhật</b> để lập lịch Chúa Nhật (mặc định 01/09 → 31/08 năm sau).
+        Ở <b>Niên khoá</b>, chọn rõ <b>Từ ngày</b> và <b>Đến ngày</b> rồi bấm <b>Cập nhật</b> — lịch Chúa Nhật chỉ sinh trong khoảng này.
         Tuần nghỉ làm bài tự dồn sang Chúa Nhật kế tiếp — dùng bộ lọc để kiểm tra.
       </div>
       <div class="adm-explorer-toolbar">
@@ -10213,7 +10213,10 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           <select id="admGLLopChon" class="adm-input" onchange="admGLTai()" style="max-width:200px;" title="Chọn một lớp để xem bài/lịch riêng của lớp đó"></select>
         </div>
         <div class="adm-tool-group" data-label="Niên khoá">
-          <input type="date" id="admGLNamHoc" class="adm-input" style="max-width:150px;" title="Ngày bắt đầu năm học, định dạng DD/MM/YYYY">
+          <span style="font-size:12px; color:var(--adm-sub); white-space:nowrap;">Từ</span>
+          <input type="date" id="admGLNamHoc" class="adm-input" style="max-width:148px;" title="Ngày bắt đầu niên khoá (DD/MM/YYYY)">
+          <span style="font-size:12px; color:var(--adm-sub); white-space:nowrap;">đến</span>
+          <input type="date" id="admGLNamHocKet" class="adm-input" style="max-width:148px;" title="Ngày kết thúc niên khoá (DD/MM/YYYY)">
           <button class="adm-btn adm-btn-outline adm-btn-sm" onclick="admGLLuuNamHoc()">Cập nhật</button>
         </div>
         <div class="adm-tool-group" data-label="Tìm bài">
@@ -11616,6 +11619,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     }
     var ngay = document.getElementById("admGLNamHoc");
     if (ngay) ngay.value = res.namHocBatDau || "";
+    var ngayKet = document.getElementById("admGLNamHocKet");
+    if (ngayKet) ngayKet.value = res.namHocKetThuc || "";
     admGLVe();
   }
 
