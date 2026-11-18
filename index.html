@@ -9806,6 +9806,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       <div class="adm-tabs">
         <div class="adm-tab" id="admTabBtnGLV" onclick="admShowView('glv')"><i class="fas fa-cross"></i>&nbsp; Giáo Lý Viên</div>
         <div class="adm-tab" id="admTabBtnLopGL" onclick="admShowView('lopgl')"><i class="fas fa-chalkboard"></i>&nbsp; Lớp Giáo Lý</div>
+        <div class="adm-tab" id="admTabBtnBaiDay" onclick="admShowView('baiday')"><i class="fas fa-book-open"></i>&nbsp; Bài Dạy & Lịch Trình</div>
         <div class="adm-tab" id="admTabBtnTNGL" onclick="admShowView('tngl')"><i class="fas fa-child"></i>&nbsp; Thiếu Nhi (GL)</div>
       </div>
     </div>
@@ -10123,6 +10124,108 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         <div class="adm-modal-foot">
           <button class="adm-btn adm-btn-outline" onclick="admLopGLDongModal()">Hủy</button>
           <button class="adm-btn adm-btn-primary" onclick="admLopGLLuu()" id="admLopGLBtnLuu">Lưu</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TAB BÀI DẠY & LỊCH TRÌNH (Admin soạn, GLV chỉ xem) ===== -->
+    <div class="adm-view" id="admViewBaiDay">
+      <div style="font-size:12px; color:var(--adm-sub); margin:0 0 10px; line-height:1.5;">
+        Soạn bài, gán cho từng lớp (để trống = dùng chung) và lập lịch Chúa Nhật trong niên khoá
+        <b id="admGLNamHocHien">01/09 → 31/08</b>. Tuần nghỉ dạy / nghỉ học giáo lý / GLV xin phép
+        thì bài tự dồn sang Chúa Nhật kế tiếp. Bên GLV chỉ xem danh sách bài &amp; tiến độ.
+      </div>
+      <div class="adm-explorer-toolbar">
+        <select id="admGLLopChon" class="adm-input" onchange="admGLTai()" style="max-width:200px;"></select>
+        <input type="date" id="admGLNamHoc" class="adm-input" style="max-width:165px;">
+        <button class="adm-btn adm-btn-outline" onclick="admGLLuuNamHoc()">Lưu năm học</button>
+        <button class="adm-btn adm-btn-outline" onclick="admGLTai()">Làm mới</button>
+        <button class="adm-btn adm-btn-primary" onclick="admGLMoBai()">+ Thêm bài</button>
+      </div>
+      <div id="admGLThongKe" style="font-size:12.5px; margin:10px 0; color:var(--adm-sub);"></div>
+      <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:flex-start;">
+        <div style="flex:1 1 300px; min-width:280px;">
+          <h4 style="font-size:13px; margin:0 0 8px;">Kho bài dạy</h4>
+          <div class="adm-table-wrap" style="max-height:430px; overflow:auto;">
+            <table class="adm-table"><thead><tr><th>Mã bài</th><th>Tên bài</th><th>Lớp</th><th>Lịch</th><th>Thao tác</th></tr></thead><tbody id="admGLBaiBody"></tbody></table>
+          </div>
+        </div>
+        <div style="flex:2 1 520px; min-width:320px;">
+          <h4 style="font-size:13px; margin:0 0 8px;">Lịch Chúa Nhật — <span id="admGLTenLop"></span></h4>
+          <div class="adm-table-wrap" style="max-height:520px; overflow:auto;">
+            <table class="adm-table"><thead><tr><th>Tuần</th><th>Chúa Nhật</th><th>Bài học / Trạng thái</th><th>Thao tác</th></tr></thead><tbody id="admGLTuanBody"></tbody></table>
+          </div>
+        </div>
+      </div>
+      <div class="adm-empty" id="admGLEmpty">Đang tải dữ liệu…</div>
+
+      <!-- Modal thêm / sửa bài dạy -->
+      <div class="adm-modal-bg" id="admGLBaiModalBg">
+        <div class="adm-modal-box">
+          <div class="adm-modal-head"><h4 id="admGLBaiTieuDe">Thêm bài dạy</h4><span onclick="admGLDongBai()" style="cursor:pointer; font-size:20px;">&times;</span></div>
+          <div class="adm-modal-body">
+            <input type="hidden" id="admGLBaiMa">
+            <label style="font-size:12px; font-weight:bold; display:block; margin:8px 0 4px;">Tên bài *</label>
+            <input class="adm-input" id="admGLBaiTen" maxlength="200" style="width:100%; box-sizing:border-box;">
+            <label style="font-size:12px; font-weight:bold; display:block; margin:8px 0 4px;">Lớp (để trống = dùng chung)</label>
+            <select class="adm-input" id="admGLBaiLop" style="width:100%; box-sizing:border-box;"></select>
+            <label style="font-size:12px; font-weight:bold; display:block; margin:8px 0 4px;">Chủ đề</label>
+            <input class="adm-input" id="admGLBaiChuDe" maxlength="200" style="width:100%; box-sizing:border-box;">
+            <label style="font-size:12px; font-weight:bold; display:block; margin:8px 0 4px;">Mục tiêu</label>
+            <textarea class="adm-input" id="admGLBaiMucTieu" rows="2" maxlength="500" style="width:100%; box-sizing:border-box;"></textarea>
+            <label style="font-size:12px; font-weight:bold; display:block; margin:8px 0 4px;">Nội dung bài dạy</label>
+            <textarea class="adm-input" id="admGLBaiNoiDung" rows="4" maxlength="4000" style="width:100%; box-sizing:border-box;"></textarea>
+            <label style="font-size:12px; font-weight:bold; display:block; margin:8px 0 4px;">Tài liệu / Kinh Thánh</label>
+            <input class="adm-input" id="admGLBaiTaiLieu" maxlength="1000" style="width:100%; box-sizing:border-box;">
+            <label style="font-size:12px; font-weight:bold; display:block; margin:8px 0 4px;">Thứ tự</label>
+            <input class="adm-input" id="admGLBaiThuTu" type="number" min="0" value="0" style="width:160px;">
+          </div>
+          <div class="adm-modal-foot">
+            <button class="adm-btn adm-btn-outline" onclick="admGLDongBai()">Hủy</button>
+            <button class="adm-btn adm-btn-primary" onclick="admGLLuuBai()">Lưu</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal gán bài vào Chúa Nhật -->
+      <div class="adm-modal-bg" id="admGLGanModalBg">
+        <div class="adm-modal-box">
+          <div class="adm-modal-head"><h4>Gán bài vào Chúa Nhật</h4><span onclick="admGLDongGan()" style="cursor:pointer; font-size:20px;">&times;</span></div>
+          <div class="adm-modal-body">
+            <input type="hidden" id="admGLGanNgay">
+            <div id="admGLGanNgayHien" style="font-size:13px; font-weight:bold; margin-bottom:10px;"></div>
+            <label style="font-size:12px; font-weight:bold; display:block; margin:8px 0 4px;">Chọn bài dạy</label>
+            <select class="adm-input" id="admGLGanBai" style="width:100%; box-sizing:border-box;"></select>
+          </div>
+          <div class="adm-modal-foot">
+            <button class="adm-btn adm-btn-outline" onclick="admGLDongGan()">Hủy</button>
+            <button class="adm-btn adm-btn-primary" onclick="admGLLuuGan()">Gán lịch</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal điều chỉnh trạng thái tuần -->
+      <div class="adm-modal-bg" id="admGLTuanModalBg">
+        <div class="adm-modal-box">
+          <div class="adm-modal-head"><h4>Điều chỉnh tuần học</h4><span onclick="admGLDongTuan()" style="cursor:pointer; font-size:20px;">&times;</span></div>
+          <div class="adm-modal-body">
+            <input type="hidden" id="admGLTuanNgay">
+            <div id="admGLTuanNgayHien" style="font-size:13px; font-weight:bold; margin-bottom:10px;"></div>
+            <label style="font-size:12px; font-weight:bold; display:block; margin:8px 0 4px;">Trạng thái</label>
+            <select class="adm-input" id="admGLTuanTrangThai" style="width:100%; box-sizing:border-box;">
+              <option value="hoc">Học bình thường</option>
+              <option value="nghi_dạy">Nghỉ dạy</option>
+              <option value="nghi_hoc">Nghỉ học giáo lý</option>
+              <option value="glv_xin_nghi">GLV xin phép nghỉ</option>
+            </select>
+            <label style="font-size:12px; font-weight:bold; display:block; margin:8px 0 4px;">Ghi chú (lý do nghỉ)</label>
+            <input class="adm-input" id="admGLTuanGhiChu" maxlength="500" style="width:100%; box-sizing:border-box;">
+            <div class="glv-note" style="margin-top:10px;">Chọn “Học bình thường” để bỏ đánh dấu nghỉ. Bài của tuần nghỉ tự dồn sang Chúa Nhật sau.</div>
+          </div>
+          <div class="adm-modal-foot">
+            <button class="adm-btn adm-btn-outline" onclick="admGLDongTuan()">Hủy</button>
+            <button class="adm-btn adm-btn-primary" onclick="admGLLuuTuan()">Lưu</button>
+          </div>
         </div>
       </div>
     </div>
@@ -11252,6 +11355,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     document.getElementById("admViewChucVu").classList.toggle("active", name === "chucvu");
     document.getElementById("admViewGLV").classList.toggle("active", name === "glv");
     document.getElementById("admViewLopGL").classList.toggle("active", name === "lopgl");
+    document.getElementById("admViewBaiDay").classList.toggle("active", name === "baiday");
     document.getElementById("admViewTNGL").classList.toggle("active", name === "tngl");
     document.getElementById("admTabBtnDash").classList.toggle("active", name === "dash");
     document.getElementById("admTabBtnExplorer").classList.toggle("active", name === "explorer");
@@ -11262,6 +11366,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     document.getElementById("admTabBtnChucVu").classList.toggle("active", name === "chucvu");
     document.getElementById("admTabBtnGLV").classList.toggle("active", name === "glv");
     document.getElementById("admTabBtnLopGL").classList.toggle("active", name === "lopgl");
+    document.getElementById("admTabBtnBaiDay").classList.toggle("active", name === "baiday");
     document.getElementById("admTabBtnTNGL").classList.toggle("active", name === "tngl");
     if (name === "forgot" && admNenTaiTab("forgot")) { admLoadYeuCauQuenMK(); admLoadYeuCauQuenMKGLV(); }
     if (name === "yeucau" && admNenTaiTab("yeucau")) admLoadYeuCauThayDoi();
@@ -11270,7 +11375,276 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     if (name === "chucvu" && admNenTaiTab("chucvu")) admChucVuKhoiTao();
     if (name === "glv" && admNenTaiTab("glv")) admGLVKhoiTao();
     if (name === "lopgl" && admNenTaiTab("lopgl")) admLopGLKhoiTao();
+    if (name === "baiday" && admNenTaiTab("baiday")) admGLKhoiTao();
     if (name === "tngl" && admNenTaiTab("tngl")) admTNGLKhoiTao();
+  }
+
+  // ---------------- BÀI DẠY & LỊCH TRÌNH (Admin soạn - GLV chỉ xem) ----------------
+  var admGLState = { duLieu: null, maLop: "" };
+
+  function admGLKhoiTao() { admGLTai(); }
+
+  function admGLTai() {
+    var sel = document.getElementById("admGLLopChon");
+    var ma = sel ? sel.value : "";
+    var empty = document.getElementById("admGLEmpty");
+    if (empty) empty.textContent = "Đang tải dữ liệu…";
+    google.script.run
+      .withSuccessHandler(function (res) {
+        if (!res || !res.success) {
+          if (empty) empty.textContent = (res && res.error) || "Lỗi tải dữ liệu.";
+          return;
+        }
+        admGLState.duLieu = res;
+        admGLState.maLop = res.maLop || "";
+        var cur = res.maLop || "";
+        if (sel) {
+          var op = '<option value="">-- Dùng chung (mọi lớp) --</option>';
+          (res.dsLop || []).forEach(function (l) {
+            op += '<option value="' + escapeHtml(l.maLop) + '">' + escapeHtml(l.ten || l.maLop) + '</option>';
+          });
+          sel.innerHTML = op;
+          sel.value = cur;
+        }
+        var ngay = document.getElementById("admGLNamHoc");
+        if (ngay) ngay.value = res.namHocBatDau || "";
+        admGLVe();
+      })
+      .withFailureHandler(function (err) {
+        if (empty) empty.textContent = "Lỗi kết nối: " + err;
+      })
+      .admGiaoLyLayDuLieu(currentUserToken, ma);
+  }
+
+  function admGLTimXep(maBai) {
+    var ds = (admGLState.duLieu && admGLState.duLieu.dsBaiDaXep) || [];
+    for (var i = 0; i < ds.length; i++) if (ds[i].maBai === maBai) return ds[i];
+    return null;
+  }
+
+  function admGLTenTrangThai(tt) {
+    if (tt === "nghi_dạy") return "Nghỉ dạy";
+    if (tt === "nghi_hoc") return "Nghỉ học giáo lý";
+    if (tt === "glv_xin_nghi") return "GLV xin phép nghỉ";
+    return "Học";
+  }
+
+  function admGLVe() {
+    var res = admGLState.duLieu;
+    var empty = document.getElementById("admGLEmpty");
+    if (!res) return;
+    if (empty) empty.style.display = "none";
+
+    var thongKe = document.getElementById("admGLThongKe");
+    if (thongKe) {
+      thongKe.innerHTML = 'Niên khoá <b>' + escapeHtml(res.namHocBatDau) + ' → ' + escapeHtml(res.namHocKetThuc) +
+        '</b> · ' + res.tongTuan + ' Chúa Nhật · ' + res.soDaDay + '/' + res.tongBai + ' bài đã qua (' + res.phanTram + '%)' +
+        ' · ' + res.soTuanNghi + ' tuần nghỉ · <span style="color:#ef6c00;">' + res.soBaiDon + ' bài được dồn</span>';
+    }
+    var hien = document.getElementById("admGLNamHocHien");
+    if (hien) hien.textContent = res.namHocBatDau + " → " + res.namHocKetThuc;
+    var tenLop = document.getElementById("admGLTenLop");
+    if (tenLop) {
+      var found = (res.dsLop || []).filter(function (l) { return l.maLop === res.maLop; })[0];
+      tenLop.textContent = res.maLop ? (found ? found.ten : res.maLop) : "dùng chung";
+    }
+
+    // Kho bài dạy.
+    var baiBody = document.getElementById("admGLBaiBody");
+    if (baiBody) {
+      var dsBai = res.dsBai || [];
+      if (!dsBai.length) {
+        baiBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#888;">Chưa có bài dạy.</td></tr>';
+      } else {
+        var h = "";
+        dsBai.forEach(function (b) {
+          var x = admGLTimXep(b.maBai);
+          var lich = x ? (x.ngayVn + (x.don ? ' <span style="color:#ef6c00;">(dồn)</span>' : '')) : '<span style="color:#888;">Chưa xếp</span>';
+          h += '<tr>' +
+            '<td>' + escapeHtml(b.maBai) + '</td>' +
+            '<td>' + escapeHtml(b.tenBai) + '</td>' +
+            '<td>' + (b.maLop ? escapeHtml(b.maLop) : '<span style="color:#888;">dùng chung</span>') + '</td>' +
+            '<td>' + lich + '</td>' +
+            '<td style="white-space:nowrap;">' +
+            '<button class="adm-btn adm-btn-outline" style="padding:3px 7px;" onclick="admGLMoBai(\'' + escapeHtml(b.maBai) + '\')">Sửa</button> ' +
+            '<button class="adm-btn adm-btn-outline" style="padding:3px 7px;" onclick="admGLMoGan(\'\',\'' + escapeHtml(b.maBai) + '\')">Gán</button> ' +
+            (x ? '<button class="adm-btn adm-btn-outline" style="padding:3px 7px;" onclick="admGLBoLich(\'' + escapeHtml(b.maBai) + '\')">Gỡ lịch</button> ' : '') +
+            '<button class="adm-btn adm-btn-outline" style="padding:3px 7px; color:#c62828;" onclick="admGLXoaBai(\'' + escapeHtml(b.maBai) + '\')">Xoá</button>' +
+            '</td></tr>';
+        });
+        baiBody.innerHTML = h;
+      }
+    }
+
+    // Lịch cả năm.
+    var tuanBody = document.getElementById("admGLTuanBody");
+    if (tuanBody) {
+      var h2 = "";
+      (res.dsTuan || []).forEach(function (t) {
+        var nghi = t.trangThai !== "hoc";
+        var mau = nghi ? '#c62828' : (t.daQua ? '#2e7d32' : 'var(--adm-sub)');
+        var noi = "";
+        if (!(t.dsBai || []).length) {
+          noi = nghi ? '<span style="color:#c62828;">' + escapeHtml(admGLTenTrangThai(t.trangThai)) + '</span>' : '—';
+        } else {
+          noi = t.dsBai.map(function (b) {
+            return '<div>' + (b.daDay ? '<i class="fas fa-circle-check" style="color:#2e7d32;"></i> ' : '') +
+              escapeHtml(b.tenBai) + ' <span style="color:#888;">' + escapeHtml(b.maBai) + '</span>' +
+              (b.don ? ' <span style="color:#ef6c00;">(dồn từ ' + escapeHtml(b.ngayGoc) + ')</span>' : '') + '</div>';
+          }).join("");
+          if (nghi) noi += '<div style="color:#c62828; font-size:11px;">' + escapeHtml(admGLTenTrangThai(t.trangThai)) + '</div>';
+        }
+        if (t.ghiChu) noi += '<div style="color:#888; font-size:11px;">' + escapeHtml(t.ghiChu) + '</div>';
+        h2 += '<tr' + (t.laHomNay ? ' style="background:rgba(255,152,0,.10);"' : '') + '>' +
+          '<td>' + t.tuan + '</td>' +
+          '<td style="color:' + mau + '; font-weight:600; white-space:nowrap;">' + escapeHtml(t.ngayVn) + '</td>' +
+          '<td>' + noi + '</td>' +
+          '<td style="white-space:nowrap;">' +
+          '<button class="adm-btn adm-btn-outline" style="padding:3px 7px;" onclick="admGLMoGan(\'' + escapeHtml(t.ngay) + '\',\'\')">Gán bài</button> ' +
+          '<button class="adm-btn adm-btn-outline" style="padding:3px 7px;" onclick="admGLMoTuan(\'' + escapeHtml(t.ngay) + '\')">Sửa tuần</button>' +
+          '</td></tr>';
+      });
+      tuanBody.innerHTML = h2;
+    }
+  }
+
+  // ---------- MODAL BÀI ----------
+  function admGLDongBai() { document.getElementById("admGLBaiModalBg").classList.remove("open"); }
+
+  function admGLMoBai(maBai) {
+    var res = admGLState.duLieu || {};
+    var b = null;
+    (res.dsBai || []).forEach(function (x) { if (x.maBai === maBai) b = x; });
+    document.getElementById("admGLBaiMa").value = b ? b.maBai : "";
+    document.getElementById("admGLBaiTieuDe").textContent = b ? "Sửa bài dạy" : "Thêm bài dạy";
+    document.getElementById("admGLBaiTen").value = b ? b.tenBai : "";
+    document.getElementById("admGLBaiChuDe").value = b ? b.chuDe : "";
+    document.getElementById("admGLBaiMucTieu").value = b ? b.mucTieu : "";
+    document.getElementById("admGLBaiNoiDung").value = b ? b.noiDung : "";
+    document.getElementById("admGLBaiTaiLieu").value = b ? b.taiLieu : "";
+    document.getElementById("admGLBaiThuTu").value = b ? (b.thuTu || 0) : 0;
+    var sel = document.getElementById("admGLBaiLop");
+    var op = '<option value="">-- Dùng chung --</option>';
+    (res.dsLop || []).forEach(function (l) {
+      op += '<option value="' + escapeHtml(l.maLop) + '">' + escapeHtml(l.ten || l.maLop) + '</option>';
+    });
+    sel.innerHTML = op;
+    sel.value = b ? (b.maLop || "") : (admGLState.maLop || "");
+    document.getElementById("admGLBaiModalBg").classList.add("open");
+  }
+
+  function admGLLuuBai() {
+    var bai = {
+      maBai: document.getElementById("admGLBaiMa").value,
+      tenBai: document.getElementById("admGLBaiTen").value,
+      maLop: document.getElementById("admGLBaiLop").value,
+      chuDe: document.getElementById("admGLBaiChuDe").value,
+      mucTieu: document.getElementById("admGLBaiMucTieu").value,
+      noiDung: document.getElementById("admGLBaiNoiDung").value,
+      taiLieu: document.getElementById("admGLBaiTaiLieu").value,
+      thuTu: document.getElementById("admGLBaiThuTu").value
+    };
+    if (!bai.tenBai.trim()) { showToast("Vui lòng nhập tên bài dạy.", "error"); return; }
+    google.script.run.withSuccessHandler(function (res) {
+      if (!res || !res.success) { showToast((res && res.error) || "Không lưu được bài.", "error"); return; }
+      showToast("Đã lưu bài dạy.");
+      admGLDongBai();
+      admGLTai();
+    }).withFailureHandler(function (err) { showToast("Lỗi kết nối: " + err, "error"); })
+      .admGiaoLyLuuBai(currentUserToken, bai);
+  }
+
+  function admGLXoaBai(maBai) {
+    if (!confirm("Xoá bài " + maBai + "? Lịch gán của bài này cũng sẽ bị gỡ.")) return;
+    google.script.run.withSuccessHandler(function (res) {
+      if (res && res.success) { showToast("Đã xoá bài dạy."); admGLTai(); }
+      else showToast((res && res.error) || "Không xoá được bài.", "error");
+    }).withFailureHandler(function (err) { showToast("Lỗi kết nối: " + err, "error"); })
+      .admGiaoLyXoaBai(currentUserToken, maBai);
+  }
+
+  // ---------- MODAL GÁN LỊCH ----------
+  function admGLDongGan() { document.getElementById("admGLGanModalBg").classList.remove("open"); }
+
+  function admGLMoGan(ngay, maBai) {
+    var res = admGLState.duLieu || {};
+    var ngayChon = ngay || "";
+    if (!ngayChon) {
+      var x = admGLTimXep(maBai);
+      if (x && x.ngayGoc) ngayChon = x.ngayGoc;
+    }
+    if (!ngayChon && (res.dsTuan || []).length) ngayChon = res.dsTuan[0].ngay;
+    var t = (res.dsTuan || []).filter(function (x) { return x.ngay === ngayChon; })[0];
+    document.getElementById("admGLGanNgay").value = ngayChon;
+    document.getElementById("admGLGanNgayHien").textContent = t ? ("Chúa Nhật " + t.ngayVn + " (tuần " + t.tuan + ")") : ngayChon;
+    var op = '<option value="">-- Chọn bài --</option>';
+    (res.dsBai || []).forEach(function (b) {
+      if (b.maLop && b.maLop !== admGLState.maLop && admGLState.maLop) return;
+      op += '<option value="' + escapeHtml(b.maBai) + '">' + escapeHtml(b.maBai) + ' - ' + escapeHtml(b.tenBai) + '</option>';
+    });
+    var sel = document.getElementById("admGLGanBai");
+    sel.innerHTML = op;
+    sel.value = maBai || "";
+    document.getElementById("admGLGanModalBg").classList.add("open");
+  }
+
+  function admGLLuuGan() {
+    var maBai = document.getElementById("admGLGanBai").value;
+    var ngay = document.getElementById("admGLGanNgay").value;
+    if (!maBai) { showToast("Vui lòng chọn bài dạy.", "error"); return; }
+    google.script.run.withSuccessHandler(function (res) {
+      if (!res || !res.success) { showToast((res && res.error) || "Không gán được bài.", "error"); return; }
+      showToast("Đã gán bài vào lịch.");
+      admGLDongGan();
+      admGLTai();
+    }).withFailureHandler(function (err) { showToast("Lỗi kết nối: " + err, "error"); })
+      .admGiaoLyDatLich(currentUserToken, admGLState.maLop, maBai, ngay);
+  }
+
+  function admGLBoLich(maBai) {
+    if (!confirm("Gỡ bài " + maBai + " khỏi lịch trình của lớp này?")) return;
+    google.script.run.withSuccessHandler(function (res) {
+      if (res && res.success) { showToast("Đã gỡ bài khỏi lịch."); admGLTai(); }
+      else showToast((res && res.error) || "Không gỡ được bài.", "error");
+    }).withFailureHandler(function (err) { showToast("Lỗi kết nối: " + err, "error"); })
+      .admGiaoLyBoLich(currentUserToken, admGLState.maLop, maBai);
+  }
+
+  // ---------- MODAL TUẦN ----------
+  function admGLDongTuan() { document.getElementById("admGLTuanModalBg").classList.remove("open"); }
+
+  function admGLMoTuan(ngay) {
+    var res = admGLState.duLieu || {};
+    var t = (res.dsTuan || []).filter(function (x) { return x.ngay === ngay; })[0] || {};
+    document.getElementById("admGLTuanNgay").value = ngay;
+    document.getElementById("admGLTuanNgayHien").textContent = "Chúa Nhật " + (t.ngayVn || ngay) + (t.tuan ? " (tuần " + t.tuan + ")" : "");
+    document.getElementById("admGLTuanTrangThai").value = t.trangThai || "hoc";
+    document.getElementById("admGLTuanGhiChu").value = t.ghiChu || "";
+    document.getElementById("admGLTuanModalBg").classList.add("open");
+  }
+
+  function admGLLuuTuan() {
+    var ngay = document.getElementById("admGLTuanNgay").value;
+    var tt = document.getElementById("admGLTuanTrangThai").value;
+    var ghiChu = document.getElementById("admGLTuanGhiChu").value;
+    google.script.run.withSuccessHandler(function (res) {
+      if (!res || !res.success) { showToast((res && res.error) || "Không lưu được tuần.", "error"); return; }
+      showToast("Đã cập nhật tuần học.");
+      admGLDongTuan();
+      admGLTai();
+    }).withFailureHandler(function (err) { showToast("Lỗi kết nối: " + err, "error"); })
+      .admGiaoLyCapNhatTuan(currentUserToken, admGLState.maLop, ngay, tt, ghiChu);
+  }
+
+  function admGLLuuNamHoc() {
+    var nd = document.getElementById("admGLNamHoc").value;
+    if (!nd) { showToast("Vui lòng chọn ngày bắt đầu năm học.", "error"); return; }
+    google.script.run.withSuccessHandler(function (res) {
+      if (!res || !res.success) { showToast((res && res.error) || "Không lưu được năm học.", "error"); return; }
+      showToast("Đã cập nhật năm học.");
+      admGLTai();
+    }).withFailureHandler(function (err) { showToast("Lỗi kết nối: " + err, "error"); })
+      .admGiaoLyLuuNamHoc(currentUserToken, nd);
   }
 
   // ---------------- THI ĐUA: ĐỀ XUẤT CHẤM ĐIỂM + ADMIN BẦU CHỌN ĐA SỐ ----------------
@@ -13096,13 +13470,13 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 // Khi ra bản mới: đổi "so" + "ngay", XOÁ HẾT mục cũ rồi chỉ thêm mục mới.
 // (Giới hạn cứng bên dưới: tối đa 4 mục, mục thừa sẽ bị bỏ — tránh danh sách phình dài.)
 var APP_PHIEN_BAN = {
-  so: "3.3.1",
+  so: "3.4.0",
   ngay: "18/11/2026",
   tieuDe: "Xứ Đoàn Thánh Anrê",
   muc: [
-    { icon: "fa-book-open", tieuDe: "Kho bài dạy Giáo Lý", moTa: "Giáo Lý Viên có thêm mục “Tiến độ”: soạn bài dạy (tên bài, chủ đề, mục tiêu, nội dung, tài liệu), bài để trống mã lớp sẽ dùng chung cho mọi lớp. Có thể sửa, xoá bài do mình tạo." },
-    { icon: "fa-chart-line", tieuDe: "Theo dõi tiến độ từng lớp", moTa: "Màn hình tiến độ tính tự động tỉ lệ bài đã dạy theo nhật ký thực tế của lớp mình. Bài đã dạy hiện dấu tick xanh, bấm “Làm mới” là cập nhật ngay." },
-    { icon: "fa-calendar-day", tieuDe: "Nhật ký buổi học", moTa: "Ghi lại từng buổi dạy: ngày, bài dạy, nội dung đã dạy và ghi chú thêm. Nhật ký chỉ ghi cho lớp được phân công, không làm ảnh hưởng đến CSDL gốc của giáo xứ." },
+    { icon: "fa-user-cog", tieuDe: "Admin soạn bài & lịch trình", moTa: "Mục “Bài Dạy & Lịch Trình” chỉ có ở giao diện Quản trị: soạn bài, gán theo từng lớp hoặc dùng chung, lập lịch 52 Chúa Nhật theo niên khoá 01/09 → 31/08." },
+    { icon: "fa-calendar-day", tieuDe: "Tuần nghỉ tự dồn bài", moTa: "Admin đánh dấu nghỉ dạy, nghỉ học giáo lý hoặc GLV xin phép nghỉ. Bài của tuần đó tự dồn sang Chúa Nhật kế tiếp; nhiều tuần nghỉ liên tiếp thì dồn cumulative và hiện rõ trên tiến độ." },
+    { icon: "fa-book-open", tieuDe: "GLV chỉ xem bài & tiến độ", moTa: "Bên Giáo Lý Viên bỏ hẳn nút soạn bài và nhật ký buổi học; chỉ còn danh sách bài và tiến độ tự tính theo Chúa Nhật đã qua. Bấm “Làm mới” để cập nhật ngay." },
     { icon: "fa-database", tieuDe: "Vẫn dùng chung CSDL Đoàn Sinh", moTa: "Hồ sơ, sĩ số và mã QR thẻ tiếp tục lấy từ CSDL thật; em đã nghỉ học tự ẩn. App chỉ đọc CSDL gốc, không ghi ngược lại." }
   ]
 };
