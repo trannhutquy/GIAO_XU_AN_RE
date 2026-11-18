@@ -11727,7 +11727,6 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     // Kho bài dạy.
     var baiBody = document.getElementById("admGLBaiBody");
     if (baiBody) {
-      var dsBai = res.dsBai || [];
       if (!dsBai.length) {
         baiBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#888;">Chưa có bài dạy.</td></tr>';
       } else {
@@ -11755,7 +11754,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     var tuanBody = document.getElementById("admGLTuanBody");
     if (tuanBody) {
       var h2 = "";
-      (res.dsTuan || []).forEach(function (t) {
+      dsTuan.forEach(function (t) {
         var nghi = t.trangThai !== "hoc";
         var mau = nghi ? '#c62828' : (t.daQua ? '#2e7d32' : 'var(--adm-sub)');
         var noi = "";
