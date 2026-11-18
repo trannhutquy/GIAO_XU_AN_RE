@@ -2689,7 +2689,61 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       <div id="glv-tab-tiendo" style="display:none;">
         <div class="card">
           <h3 style="margin-top:0;">Tiến độ học tập</h3>
-          <div class="state-msg state-msg-empty"><i class="fas fa-hourglass-half"></i>Chức năng Tiến độ học tập đang lên kế hoạch, sẽ sớm ra mắt!</div>
+          <div id="glv-td-tongquan" class="glv-sum"></div>
+          <div style="display:flex; gap:7px; flex-wrap:wrap; margin:10px 0 12px;">
+            <button class="glv-mini-btn" onclick="glvTaiTienDo(true)"><i class="fas fa-rotate"></i> Làm mới</button>
+            <button class="glv-mini-btn" onclick="glvMoModalBaiDay()"><i class="fas fa-plus"></i> Thêm bài dạy</button>
+            <button class="glv-mini-btn" onclick="glvMoModalNhatKy()"><i class="fas fa-pen"></i> Ghi buổi học</button>
+          </div>
+          <div id="glv-td-noidung"></div>
+        </div>
+      </div>
+
+      <!-- MODAL BÀI DẠY (kho bài dùng chung / riêng lớp) -->
+      <div id="glv-td-bai-modal" class="modal-overlay" onclick="if(event.target===this) glvDongModalBaiDay()">
+        <div class="modal-content" style="max-width:520px; text-align:left; max-height:88vh; overflow:auto;">
+          <h3 id="glv-td-bai-tieude" style="color:#d32f2f; margin-top:0;">Thêm bài dạy</h3>
+          <input type="hidden" id="glv-td-bai-ma">
+          <label style="font-size:12px; color:#7f8c8d;">Tên bài *</label>
+          <input id="glv-td-bai-ten" maxlength="200" placeholder="VD: Bài 1 - Tìm hiểu về Thánh Thể" style="width:100%; box-sizing:border-box; margin-bottom:8px;">
+          <label style="font-size:12px; color:#7f8c8d;">Chủ đề</label>
+          <input id="glv-td-bai-chude" maxlength="200" placeholder="VD: Đức Tin" style="width:100%; box-sizing:border-box; margin-bottom:8px;">
+          <label style="font-size:12px; color:#7f8c8d;">Mục tiêu</label>
+          <textarea id="glv-td-bai-muctieu" rows="2" maxlength="500" style="width:100%; box-sizing:border-box; margin-bottom:8px;"></textarea>
+          <label style="font-size:12px; color:#7f8c8d;">Nội dung bài dạy</label>
+          <textarea id="glv-td-bai-noidung" rows="4" maxlength="4000" style="width:100%; box-sizing:border-box; margin-bottom:8px;"></textarea>
+          <div style="display:flex; gap:8px;">
+            <div style="flex:1;">
+              <label style="font-size:12px; color:#7f8c8d;">Tài liệu / kinh thánh</label>
+              <input id="glv-td-bai-tailieu" maxlength="1000" style="width:100%; box-sizing:border-box; margin-bottom:8px;">
+            </div>
+            <div style="width:110px;">
+              <label style="font-size:12px; color:#7f8c8d;">Thứ tự</label>
+              <input id="glv-td-bai-thutu" type="number" min="0" value="0" style="width:100%; box-sizing:border-box; margin-bottom:8px;">
+            </div>
+          </div>
+          <p class="glv-note" style="margin-top:0;">Để trống "Mã lớp" thì bài dùng chung cho mọi lớp; bài riêng được gán tự động theo lớp bạn phụ trách.</p>
+          <button class="btn-action" onclick="glvLuuBaiDayUI()"><i class="fas fa-floppy-disk"></i> Lưu bài dạy</button>
+          <button class="btn-action" style="background:#95a5a6; margin-top:8px;" onclick="glvDongModalBaiDay()">Đóng</button>
+          <p id="glv-td-bai-msg" style="font-size:13px; font-weight:bold;"></p>
+        </div>
+      </div>
+
+      <!-- MODAL NHẬT KÝ BUỔI HỌC -->
+      <div id="glv-td-nk-modal" class="modal-overlay" onclick="if(event.target===this) glvDongModalNhatKy()">
+        <div class="modal-content" style="max-width:520px; text-align:left;">
+          <h3 style="color:#d32f2f; margin-top:0;">Ghi nhật ký buổi học</h3>
+          <label style="font-size:12px; color:#7f8c8d;">Ngày buổi học *</label>
+          <input id="glv-td-nk-ngay" type="date" style="width:100%; box-sizing:border-box; margin-bottom:8px;">
+          <label style="font-size:12px; color:#7f8c8d;">Bài dạy</label>
+          <select id="glv-td-nk-bai" style="width:100%; box-sizing:border-box; margin-bottom:8px; padding:9px; border:1px solid #ddd; border-radius:8px;"></select>
+          <label style="font-size:12px; color:#7f8c8d;">Nội dung đã dạy *</label>
+          <textarea id="glv-td-nk-noidung" rows="4" maxlength="2000" placeholder="VD: Đã dạy đoạn 1, ôn lại kinh Tin Kính…" style="width:100%; box-sizing:border-box; margin-bottom:8px;"></textarea>
+          <label style="font-size:12px; color:#7f8c8d;">Ghi chú thêm</label>
+          <input id="glv-td-nk-ghichu" maxlength="500" style="width:100%; box-sizing:border-box; margin-bottom:8px;">
+          <button class="btn-action" onclick="glvLuuNhatKyUI()"><i class="fas fa-floppy-disk"></i> Lưu nhật ký</button>
+          <button class="btn-action" style="background:#95a5a6; margin-top:8px;" onclick="glvDongModalNhatKy()">Đóng</button>
+          <p id="glv-td-nk-msg" style="font-size:13px; font-weight:bold;"></p>
         </div>
       </div>
     </div>
@@ -4435,6 +4489,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       if (tab !== "diemdanh") { try { glvDungQuetQR(); } catch (e) {} }
       if (tab === "dsachlop" && !glvDsachLopDaTai) { taiDanhSachThieuNhiGLV(); }
       if (tab === "diemdanh") { taiDiemDanhHomNayGLV(); }
+      if (tab === "tiendo" && !glvTdDaTai) { glvTaiTienDo(); }
     }
 
     // Viên thuốc trượt dưới tab đang chọn (giống thanh dưới của Huynh Trưởng)
@@ -4446,6 +4501,194 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       pill.style.width = act.offsetWidth + "px";
     }
     window.addEventListener("resize", function () { glvCapNhatPill(); });
+
+    // ---------- ĐỢT 2: TIẾN ĐỘ HỌC TẬP (kho bài + nhật ký buổi học) ----------
+    var glvTdDaTai = false;
+    function glvTaiTienDo(ep) {
+      var box = document.getElementById("glv-td-noidung");
+      if (!box) return;
+      if (ep) box.innerHTML = getEmptyStateHtml("Đang tải tiến độ…", "fa-circle-notch fa-spin");
+      google.script.run.withSuccessHandler(function (res) {
+        if (!res || !res.success) {
+          box.innerHTML = getEmptyStateHtml((res && res.error) || "Lỗi tải dữ liệu.", "fa-triangle-exclamation");
+          return;
+        }
+        glvTdDaTai = true;
+        if (!res.coLop) {
+          box.innerHTML = getEmptyStateHtml("Bạn chưa được phân công phụ trách lớp nào.", "fa-hourglass-half");
+          return;
+        }
+        glvState.td = res;
+        glvTdVeTongQuan();
+        glvTdVeNoiDung();
+      }).withFailureHandler(function (err) {
+        box.innerHTML = getEmptyStateHtml("Lỗi kết nối: " + err, "fa-triangle-exclamation");
+      }).glvLayTienDo(currentGLVToken);
+    }
+
+    function glvTdVeTongQuan() {
+      var el = document.getElementById("glv-td-tongquan");
+      var d = glvState.td;
+      if (!el || !d) return;
+      var p = d.phanTram || 0;
+      el.innerHTML = '<div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px;">' +
+        '<span><i class="fas fa-book-open"></i> Đã dạy <b>' + d.soDaDay + '/' + d.tongBai + '</b> bài</span>' +
+        '<b>' + p + '%</b></div>' +
+        '<div style="height:9px; background:#e9ecef; border-radius:6px; overflow:hidden;">' +
+        '<div style="height:100%; width:' + p + '%; background:linear-gradient(90deg,#d32f2f,#fb8c00);"></div></div>';
+    }
+
+    function glvTdVeNoiDung() {
+      var box = document.getElementById("glv-td-noidung");
+      var d = glvState.td;
+      if (!box || !d) return;
+      var html = '<h4 style="margin:4px 0 8px; font-size:14px;">Kho bài dạy</h4>';
+      if (!d.dsBai || !d.dsBai.length) {
+        html += getEmptyStateHtml("Chưa có bài dạy nào. Bấm “Thêm bài dạy” để bắt đầu.", "fa-book-open");
+      } else {
+        html += '<div style="display:flex; flex-direction:column; gap:8px;">';
+        d.dsBai.forEach(function (b) {
+          var da = !!d.daDay[String(b.maBai).trim().toUpperCase()];
+          html += '<div style="border:1px solid #eee; border-radius:10px; padding:10px 11px; background:#fff;">' +
+            '<div style="display:flex; gap:8px; align-items:flex-start;">' +
+            '<div style="flex:1; min-width:0;">' +
+            '<div style="font-weight:bold; font-size:13.5px;">' + (da ? '<i class="fas fa-circle-check" style="color:#2e7d32;"></i> ' : '') + escapeHtml(b.tenBai) + '</div>' +
+            '<div style="font-size:11.5px; color:#7f8c8d; margin-top:3px;">' + escapeHtml(b.maBai) +
+            (b.chuDe ? ' · ' + escapeHtml(b.chuDe) : '') + (b.maLop ? ' · lớp ' + escapeHtml(b.maLop) : ' · dùng chung') + '</div>' +
+            (b.mucTieu ? '<div style="font-size:12px; margin-top:5px;">🎯 ' + escapeHtml(b.mucTieu) + '</div>' : '') +
+            (b.noiDung ? '<div class="glv-note" style="margin:5px 0 0; white-space:pre-wrap;">' + escapeHtml(b.noiDung) + '</div>' : '') +
+            (b.taiLieu ? '<div style="font-size:11.5px; color:#7f8c8d; margin-top:4px;">📄 ' + escapeHtml(b.taiLieu) + '</div>' : '') +
+            '</div>' +
+            '<div style="display:flex; flex-direction:column; gap:4px;">' +
+            '<button class="glv-mini-btn" onclick="glvMoModalBaiDay(\'' + escapeHtml(b.maBai) + '\')">Sửa</button>' +
+            '<button class="glv-mini-btn" onclick="glvXoaBaiDayUI(\'' + escapeHtml(b.maBai) + '\')" style="color:#d32f2f;">Xoá</button>' +
+            '</div></div></div>';
+        });
+        html += '</div>';
+      }
+
+      html += '<h4 style="margin:18px 0 8px; font-size:14px;">Nhật ký buổi học</h4>';
+      if (!d.dsNhatKy || !d.dsNhatKy.length) {
+        html += getEmptyStateHtml("Chưa có buổi học nào được ghi.", "fa-calendar-day");
+      } else {
+        html += '<div style="display:flex; flex-direction:column; gap:8px;">';
+        d.dsNhatKy.forEach(function (n) {
+          html += '<div style="border:1px solid #eee; border-left:3px solid #fb8c00; border-radius:8px; padding:9px 11px;">' +
+            '<div style="display:flex; align-items:center; gap:8px;">' +
+            '<b style="font-size:12.5px;">' + escapeHtml(n.ngay) + '</b>' +
+            (n.maBai ? '<span style="font-size:11px; color:#7f8c8d;">' + escapeHtml(n.maBai) + '</span>' : '') +
+            '<button class="glv-mini-btn" style="margin-left:auto; color:#d32f2f;" onclick="glvXoaNhatKyUI(\'' + escapeHtml(n.ngayIso) + '\',\'' + escapeHtml(n.maBai) + '\')">Xoá</button>' +
+            '<button class="glv-mini-btn" onclick="glvMoModalNhatKy(\'' + escapeHtml(n.ngayIso) + '\',\'' + escapeHtml(n.maBai) + '\',\'' + escapeHtml(n.noiDung) + '\',\'' + escapeHtml(n.ghiChu) + '\')">Sửa</button>' +
+            '</div>' +
+            '<div class="glv-note" style="margin:5px 0 0; white-space:pre-wrap;">' + escapeHtml(n.noiDung) + '</div>' +
+            (n.ghiChu ? '<div style="font-size:11.5px; color:#7f8c8d; margin-top:3px;">' + escapeHtml(n.ghiChu) + '</div>' : '') +
+            '</div>';
+        });
+        html += '</div>';
+      }
+      box.innerHTML = html;
+    }
+
+    function glvDongModalBaiDay() { document.getElementById("glv-td-bai-modal").style.display = "none"; }
+    function glvDongModalNhatKy() { document.getElementById("glv-td-nk-modal").style.display = "none"; }
+    function glvTdSetMsg(id, text, ok) {
+      var e = document.getElementById(id);
+      if (e) { e.innerText = text || ""; e.style.color = ok ? "#2e7d32" : "#d32f2f"; }
+    }
+
+    function glvMoModalBaiDay(maBai) {
+      glvTdSetMsg("glv-td-bai-msg", "", true);
+      var ma = maBai || "";
+      var b = null;
+      if (ma && glvState.td) {
+        for (var i = 0; i < glvState.td.dsBai.length; i++) {
+          if (glvState.td.dsBai[i].maBai === ma) { b = glvState.td.dsBai[i]; break; }
+        }
+      }
+      document.getElementById("glv-td-bai-ma").value = b ? b.maBai : "";
+      document.getElementById("glv-td-bai-tieude").innerText = b ? "Sửa bài dạy" : "Thêm bài dạy";
+      document.getElementById("glv-td-bai-ten").value = b ? b.tenBai : "";
+      document.getElementById("glv-td-bai-chude").value = b ? b.chuDe : "";
+      document.getElementById("glv-td-bai-muctieu").value = b ? b.mucTieu : "";
+      document.getElementById("glv-td-bai-noidung").value = b ? b.noiDung : "";
+      document.getElementById("glv-td-bai-tailieu").value = b ? b.taiLieu : "";
+      document.getElementById("glv-td-bai-thutu").value = b ? (b.thuTu || 0) : 0;
+      document.getElementById("glv-td-bai-modal").style.display = "flex";
+    }
+
+    function glvLuuBaiDayUI() {
+      var ma = document.getElementById("glv-td-bai-ma").value;
+      var bai = {
+        maBai: ma,
+        tenBai: document.getElementById("glv-td-bai-ten").value,
+        chuDe: document.getElementById("glv-td-bai-chude").value,
+        mucTieu: document.getElementById("glv-td-bai-muctieu").value,
+        noiDung: document.getElementById("glv-td-bai-noidung").value,
+        taiLieu: document.getElementById("glv-td-bai-tailieu").value,
+        thuTu: document.getElementById("glv-td-bai-thutu").value
+      };
+      if (!bai.tenBai.trim()) { glvTdSetMsg("glv-td-bai-msg", "Vui lòng nhập tên bài dạy.", false); return; }
+      glvTdSetMsg("glv-td-bai-msg", "Đang lưu…", true);
+      google.script.run.withSuccessHandler(function (res) {
+        glvTdSetMsg("glv-td-bai-msg", (res && res.error) || "Đã lưu bài dạy.", !(res && res.error));
+        if (res && res.success) { showToast("Đã lưu bài dạy."); glvDongModalBaiDay(); glvTdDaTai = false; glvTaiTienDo(); }
+      }).withFailureHandler(function (err) {
+        glvTdSetMsg("glv-td-bai-msg", "Lỗi kết nối: " + err, false);
+      }).glvLuuBaiDay(currentGLVToken, bai);
+    }
+
+    function glvXoaBaiDayUI(maBai) {
+      if (!confirm("Xoá bài dạy " + maBai + "? Nhật ký đã ghi vẫn giữ lại.")) return;
+      google.script.run.withSuccessHandler(function (res) {
+        if (res && res.success) { showToast("Đã xoá bài dạy."); glvTdDaTai = false; glvTaiTienDo(); }
+        else showToast((res && res.error) || "Không xoá được bài dạy.", "error");
+      }).withFailureHandler(function (err) { showToast("Lỗi kết nối: " + err, "error"); })
+        .glvXoaBaiDay(currentGLVToken, maBai);
+    }
+
+    function glvMoModalNhatKy(ngay, maBai, noiDung, ghiChu) {
+      glvTdSetMsg("glv-td-nk-msg", "", true);
+      var sel = document.getElementById("glv-td-nk-bai");
+      var html = '<option value="">-- Không gắn bài cụ thể --</option>';
+      var ds = (glvState.td && glvState.td.dsBai) || [];
+      ds.forEach(function (b) {
+        html += '<option value="' + escapeHtml(b.maBai) + '">' + escapeHtml(b.maBai) + ' - ' + escapeHtml(b.tenBai) + '</option>';
+      });
+      sel.innerHTML = html;
+      var homNay = new Date();
+      var iso = homNay.getFullYear() + "-" + ("0" + (homNay.getMonth() + 1)).slice(-2) + "-" + ("0" + homNay.getDate()).slice(-2);
+      document.getElementById("glv-td-nk-ngay").value = ngay || iso;
+      sel.value = maBai || "";
+      document.getElementById("glv-td-nk-noidung").value = noiDung || "";
+      document.getElementById("glv-td-nk-ghichu").value = ghiChu || "";
+      document.getElementById("glv-td-nk-modal").style.display = "flex";
+    }
+
+    function glvLuuNhatKyUI() {
+      var n = {
+        ngay: document.getElementById("glv-td-nk-ngay").value,
+        maBai: document.getElementById("glv-td-nk-bai").value,
+        noiDung: document.getElementById("glv-td-nk-noidung").value,
+        ghiChu: document.getElementById("glv-td-nk-ghichu").value
+      };
+      if (!n.ngay || !n.noiDung.trim()) { glvTdSetMsg("glv-td-nk-msg", "Vui lòng chọn ngày và ghi nội dung đã dạy.", false); return; }
+      glvTdSetMsg("glv-td-nk-msg", "Đang lưu…", true);
+      google.script.run.withSuccessHandler(function (res) {
+        glvTdSetMsg("glv-td-nk-msg", (res && res.error) || "Đã lưu nhật ký.", !(res && res.error));
+        if (res && res.success) { showToast("Đã lưu nhật ký buổi học."); glvDongModalNhatKy(); glvTdDaTai = false; glvTaiTienDo(); }
+      }).withFailureHandler(function (err) {
+        glvTdSetMsg("glv-td-nk-msg", "Lỗi kết nối: " + err, false);
+      }).glvLuuNhatKyBuoi(currentGLVToken, n);
+    }
+
+    function glvXoaNhatKyUI(ngay, maBai) {
+      if (!confirm("Xoá nhật ký ngày " + ngay + "?")) return;
+      google.script.run.withSuccessHandler(function (res) {
+        if (res && res.success) { showToast("Đã xoá nhật ký."); glvTdDaTai = false; glvTaiTienDo(); }
+        else showToast((res && res.error) || "Không xoá được nhật ký.", "error");
+      }).withFailureHandler(function (err) { showToast("Lỗi kết nối: " + err, "error"); })
+        .glvXoaNhatKyBuoi(currentGLVToken, ngay, maBai);
+    }
 
     // Đổ thông tin Giáo Lý Viên lên thanh trên, sidebar và thẻ chào
     function glvHienThongTin(res) {
