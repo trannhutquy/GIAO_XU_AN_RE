@@ -10217,8 +10217,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           <button class="adm-btn adm-btn-outline adm-btn-sm" onclick="admGLLuuNamHoc()">Cập nhật</button>
         </div>
         <div class="adm-tool-group" data-label="Tìm bài">
-          <input id="admGLTimBai" class="adm-input" placeholder="Tên hoặc mã bài..." oninput="admGLVe()" style="max-width:165px;">
-          <select id="admGLLocBai" class="adm-input" onchange="admGLVe()" style="max-width:140px;">
+          <input id="admGLTimBai" class="adm-input" placeholder="Tên hoặc mã bài..." oninput="admGLLocDoi()" style="max-width:165px;">
+          <select id="admGLLocBai" class="adm-input" onchange="admGLLocDoi()" style="max-width:140px;">
             <option value="tatca">Tất cả bài</option>
             <option value="colich">Có lịch</option>
             <option value="chuaxep">Chưa xếp lịch</option>
@@ -10226,7 +10226,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           </select>
         </div>
         <div class="adm-tool-group" data-label="Lịch tuần">
-          <select id="admGLLocTuan" class="adm-input" onchange="admGLVe()" style="max-width:150px;">
+          <select id="admGLLocTuan" class="adm-input" onchange="admGLLocDoi()" style="max-width:150px;">
             <option value="tatca">Tất cả tuần</option>
             <option value="cobai">Tuần có bài</option>
             <option value="nghi">Tuần nghỉ</option>
@@ -11668,11 +11668,43 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     return "Học";
   }
 
+  function admGLDocLoc() {
+    var tim = document.getElementById("admGLTimBai");
+    var bai = document.getElementById("admGLLocBai");
+    var tuan = document.getElementById("admGLLocTuan");
+    admGLState.loc = {
+      tuKhoa: tim ? tim.value : "",
+      bai: bai ? bai.value : "tatca",
+      tuan: tuan ? tuan.value : "tatca"
+    };
+  }
+
+  function admGLLocDoi() { admGLDocLoc(); admGLVe(); }
+
   function admGLVe() {
     var res = admGLState.duLieu;
     var empty = document.getElementById("admGLEmpty");
     if (!res) return;
     if (empty) empty.style.display = "none";
+
+    var loc = admGLState.loc || (admGLState.loc = { tuKhoa: "", bai: "tatca", tuan: "tatca" });
+    var tuKhoa = String(loc.tuKhoa || "").trim().toLowerCase();
+    var tatCaBai = res.dsBai || [];
+    var dsBai = tatCaBai.filter(function (b) {
+      if (tuKhoa && String(b.tenBai + " " + b.maBai + " " + (b.chuDe || "")).toLowerCase().indexOf(tuKhoa) < 0) return false;
+      var x = admGLTimXep(b.maBai);
+      if (loc.bai === "colich") return !!x;
+      if (loc.bai === "chuaxep") return !x;
+      if (loc.bai === "bidon") return !!(x && x.don);
+      return true;
+    });
+    var tatCaTuan = res.dsTuan || [];
+    var dsTuan = tatCaTuan.filter(function (t) {
+      if (loc.tuan === "nghi") return t.trangThai !== "hoc";
+      if (loc.tuan === "cobai") return (t.dsBai || []).length > 0;
+      if (loc.tuan === "trong") return !(t.dsBai || []).length && t.trangThai === "hoc";
+      return true;
+    });
 
     var thongKe = document.getElementById("admGLThongKe");
     if (thongKe) {
@@ -11680,12 +11712,16 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         '</b> · ' + res.tongTuan + ' Chúa Nhật · ' + res.soDaDay + '/' + res.tongBai + ' bài đã qua (' + res.phanTram + '%)' +
         ' · ' + res.soTuanNghi + ' tuần nghỉ · <span style="color:#ef6c00;">' + res.soBaiDon + ' bài được dồn</span>';
     }
-    var hien = document.getElementById("admGLNamHocHien");
-    if (hien) hien.textContent = res.namHocBatDau + " → " + res.namHocKetThuc;
+    var found = (res.dsLop || []).filter(function (l) { return l.maLop === res.maLop; })[0];
+    var tenLopHien = res.maLop ? (found ? found.ten : res.maLop) : "dùng chung (mọi lớp)";
     var tenLop = document.getElementById("admGLTenLop");
-    if (tenLop) {
-      var found = (res.dsLop || []).filter(function (l) { return l.maLop === res.maLop; })[0];
-      tenLop.textContent = res.maLop ? (found ? found.ten : res.maLop) : "dùng chung";
+    if (tenLop) tenLop.textContent = tenLopHien;
+    var tomTat = document.getElementById("admGLTomTat");
+    if (tomTat) {
+      tomTat.innerHTML = 'Đang xem: <b>' + escapeHtml(tenLopHien) + '</b> · Niên khoá <b>' +
+        escapeHtml(res.namHocBatDau) + ' → ' + escapeHtml(res.namHocKetThuc) + '</b> · Hiện <b>' +
+        dsBai.length + '/' + tatCaBai.length + '</b> bài và <b>' + dsTuan.length + '/' + tatCaTuan.length + '</b> tuần' +
+        (tuKhoa ? ' · từ khoá "' + escapeHtml(loc.tuKhoa) + '"' : '');
     }
 
     // Kho bài dạy.
