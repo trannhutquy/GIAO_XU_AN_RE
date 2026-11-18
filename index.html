@@ -9769,6 +9769,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   @keyframes admStatusPulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.75); } }
   #admStatusText { color: var(--adm-text); font-weight: 700; }
   .adm-status-detail { opacity: .85; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 46vw; }
+  .adm-status-inline { font-size: 11.5px; color: var(--adm-sub); align-items: center; gap: 5px; }
   #admStatusRefresh { margin-left: auto; }
 
   /* Gom nhóm nút theo tác vụ, vùng xem có khung riêng dễ đọc */
@@ -10127,9 +10128,13 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         Thêm / sửa / khoá / đặt lại mật khẩu cho tài khoản Giáo Lý Viên (đăng nhập riêng, tab "Giáo Lý Viên" ở màn hình đăng nhập) mà không cần mở Google Sheet.
       </div>
       <div class="adm-explorer-toolbar">
-        <input class="adm-input" id="admGLVTimKiem" placeholder="Tìm theo mã số / họ tên..." oninput="admGLVVeBang()" style="max-width:260px;">
-        <button class="adm-btn adm-btn-outline" onclick="admGLVKhoiTao()">Làm mới danh sách</button>
-        <button class="adm-btn adm-btn-primary" onclick="admGLVMoModalThem()">+ Thêm Giáo Lý Viên</button>
+        <div class="adm-tool-group" data-label="Tìm">
+          <input class="adm-input" id="admGLVTimKiem" placeholder="Tìm theo mã số / họ tên..." oninput="admGLVVeBang()" style="max-width:260px;">
+        </div>
+        <div class="adm-tool-group" data-label="Thao tác">
+          <button class="adm-btn adm-btn-outline adm-btn-sm" onclick="admGLVKhoiTao()">Làm mới</button>
+          <button class="adm-btn adm-btn-primary adm-btn-sm" onclick="admGLVMoModalThem()">+ Thêm GLV</button>
+        </div>
       </div>
       <div class="adm-table-wrap">
         <table class="adm-table" id="admGLVTable" style="display:none;">
@@ -10142,13 +10147,17 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 
     <!-- ===== TAB LỚP GIÁO LÝ ===== -->
     <div class="adm-view" id="admViewLopGL">
-      <div style="font-size:12px; color:var(--adm-sub); margin:0 0 10px; line-height:1.5;">
+      <div class="adm-view-note">
         Danh sách lớp được lấy tự động từ cột <b>Lớp</b> trong CSDL gốc (BAO ĐỒNG, THÊM SỨC...). Admin chỉ cần đặt khối, niên khóa, phòng học, lịch học cho từng lớp. Để GLV nhìn thấy đúng lớp mình phụ trách, <b>Tên lớp</b> phải trùng khớp với "Lớp Giáo Lí" đang gán cho GLV đó ở tab "Giáo Lý Viên".
       </div>
       <div class="adm-explorer-toolbar">
-        <input class="adm-input" id="admLopGLTimKiem" placeholder="Tìm theo mã lớp / tên lớp..." oninput="admLopGLVeBang()" style="max-width:260px;">
-        <button class="adm-btn adm-btn-outline" onclick="admLopGLKhoiTao()">Làm mới danh sách</button>
-        <button class="adm-btn adm-btn-primary" onclick="admLopGLMoModalThem()">+ Thêm Lớp Giáo Lý</button>
+        <div class="adm-tool-group" data-label="Tìm">
+          <input class="adm-input" id="admLopGLTimKiem" placeholder="Tìm theo mã lớp / tên lớp..." oninput="admLopGLVeBang()" style="max-width:260px;">
+        </div>
+        <div class="adm-tool-group" data-label="Thao tác">
+          <button class="adm-btn adm-btn-outline adm-btn-sm" onclick="admLopGLKhoiTao()">Làm mới</button>
+          <button class="adm-btn adm-btn-primary adm-btn-sm" onclick="admLopGLMoModalThem()">+ Thêm lớp</button>
+        </div>
       </div>
       <div class="adm-table-wrap">
         <table class="adm-table" id="admLopGLTable" style="display:none;">
@@ -10194,29 +10203,33 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 
     <!-- ===== TAB BÀI DẠY & LỊCH TRÌNH (Admin soạn, GLV chỉ xem) ===== -->
     <div class="adm-view" id="admViewBaiDay">
-      <div style="font-size:12px; color:var(--adm-sub); margin:0 0 10px; line-height:1.5;">
+      <div class="adm-view-note">
         Soạn bài, gán cho từng lớp (để trống = dùng chung) và lập lịch Chúa Nhật trong niên khoá
         <b id="admGLNamHocHien">01/09 → 31/08</b>. Tuần nghỉ dạy / nghỉ học giáo lý / GLV xin phép
         thì bài tự dồn sang Chúa Nhật kế tiếp. Bên GLV chỉ xem danh sách bài &amp; tiến độ.
       </div>
       <div class="adm-explorer-toolbar">
-        <select id="admGLLopChon" class="adm-input" onchange="admGLTai()" style="max-width:200px;"></select>
-        <input type="date" id="admGLNamHoc" class="adm-input" style="max-width:165px;">
-        <button class="adm-btn adm-btn-outline" onclick="admGLLuuNamHoc()">Lưu năm học</button>
-        <button class="adm-btn adm-btn-outline" onclick="admGLTai()">Làm mới</button>
-        <span id="admGLDangTai" style="font-size:11.5px; color:#888; display:none;"><i class="fas fa-circle-notch fa-spin"></i> Đang cập nhật…</span>
-        <button class="adm-btn adm-btn-primary" onclick="admGLMoBai()">+ Thêm bài</button>
+        <div class="adm-tool-group" data-label="Lọc">
+          <select id="admGLLopChon" class="adm-input" onchange="admGLTai()" style="max-width:190px;"></select>
+          <input type="date" id="admGLNamHoc" class="adm-input" style="max-width:160px;">
+        </div>
+        <div class="adm-tool-group" data-label="Thao tác">
+          <button class="adm-btn adm-btn-outline adm-btn-sm" onclick="admGLLuuNamHoc()">Lưu năm học</button>
+          <button class="adm-btn adm-btn-outline adm-btn-sm" onclick="admGLTai()">Làm mới</button>
+          <button class="adm-btn adm-btn-primary adm-btn-sm" onclick="admGLMoBai()">+ Thêm bài</button>
+        </div>
+        <span id="admGLDangTai" class="adm-status-inline" style="display:none;"><i class="fas fa-circle-notch fa-spin"></i> Đang cập nhật…</span>
       </div>
       <div id="admGLThongKe" style="font-size:12.5px; margin:10px 0; color:var(--adm-sub);"></div>
       <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:flex-start;">
-        <div style="flex:1 1 300px; min-width:280px;">
-          <h4 style="font-size:13px; margin:0 0 8px;">Kho bài dạy</h4>
+        <div class="adm-view-section" style="flex:1 1 300px; min-width:280px;">
+          <h4><i class="fas fa-book"></i>&nbsp; Kho bài dạy</h4>
           <div class="adm-table-wrap" style="max-height:430px; overflow:auto;">
             <table class="adm-table"><thead><tr><th>Mã bài</th><th>Tên bài</th><th>Lớp</th><th>Lịch</th><th>Thao tác</th></tr></thead><tbody id="admGLBaiBody"></tbody></table>
           </div>
         </div>
-        <div style="flex:2 1 520px; min-width:320px;">
-          <h4 style="font-size:13px; margin:0 0 8px;">Lịch Chúa Nhật — <span id="admGLTenLop"></span></h4>
+        <div class="adm-view-section" style="flex:2 1 520px; min-width:320px;">
+          <h4><i class="fas fa-calendar-days"></i>&nbsp; Lịch Chúa Nhật — <span id="admGLTenLop"></span></h4>
           <div class="adm-table-wrap" style="max-height:520px; overflow:auto;">
             <table class="adm-table"><thead><tr><th>Tuần</th><th>Chúa Nhật</th><th>Bài học / Trạng thái</th><th>Thao tác</th></tr></thead><tbody id="admGLTuanBody"></tbody></table>
           </div>
@@ -10301,12 +10314,16 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         Đang lấy danh sách từ <b>CSDL Đoàn Sinh</b> của giáo xứ. Mã QR thẻ in từ đây trùng mã dùng để điểm danh.
       </div>
       <div class="adm-explorer-toolbar">
-        <input class="adm-input" id="admTNGLTimKiem" placeholder="Tìm theo mã / họ tên..." oninput="admTNGLVeBang()" style="max-width:220px;">
-        <select class="adm-input" id="admTNGLLocLop" onchange="admTNGLKhoiTao()" style="max-width:200px;">
-          <option value="">-- Tất cả các lớp --</option>
-        </select>
-        <button class="adm-btn adm-btn-outline" onclick="admTNGLKhoiTao()">Làm mới danh sách</button>
-        <button class="adm-btn adm-btn-primary" onclick="admTNGLMoModalThem()">+ Thêm Thiếu Nhi</button>
+        <div class="adm-tool-group" data-label="Lọc">
+          <input class="adm-input" id="admTNGLTimKiem" placeholder="Tìm theo mã / họ tên..." oninput="admTNGLVeBang()" style="max-width:210px;">
+          <select class="adm-input" id="admTNGLLocLop" onchange="admTNGLKhoiTao()" style="max-width:190px;">
+            <option value="">-- Tất cả các lớp --</option>
+          </select>
+        </div>
+        <div class="adm-tool-group" data-label="Thao tác">
+          <button class="adm-btn adm-btn-outline adm-btn-sm" onclick="admTNGLKhoiTao()">Làm mới</button>
+          <button class="adm-btn adm-btn-primary adm-btn-sm" onclick="admTNGLMoModalThem()">+ Thêm TN</button>
+        </div>
       </div>
       <div class="adm-table-wrap">
         <table class="adm-table" id="admTNGLTable" style="display:none;">
@@ -11389,6 +11406,105 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   // không phải chờ máy chủ. Nút làm mới / thao tác ghi vẫn gọi thẳng như cũ.
   var admTabCache = {};
 
+  // ---- Thanh trạng thái dùng chung: tự phát hiện tab đang tải / cập nhật nền / lỗi ----
+  var admCurrentView = "dash";
+  var admStatusDangTheoDoi = false;
+  var admStatusDoiQuet = false;
+  var admTenTab = {
+    dash: "Tổng Quan", explorer: "Duyệt Dữ Liệu", forgot: "Quên Mật Khẩu",
+    yeucau: "Yêu Cầu Thay Đổi", thidua: "Thi Đua", thongbao: "Thông Báo",
+    chucvu: "Chức Vụ", glv: "Giáo Lý Viên", lopgl: "Lớp Giáo Lý",
+    baiday: "Bài Dạy & Lịch Trình", tngl: "Thiếu Nhi (GL)"
+  };
+
+  function admGio(ms) {
+    var d = ms ? new Date(ms) : new Date();
+    return ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
+  }
+
+  function admStatusSet(kind, text, detail) {
+    var dot = document.getElementById("admStatusDot");
+    var txt = document.getElementById("admStatusText");
+    var chiTiet = document.getElementById("admStatusDetail");
+    if (!dot || !txt) return;
+    dot.className = "adm-status-dot" + (kind ? " " + kind : "");
+    txt.innerText = text || "Sẵn sàng";
+    if (chiTiet) chiTiet.innerText = detail || "";
+  }
+
+  function admStatusMacDinh(kind, text) {
+    var lan = admTabCache[admCurrentView];
+    var detail = (admTenTab[admCurrentView] || "Tab hiện tại") +
+      (lan ? " · cập nhật lúc " + admGio(lan) : "");
+    admStatusSet(kind || "ready", text || "Sẵn sàng", detail);
+  }
+
+  function admStatusQuet() {
+    var view = document.querySelector("#adminPanelScreen .adm-view.active");
+    if (!view) return;
+    var dang = false, capNhatNen = false, loi = "", trong = "";
+    var nodes = view.querySelectorAll(".adm-empty, .adm-status-inline, [id$='Empty'], [id$='DangTai']");
+    for (var i = 0; i < nodes.length; i++) {
+      var el = nodes[i];
+      if (window.getComputedStyle(el).display === "none") continue;
+      var t = (el.innerText || el.textContent || "").replace(/\s+/g, " ").trim();
+      if (!t) continue;
+      if (/^đang (tải|cập nhật|gửi|lưu|xử lý)/i.test(t)) {
+        dang = true;
+        if (/cập nhật/i.test(t)) capNhatNen = true;
+      }
+      if (/(lỗi kết nối|lỗi tải|không kết nối|không thể tải|lỗi hệ thống)/i.test(t)) loi = t;
+      if (/^(chưa có|không có|chọn một)/i.test(t)) trong = t;
+    }
+    var ten = admTenTab[admCurrentView] || "Tab hiện tại";
+    if (dang) {
+      admStatusSet(capNhatNen ? "updating" : "loading",
+        capNhatNen ? "Đang cập nhật nền…" : "Đang tải dữ liệu…", ten + " · vui lòng đợi");
+    } else if (loi) {
+      admStatusSet("error", "Có lỗi", loi.slice(0, 90));
+    } else if (trong) {
+      admStatusSet("idle", "Không có dữ liệu", trong.slice(0, 90));
+    } else {
+      admStatusMacDinh("ready", "Sẵn sàng");
+    }
+  }
+
+  function admStatusXemLai() {
+    if (admStatusDoiQuet) return;
+    admStatusDoiQuet = true;
+    requestAnimationFrame(function () { admStatusDoiQuet = false; admStatusQuet(); });
+  }
+
+  function admStatusTheoDoi() {
+    if (admStatusDangTheoDoi) return;
+    var body = document.querySelector("#adminPanelScreen .adm-body");
+    if (!body || !window.MutationObserver) return;
+    admStatusDangTheoDoi = true;
+    var observer = new MutationObserver(admStatusXemLai);
+    observer.observe(body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["style", "class"] });
+  }
+
+  // Nút chung trên thanh trạng thái: tải lại đúng tab đang mở, bỏ qua cache 60s
+  function admTaiLaiTabHienTai() {
+    var name = admCurrentView || "dash";
+    admTabCache[name] = Date.now();
+    admStatusSet("loading", "Đang làm mới…", (admTenTab[name] || "Tab hiện tại") + " · bỏ qua dữ liệu tạm");
+    switch (name) {
+      case "dash": admState.dashLoaded = false; admLoadDashboard(); break;
+      case "explorer": admLoadDBList(); break;
+      case "forgot": admLoadYeuCauQuenMK(); admLoadYeuCauQuenMKGLV(); break;
+      case "yeucau": admLoadYeuCauThayDoi(); break;
+      case "thidua": admThiDuaKhoiTao(); break;
+      case "thongbao": admTbTai(); break;
+      case "chucvu": admChucVuKhoiTao(); break;
+      case "glv": admGLVKhoiTao(); break;
+      case "lopgl": admLopGLKhoiTao(); break;
+      case "baiday": admGLState.boNho = {}; admGLTai(); break;
+      case "tngl": admTNGLKhoiTao(); break;
+      default: admStatusMacDinh("ready", "Sẵn sàng");
+    }
+  }
+
   function admNenTaiTab(name) {
     if (admTabCache.__token !== currentUserToken) {
       admTabCache = { __token: currentUserToken };
@@ -11403,6 +11519,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     if (!currentUserToken) { showToast && showToast("Vui lòng đăng nhập lại!", "error"); return; }
     document.getElementById("adminPanelScreen").classList.add("open");
     document.getElementById("settingsDropdown").style.display = "none";
+    admStatusTheoDoi();
+    admStatusMacDinh("ready", "Sẵn sàng");
     if (!admState.dashLoaded) admLoadDashboard();
     // Danh sách file CSDL chỉ cần khi mở tab Explorer — khỏi gọi thêm 1 lượt
     // Apps Script (~3 giây) ngay lúc mở panel.
