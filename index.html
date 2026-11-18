@@ -2490,6 +2490,17 @@ body.dark-mode .glv-ls-item { border-bottom-color: #33353c; }
   .glv-tile-wide { grid-column: 1 / -1; }
   #glv-app .card { padding: 26px; }
 }
+
+  /* Modal của Giáo Lý Viên (Tiến độ + hồ sơ) phải nằm TRÊN sidebar laptop.
+     Sidebar có z-index 4000; để z-index mặc định 300/450 thì khi mở modal
+     bị che mất phần bên trái và vẫn bấm được vào sidebar phía sau. */
+  #glv-td-bai-modal, #glv-td-nk-modal, .glv-sheet { z-index: 6000 !important; }
+  #glv-td-bai-modal .modal-content,
+  #glv-td-nk-modal .modal-content { box-sizing: border-box; }
+  @media (min-width: 992px) {
+    /* Dồn modal vào vùng nội dung bên phải sidebar thay vì căn giữa toàn màn hình. */
+    #glv-td-bai-modal, #glv-td-nk-modal, .glv-sheet { padding-left: var(--sb-w); }
+  }
 </style>
 <style id="lock-notice-css">
 .lock-notice { display:flex; gap:10px; align-items:flex-start; text-align:left; margin:2px 0 12px; padding:11px 12px; border-radius:12px;
