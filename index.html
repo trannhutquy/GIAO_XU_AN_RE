@@ -14324,5 +14324,69 @@ var APP_PHIEN_BAN = {
   });
 })();
 </script>
+
+<script id="xd-dinh-dang-ngay">
+// Mọi ngày hiển thị trong app đều dùng DD/MM/YYYY (giá trị bên trong vẫn giữ ISO
+// YYYY-MM-DD để gửi lên Google Sheet). Không đụng vào value của <input type="date">.
+(function () {
+  var DANG_SUA = false;
+
+  function doiIso(text) {
+    return String(text || "").replace(/\b(\d{4})-(\d{1,2})-(\d{1,2})\b/g, function (_, y, m, d) {
+      return ("0" + d).slice(-2) + "/" + ("0" + m).slice(-2) + "/" + y;
+    });
+  }
+
+  function quetText() {
+    if (DANG_SUA) return;
+    DANG_SUA = true;
+    try {
+      var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+      var node;
+      while ((node = walker.nextNode())) {
+        var p = node.parentElement;
+        if (!p || p.tagName === "SCRIPT" || p.tagName === "STYLE" || p.tagName === "TEXTAREA") continue;
+        var cu = node.nodeValue || "";
+        if (cu.indexOf("-") < 0) continue;
+        var moi = doiIso(cu);
+        if (moi !== cu) node.nodeValue = moi;
+      }
+      capNhatGoYNgay();
+    } finally { DANG_SUA = false; }
+  }
+
+  // Ô chọn ngày của trình duyệt có thể hiện theo locale máy; thêm nhãn DD/MM/YYYY
+  // ngay bên cạnh để người dùng luôn đọc được cùng một định dạng.
+  function capNhatGoYNgay() {
+    var ds = document.querySelectorAll('input[type="date"]');
+    for (var i = 0; i < ds.length; i++) {
+      var inp = ds[i];
+      if (inp.getAttribute("data-xd-co-ghi-chu")) continue;
+      inp.setAttribute("data-xd-co-ghi-chu", "1");
+      inp.title = "Định dạng ngày: DD/MM/YYYY";
+      var go = document.createElement("span");
+      go.className = "xd-date-hint";
+      go.style.cssText = "display:inline-block;margin-left:6px;font-size:11px;color:#888;white-space:nowrap;";
+      inp.parentNode.insertBefore(go, inp.nextSibling);
+    }
+    var goys = document.querySelectorAll(".xd-date-hint");
+    for (var j = 0; j < goys.length; j++) {
+      var inp2 = goys[j].previousElementSibling;
+      if (!inp2 || inp2.type !== "date") continue;
+      goys[j].textContent = inp2.value ? doiIso(inp2.value) : "DD/MM/YYYY";
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", quetText);
+  document.addEventListener("input", quetText, true);
+  document.addEventListener("change", quetText, true);
+  if (window.MutationObserver) {
+    new MutationObserver(quetText).observe(document.body, {
+      childList: true, subtree: true, characterData: true
+    });
+  }
+  quetText();
+})();
+</script>
 </body>
 </html>
