@@ -14436,11 +14436,18 @@ var APP_PHIEN_BAN = {
     }
   }
 
+  var dangCho = false;
+  function quetKhiDoi() {
+    if (dangCho) return;
+    dangCho = true;
+    requestAnimationFrame(function () { dangCho = false; quetText(); });
+  }
+
   document.addEventListener("DOMContentLoaded", quetText);
-  document.addEventListener("input", quetText, true);
-  document.addEventListener("change", quetText, true);
+  document.addEventListener("input", quetKhiDoi, true);
+  document.addEventListener("change", quetKhiDoi, true);
   if (window.MutationObserver) {
-    new MutationObserver(quetText).observe(document.body, {
+    new MutationObserver(quetKhiDoi).observe(document.body, {
       childList: true, subtree: true, characterData: true
     });
   }
