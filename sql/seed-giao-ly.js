@@ -88,6 +88,14 @@ const n = (v) => Number(v) || 0;
   const out = [];
   out.push("-- Seed Giáo Lý xuất từ Google Sheet " + new Date().toISOString());
   out.push("begin;");
+  if (rowsLop.length) {
+    out.push("insert into lop_giao_ly(ma_lop,ten_lop,khoi,nien_khoa,phong_hoc,lich_hoc,si_so_du_kien,ghi_chu,nguon) values");
+    out.push(rowsLop.join(",\n") + " on conflict (ma_lop) do update set " +
+      "ten_lop=excluded.ten_lop, khoi=excluded.khoi, nien_khoa=excluded.nien_khoa, " +
+      "phong_hoc=excluded.phong_hoc, lich_hoc=excluded.lich_hoc, " +
+      "si_so_du_kien=excluded.si_so_du_kien, ghi_chu=excluded.ghi_chu, nguon=excluded.nguon, " +
+      "cap_nhat_luc=now();");
+  }
   out.push("insert into cau_hinh(khoa, gia_tri) values " +
     "('NAM_HOC_BAT_DAU'," + q(cfg.namHocBatDau) + "),('NAM_HOC_KET_THUC'," + q(cfg.namHocKetThuc) + ") " +
     "on conflict (khoa) do update set gia_tri = excluded.gia_tri;");
@@ -110,5 +118,6 @@ const n = (v) => Number(v) || 0;
   const file = path.join(__dirname, "giao_ly_seed.sql");
   fs.writeFileSync(file, out.join("\n"), "utf8");
   console.log("Đã ghi " + file);
-  console.log("bài: " + rowsBai.size + " · lịch: " + new Set(rowsLich).size + " · tuần nghỉ: " + new Set(rowsNghi).size);
+  console.log("lớp: " + rowsLop.length + " · bài: " + rowsBai.size +
+    " · lịch: " + new Set(rowsLich).size + " · tuần nghỉ: " + new Set(rowsNghi).size);
 })().catch((e) => { console.error(e.message); process.exit(1); });

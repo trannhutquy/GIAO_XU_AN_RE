@@ -63,8 +63,13 @@ $env:ADMIN_TOKEN = "dán-token-vào-đây"
 node sql/seed-giao-ly.js
 ```
 
-Script tạo `sql/giao_ly_seed.sql`. Mở file đó trong Supabase SQL Editor → Run.
+Script tạo `sql/giao_ly_seed.sql` (gồm cả danh sách lớp lấy từ CSDL gốc).
+Mở file đó trong Supabase SQL Editor → Run.
 ⚠️ File seed chứa dữ liệu nội bộ → không commit lên GitHub.
+
+> Khi CSDL gốc thêm/sửa lớp, chạy lại seed rồi Run file SQL để cập nhật bảng
+> `lop_giao_ly` (snapshot chỉ đọc). Nếu quên, dropdown lớp trên tab Bài Dạy sẽ
+> thiếu lớp mới.
 
 Các mảng khác (điểm danh, CTTT, quỹ…) chưa chuyển ở đợt này — vẫn đi qua Apps
 Script. Bảng của chúng đã có trong `schema.sql` sẵn cho các đợt sau.

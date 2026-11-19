@@ -1,0 +1,6 @@
+# File seed chứa dữ liệu nội bộ của đoàn → không đẩy lên GitHub
+sql/giao_ly_seed.sql
+
+# Key / biến môi trường (nếu có file local)
+.env
+.env.*
