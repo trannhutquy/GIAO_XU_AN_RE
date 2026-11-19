@@ -19,10 +19,13 @@ Mặc định `window.SQL_CHE_DO = "off"` trong `config.js` → app vẫn chạy
 1. Đăng ký → New project (chọn region gần nhất, free 500 MB).
 2. Project → **SQL Editor** → paste toàn bộ `sql/schema.sql` → **Run**.
    Chạy lại nhiều lần được, không mất dữ liệu.
-3. Project Settings → API → copy:
+3. Project Settings → **API Keys** → copy:
    - `Project URL` → `SUPABASE_URL`
-   - `service_role` **secret** → `SUPABASE_SERVICE_ROLE_KEY`
-   - ⚠️ Không dùng `anon key`, và không bao giờ đưa key này vào file trong repo.
+   - **Secret key** (`sb_secret_...`) → `SUPABASE_SECRET_KEY`
+   - Key cũ `service_role` (dạng `eyJ...`) vẫn dùng được qua biến
+     `SUPABASE_SERVICE_ROLE_KEY`, nhưng Supabase sẽ bỏ dần trong 2026.
+   - ⚠️ Không dùng publishable/anon key cho `/api/sql`, và không bao giờ đưa
+     key này vào file trong repo.
 
 ### 2. Apps Script (chỉ dán file nhỏ)
 
@@ -43,8 +46,12 @@ Project settings → Environment Variables → thêm:
 | Tên | Giá trị |
 |---|---|
 | `SUPABASE_URL` | `https://xxxx.supabase.co` |
-| `SUPABASE_SERVICE_ROLE_KEY` | service_role secret |
+| `SUPABASE_SECRET_KEY` | key mới `sb_secret_...` |
+| `SUPABASE_SERVICE_ROLE_KEY` | *(cách cũ)* key `service_role` dạng `eyJ...` |
 | `GAS_URL` | *(tuỳ chọn)* URL `/exec`, đã có default trong `api/sql.js` |
+
+Chỉ cần **một trong hai** biến key. `/api/sql` tự nhận biết key mới hay cũ để
+gửi đúng header (`apikey` cho key mới, thêm `Authorization: Bearer` cho key cũ).
 
 Rồi **Redeploy**. Không cần `package.json`, không cài npm (`api/sql.js` dùng `fetch` có sẵn).
 

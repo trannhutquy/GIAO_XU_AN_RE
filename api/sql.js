@@ -47,7 +47,7 @@ function loi(message, code) {
 async function db(table, opt) {
   const o = opt || {};
   if (!SUPABASE_URL || !SERVICE_KEY) {
-    throw loi("Chưa cấu hình SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY trên Vercel.", "CHUA_CAU_HINH");
+    throw loi("Chưa cấu hình SUPABASE_URL / SUPABASE_SECRET_KEY trên Vercel.", "CHUA_CAU_HINH");
   }
   const qs = o.query ? "?" + o.query : "";
   const headers = {
