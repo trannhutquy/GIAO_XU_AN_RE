@@ -11877,7 +11877,16 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     if (!maBai) { showToast("Vui lòng chọn bài dạy.", "error"); return; }
     google.script.run.withSuccessHandler(function (res) {
       if (!res || !res.success) { showToast((res && res.error) || "Không gán được bài.", "error"); return; }
-      showToast("Đã gán bài vào lịch.");
+      // Bài riêng của lớp: gán xong tự chuyển sang xem lịch của lớp đó,
+      // vì chế độ "dùng chung" không hiển thị lịch riêng của từng lớp.
+      var lopMoi = String(res.maLop || "").trim();
+      if (lopMoi && lopMoi !== String(admGLState.maLop || "").trim()) {
+        var selLop = document.getElementById("admGLLopChon");
+        if (selLop) selLop.value = lopMoi;
+        showToast("Đã gán bài cho lớp " + lopMoi + ".");
+      } else {
+        showToast("Đã gán bài vào lịch.");
+      }
       admGLDongGan();
       admGLTai();
     }).withFailureHandler(function (err) { showToast("Lỗi kết nối: " + err, "error"); })

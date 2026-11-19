@@ -27,7 +27,6 @@ const TRANG_THAI_TUAN = ["hoc", "nghi_dạy", "nghi_hoc", "glv_xin_nghi"];
 // fn -> quyền. 'write' để shim KHÔNG tự gọi lại Apps Script khi lỗi (tránh ghi trùng).
 const SQL_FN = {
   xdSqlPing:                  { auth: null,    write: false },
-  xdSqlDebug:                 { auth: "admin", write: false },
   admGiaoLyLayDuLieu:         { auth: "admin", write: false },
   glvLayTienDo:               { auth: "glv",   write: false },
   admGiaoLyLuuNamHoc:         { auth: "admin", write: true },
@@ -471,18 +470,21 @@ async function admGiaoLyXoaBai(args) {
 
 async function admGiaoLyDatLich(args) {
   await xacThuc(args[0], "admin");
-  const maLop = String(args[1] || "").trim().toUpperCase();
+  const maLopChon = String(args[1] || "").trim().toUpperCase();
   const maBai = String(args[2] || "").trim().toUpperCase();
   const ngay = String(args[3] || "").trim().slice(0, 10);
   const dl = await duLieuGl();
-  const coBai = dl.dsBai.some((b) => b.maBai === maBai);
-  if (!coBai) throw loi("Không tìm thấy bài dạy này.");
+  const bai = dl.dsBai.filter((b) => b.maBai === maBai)[0];
+  if (!bai) throw loi("Không tìm thấy bài dạy này.");
   if (dl.dsTuanNgay.indexOf(ngay) < 0) throw loi("Ngày này không phải Chúa Nhật trong niên khoá.");
+  // Bài riêng của một lớp mà đang đứng ở chế độ "dùng chung": gán đúng lớp
+  // của bài, tránh tạo dòng lịch ma_lop rỗng gây trùng khi xem theo lớp.
+  const maLop = maLopChon || bai.maLop || "";
   await upsert("lich_giao_ly_tuan", {
     ma_lop: maLop, ma_bai: maBai, ngay, ngay_goc: ngay,
     trang_thai: "hoc", ghi_chu: "", nguoi: "", luc: new Date().toISOString(),
   }, "ma_lop,ma_bai");
-  return { success: true };
+  return { success: true, maLop };
 }
 
 async function admGiaoLyBoLich(args) {
@@ -519,22 +521,8 @@ async function admGiaoLyCapNhatTuan(args) {
   return { success: true };
 }
 
-async function xdSqlDebug(args) {
-  await xacThuc(args[0], "admin");
-  const lich = await chonTatCa("lich_giao_ly_tuan");
-  let thu = null, loiThu = null;
-  try {
-    thu = await upsert("lich_giao_ly_tuan", {
-      ma_lop: "", ma_bai: "BD0001", ngay: "2026-10-04", ngay_goc: "2026-10-04",
-      trang_thai: "hoc", ghi_chu: "", nguoi: "", luc: new Date().toISOString(),
-    }, "ma_lop,ma_bai");
-  } catch (e) { loiThu = e.message; }
-  return { soLich: (lich || []).length, lich: lich || [], thu, loiThu };
-}
-
 const HAM = {
   xdSqlPing: async () => ({ ok: true, dangChay: "sql", thoiGian: Date.now() }),
-  xdSqlDebug,
   admGiaoLyLayDuLieu,
   glvLayTienDo,
   admGiaoLyLuuNamHoc,
