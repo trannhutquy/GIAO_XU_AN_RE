@@ -58,6 +58,9 @@ const n = (v) => Number(v) || 0;
   const rowsBai = new Map();
   const rowsLich = [];
   const rowsNghi = [];
+  // dsBaiDaXep / dsTuan là VIEW ĐÃ GỘP: bản dùng chung hiện lại trong mọi lớp.
+  // Nhớ lại bản dùng chung để không ghi trùng thành lịch riêng của từng lớp.
+  const sharedLich = {}, sharedNghi = {};
 
   for (const ma of maLops) {
     const res = await goi("admGiaoLyLayDuLieu", [TOKEN, ma]);
@@ -74,11 +77,17 @@ const n = (v) => Number(v) || 0;
 
     (res.dsBaiDaXep || []).forEach((b) => {
       if (!b.ngayGoc) return;
+      const khoa = b.maBai + "|" + b.ngayGoc;
+      if (ma === "") sharedLich[khoa] = true;
+      else if (sharedLich[khoa]) return;
       rowsLich.push("(" + [q(ma), q(b.maBai), q(b.ngayGoc), q(b.ngayGoc), q("hoc")].join(",") + ")");
     });
 
     (res.dsTuan || []).forEach((t) => {
       if (!t.ngay || t.trangThai === "hoc") return;
+      const khoa = t.ngay + "|" + t.trangThai + "|" + String(t.ghiChu || "");
+      if (ma === "") sharedNghi[khoa] = true;
+      else if (sharedNghi[khoa]) return;
       rowsNghi.push("(" + [q(ma), q(t.ngay), q(t.trangThai), q(t.ghiChu), q(t.nguoi), q(t.luc)].join(",") + ")");
     });
   }
