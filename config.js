@@ -12,4 +12,4 @@ window.GAS_URL = "https://script.google.com/macros/s/AKfycbxgKaYg-5fBvx1r4_pU431
 //  Muốn bật: đổi thành "sql" -> deploy web -> thử tab Bài Dạy & Lịch Trình.
 //  Muốn lui lại ngay: đổi về "off" -> deploy lại (không cần đụng CSDL).
 // ============================================================================
-window.SQL_CHE_DO = "off";
+window.SQL_CHE_DO = "sql";
