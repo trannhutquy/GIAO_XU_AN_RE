@@ -11863,7 +11863,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     var op = '<option value="">-- Chọn bài --</option>';
     (res.dsBai || []).forEach(function (b) {
       if (b.maLop && b.maLop !== admGLState.maLop && admGLState.maLop) return;
-      op += '<option value="' + escapeHtml(b.maBai) + '">' + escapeHtml(b.maBai) + ' - ' + escapeHtml(b.tenBai) + '</option>';
+      op += '<option value="' + escapeHtml(b.maBai) + '">' + escapeHtml(b.maBai) + ' - ' + escapeHtml(b.tenBai) + (b.maLop ? ' · ' + escapeHtml(b.maLop) : '') + '</option>';
     });
     var sel = document.getElementById("admGLGanBai");
     sel.innerHTML = op;
