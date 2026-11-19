@@ -27,6 +27,7 @@ const TRANG_THAI_TUAN = ["hoc", "nghi_dạy", "nghi_hoc", "glv_xin_nghi"];
 // fn -> quyền. 'write' để shim KHÔNG tự gọi lại Apps Script khi lỗi (tránh ghi trùng).
 const SQL_FN = {
   xdSqlPing:                  { auth: null,    write: false },
+  xdSqlDebug:                 { auth: "admin", write: false },
   admGiaoLyLayDuLieu:         { auth: "admin", write: false },
   glvLayTienDo:               { auth: "glv",   write: false },
   admGiaoLyLuuNamHoc:         { auth: "admin", write: true },
@@ -518,8 +519,22 @@ async function admGiaoLyCapNhatTuan(args) {
   return { success: true };
 }
 
+async function xdSqlDebug(args) {
+  await xacThuc(args[0], "admin");
+  const lich = await chonTatCa("lich_giao_ly_tuan");
+  let thu = null, loiThu = null;
+  try {
+    thu = await upsert("lich_giao_ly_tuan", {
+      ma_lop: "", ma_bai: "BD0001", ngay: "2026-10-04", ngay_goc: "2026-10-04",
+      trang_thai: "hoc", ghi_chu: "", nguoi: "", luc: new Date().toISOString(),
+    }, "ma_lop,ma_bai");
+  } catch (e) { loiThu = e.message; }
+  return { soLich: (lich || []).length, lich: lich || [], thu, loiThu };
+}
+
 const HAM = {
   xdSqlPing: async () => ({ ok: true, dangChay: "sql", thoiGian: Date.now() }),
+  xdSqlDebug,
   admGiaoLyLayDuLieu,
   glvLayTienDo,
   admGiaoLyLuuNamHoc,
