@@ -29,6 +29,21 @@
   function phien() { return (typeof currentUserToken !== "undefined" && currentUserToken) ? currentUserToken : ""; }
   function thongBao(m, loai) { try { if (typeof showToast === "function") showToast(m, loai || "info"); } catch (e) {} }
 
+  // Hiện ngay 1 thông báo thử trên thanh thông báo của thiết bị.
+  // FCM gửi dạng "data": khi app đang mở chỉ bắn onMessage (toast trong app),
+  // nên cần showNotification để người dùng thấy rõ là đã bật thành công.
+  function hienThongBaoThu() {
+    if (!("serviceWorker" in navigator)) return;
+    navigator.serviceWorker.ready.then(function (reg) {
+      if (!reg || typeof reg.showNotification !== "function") return;
+      return reg.showNotification("Đã bật thông báo", {
+        body: "Đây là thông báo thử. Từ giờ bạn sẽ nhận tin nhắn và thông báo mới ngay trên thiết bị này.",
+        tag: "xd-thu", icon: "icons/icon-192.png", badge: "icons/icon-192.png",
+        data: { mo: "" }
+      });
+    }).catch(function () {});
+  }
+
   function loadScript(src) {
     return new Promise(function (res, rej) {
       var s = document.createElement("script");
@@ -47,7 +62,10 @@
   // Thông báo đẩy đến khi app đang mở: hiện thông báo trong app + cập nhật chấm đỏ ngay
   function khiNhanTinDangMo(p) {
     var d = (p && p.data) || {};
-    try { thongBao((d.title ? d.title + ": " : "") + (d.body || ""), "info"); } catch (e) {}
+    // Bỏ toast trùng với thông báo thử đã hiện trên thanh thông báo.
+    if (d.tag !== "chao") {
+      try { thongBao((d.title ? d.title + ": " : "") + (d.body || ""), "info"); } catch (e) {}
+    }
     try { if (typeof pollNen === "function") pollNen(); } catch (e2) {}
   }
 
@@ -137,8 +155,12 @@
     thongBao("Đang bật thông báo...", "info");
     bat().then(function (r) {
       if (r.ok) {
-        if (r.moi && r.thu && r.thu !== "ok") thongBao("Đã đăng ký thiết bị nhưng máy chủ chưa gửi được thông báo thử. Hãy báo Quản trị viên kiểm tra cấu hình.", "error");
-        else thongBao("Đã bật thông báo! Bạn sẽ nhận một thông báo thử trong giây lát.", "success");
+        if (r.moi && r.thu && r.thu !== "ok") {
+          thongBao("Đã đăng ký thiết bị nhưng máy chủ chưa gửi được thông báo thử (" + r.thu + "). Hãy báo Quản trị viên kiểm tra FCM_SERVICE_ACCOUNT.", "error");
+        } else {
+          hienThongBaoThu();
+          thongBao("Đã bật thông báo! Xem thông báo thử trên thanh thông báo của điện thoại.", "success");
+        }
       } else {
         thongBao(LOI[r.ly] || ("Không bật được thông báo" + (r.chiTiet ? ": " + r.chiTiet : ".")), "error");
       }
