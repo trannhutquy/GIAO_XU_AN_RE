@@ -12432,7 +12432,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     sel.setAttribute("data-gia-tri", cur);
   }
 
-  function admGLVNapDanhSachLop(giaTriChon, batBuocTai) {
+  function admGLVNapDanhSachLop(giaTriChon, batBuocTai, imLang) {
     var sel = document.getElementById("admGLVFormLop");
     if (!sel) return;
     if (giaTriChon != null) sel.setAttribute("data-gia-tri", String(giaTriChon || "").trim());
@@ -12450,12 +12450,12 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       .withSuccessHandler(function (res) {
         sel.disabled = disabledCu;
         if (res && res.success) admGLVState.dsLop = res.list || [];
-        else if (!(admGLVState.dsLop || []).length) showToast((res && res.error) || "Không tải được danh sách lớp.", "error");
+        else if (!imLang && !(admGLVState.dsLop || []).length) showToast((res && res.error) || "Không tải được danh sách lớp.", "error");
         admGLVVeSelectLop(cur);
       })
       .withFailureHandler(function (err) {
         sel.disabled = disabledCu;
-        showToast("Không tải được danh sách lớp: " + err, "error");
+        if (!imLang) showToast("Không tải được danh sách lớp: " + err, "error");
         admGLVVeSelectLop(cur);
       })
       .admLayDanhSachLopGiaoLy(currentUserToken);
@@ -12475,7 +12475,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         }
         admGLVState.ds = res.list || [];
         admGLVVeBang();
-        admGLVNapDanhSachLop();
+        admGLVNapDanhSachLop(null, false, true);
       })
       .withFailureHandler(function (err) { empty.innerHTML = '<i class="fas fa-triangle-exclamation" style="font-size:26px; display:block; margin-bottom:8px; color:#ff4d6d;"></i>Lỗi kết nối: ' + err; })
       .admLayDanhSachGLV(currentUserToken);
@@ -12594,16 +12594,28 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     btn.disabled = true; btn.innerText = "Đang lưu...";
 
     if (maSoGoc) {
-      // Sửa
-      google.script.run
-        .withSuccessHandler(function (res) {
-          btn.disabled = false; btn.innerText = chuGoc;
-          if (!res.success) { showToast(res.error, "error"); return; }
-          showToast("Đã cập nhật " + thongTin.maSo, "success");
-          admGLVDongModal(); admGLVKhoiTao();
-        })
-        .withFailureHandler(function (err) { btn.disabled = false; btn.innerText = chuGoc; showToast("Lỗi kết nối: " + err, "error"); })
-        .admSuaGLV(currentUserToken, maSoGoc, thongTin);
+      // Sửa: hàm này ghi đè đúng cùng giá trị nên có thể thử lại 1 lần khi mạng chập chờn.
+      var luuSua = function (lanThu) {
+        google.script.run
+          .withSuccessHandler(function (res) {
+            btn.disabled = false; btn.innerText = chuGoc;
+            if (!res.success) { showToast(res.error, "error"); return; }
+            showToast("Đã cập nhật " + thongTin.maSo, "success");
+            admGLVDongModal(); admGLVKhoiTao();
+          })
+          .withFailureHandler(function (err) {
+            var msg = String((err && err.message) || err || "");
+            if (lanThu < 1 && /failed to fetch|networkerror|load failed|không có kết nối|mất kết nối/i.test(msg)) {
+              showToast("Mạng chập chờn, đang thử lưu lại…", "info");
+              setTimeout(function () { luuSua(lanThu + 1); }, 1200);
+              return;
+            }
+            btn.disabled = false; btn.innerText = chuGoc;
+            showToast("Lỗi kết nối: " + err, "error");
+          })
+          .admSuaGLV(currentUserToken, maSoGoc, thongTin);
+      };
+      luuSua(0);
     } else {
       // Thêm mới
       google.script.run
