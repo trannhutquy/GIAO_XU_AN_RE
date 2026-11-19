@@ -43,11 +43,16 @@ const q = (v) => "'" + String(v == null ? "" : v).replace(/'/g, "''") + "'";
 const n = (v) => Number(v) || 0;
 
 (async function () {
-  const dsLop = [""].concat((await goi("admLayDanhSachLopGiaoLy", [TOKEN])).list || []);
-  // admLayDanhSachLopGiaoLy trả {list:[{maLop, ten,...}]} ở bản mới;
-  // nếu bản cũ trả mảng thì vẫn xử lý được.
-  const danhSach = Array.isArray(dsLop) ? dsLop : [""];
-  const maLops = danhSach.map((x) => String(x.maLop || x || "")).filter((x, i, a) => a.indexOf(x) === i);
+  // Danh sách lớp vẫn lấy từ CSDL gốc qua Apps Script, rồi lưu snapshot vào
+  // bảng lop_giao_ly (chỉ đọc) để chế độ SQL không phải gọi Google mỗi lần.
+  const kqLop = await goi("admLayDanhSachLopGiaoLy", [TOKEN]);
+  const dsLop = (kqLop && kqLop.success && Array.isArray(kqLop.list)) ? kqLop.list : [];
+  const maLops = [""].concat(dsLop.map((l) => String(l.maLop || "")))
+    .filter((x, i, a) => a.indexOf(x) === i);
+  const rowsLop = dsLop.map((l) => "(" + [
+    q(l.maLop), q(l.ten || l.maLop), q(l.khoi), q(l.nienKhoa),
+    q(l.phong), q(l.lich), n(l.siSo), q(l.ghiChu), q("CSDL"),
+  ].join(",") + ")");
 
   let cfg = null;
   const rowsBai = new Map();
