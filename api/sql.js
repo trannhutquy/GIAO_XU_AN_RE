@@ -9,12 +9,15 @@
 //
 //  Biến môi trường cần đặt trên Vercel:
 //    SUPABASE_URL                  (vd https://xxxx.supabase.co)
-//    SUPABASE_SERVICE_ROLE_KEY     (service_role, không phải anon)
+//    SUPABASE_SECRET_KEY           (key mới: sb_secret_...)
+//      hoặc SUPABASE_SERVICE_ROLE_KEY (key cũ service_role, vẫn chấp nhận)
 //    GAS_URL                       (tuỳ chọn, có sẵn default bên dưới)
 // ============================================================================
 
 const SUPABASE_URL = String(process.env.SUPABASE_URL || "").replace(/\/+$/, "");
-const SERVICE_KEY = String(process.env.SUPABASE_SERVICE_ROLE_KEY || "");
+const SERVICE_KEY = String(
+  process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || ""
+);
 const GAS_URL = String(process.env.GAS_URL ||
   "https://script.google.com/macros/s/AKfycbxgKaYg-5fBvx1r4_pU4316aCe-tBWVGNL4VBVQgyotsahs3AQ6Ou6ck9k4IhQV2k2G/exec");
 
@@ -49,9 +52,12 @@ async function db(table, opt) {
   const qs = o.query ? "?" + o.query : "";
   const headers = {
     apikey: SERVICE_KEY,
-    Authorization: "Bearer " + SERVICE_KEY,
     "Content-Type": "application/json",
   };
+  // Key mới (sb_secret_ / sb_publishable_) KHÔNG phải JWT: chỉ gửi ở apikey.
+  // Gửi thêm Authorization: Bearer sẽ khiến PostgREST thử verify JWT và trả 401.
+  // Key cũ service_role (eyJ...) thì bắt buộc phải có Authorization Bearer.
+  if (/^eyJ/.test(SERVICE_KEY)) headers.Authorization = "Bearer " + SERVICE_KEY;
   if (o.prefer) headers.Prefer = o.prefer;
 
   const r = await fetch(SUPABASE_URL + "/rest/v1/" + table + qs, {
