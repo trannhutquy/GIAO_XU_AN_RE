@@ -79,6 +79,19 @@
   // bằng GET, không tốn lượt chạy Apps Script. Lỗi là tự gọi thẳng như cũ.
   var EDGE = { layTrangThaiBaoTri: 1, getAppConfigData: 1, getHanhTrinhData: 1, xdChung: 1 };
 
+  // ---------- backend SQL (chế độ hybrid) ----------
+  // Giữ danh sách này khớp SQL_FN trong api/sql.js. Hàm không có ở đây vẫn đi
+  // thẳng Apps Script, nên bật SQL không làm hỏng các tab khác.
+  var SQL_FN = {
+    admGiaoLyLayDuLieu: 1, glvLayTienDo: 1,
+    admGiaoLyLuuNamHoc: 1, admGiaoLyLuuBai: 1, admGiaoLyXoaBai: 1,
+    admGiaoLyDatLich: 1, admGiaoLyBoLich: 1, admGiaoLyCapNhatTuan: 1
+  };
+  // Chế độ "shadow" chỉ thử các hàm ĐỌC; hàm GHI vẫn đi Apps Script để tránh
+  // ghi trùng hai nơi. Chế độ "sql" mới gửi cả ghi xuống /api/sql.
+  var SQL_READ = { admGiaoLyLayDuLieu: 1, glvLayTienDo: 1 };
+  function sqlCheDo() { return String(window.SQL_CHE_DO || "off").toLowerCase(); }
+
   function sendGas(fn, args, onOk, onErr, attempt) {
     var url = window.GAS_URL;
     var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
@@ -117,8 +130,41 @@
     });
   }
 
-  // Chọn đường: hàm có trong EDGE -> qua lớp đệm; còn lại -> Apps Script trực tiếp.
+  // Gửi tới /api/sql (Supabase). Envelope trả về GIỐNG Apps Script {ok,result}.
+  // Hàm ĐỌC nếu SQL lỗi thì tự rơi lại Apps Script; hàm GHI thì báo lỗi, KHÔNG
+  // gọi lại Apps Script vì có thể đã ghi thành công ở SQL (tránh ghi trùng).
+  function sendSql(fn, args, onOk, onErr, attempt) {
+    var laDoc = !!SQL_READ[fn];
+    var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, TIMEOUT_MS) : null;
+    function quayVeGas(err) {
+      if (timer) clearTimeout(timer);
+      if (laDoc) return sendGas(fn, args, onOk, onErr, attempt);
+      onErr(err);
+    }
+    fetch(location.origin + "/api/sql", {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ fn: fn, args: args }),
+      redirect: "follow",
+      signal: ctrl ? ctrl.signal : undefined
+    }).then(function (r) { return r.text(); }).then(function (txt) {
+      if (timer) clearTimeout(timer);
+      var data;
+      try { data = JSON.parse(txt); }
+      catch (e) { return quayVeGas(new Error("SQL trả dữ liệu không hợp lệ")); }
+      if (!data || !data.ok) return quayVeGas(new Error((data && data.error) || "Lỗi SQL"));
+      onOk(data.result);
+    }).catch(quayVeGas);
+  }
+
+  // Chọn đường: SQL (nếu bật) -> lớp đệm EDGE -> Apps Script trực tiếp.
   function send(fn, args, onOk, onErr, attempt) {
+    var cheDo = sqlCheDo();
+    if (cheDo !== "off" && SQL_FN[fn] &&
+        (cheDo === "sql" || (cheDo === "shadow" && SQL_READ[fn]))) {
+      return sendSql(fn, args, onOk, onErr, attempt);
+    }
     var khongThamSo = !args || args.length === 0;
     if (!EDGE[fn] || !khongThamSo || !/^https?:$/.test(location.protocol)) {
       return sendGas(fn, args, onOk, onErr, attempt);
