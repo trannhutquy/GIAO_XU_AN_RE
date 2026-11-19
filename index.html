@@ -10418,8 +10418,13 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           <input class="adm-input" id="admGLVFormMaSo" placeholder="VD: GLV.BS033" style="width:100%; box-sizing:border-box;">
           <label style="font-size:12px; font-weight:bold; display:block; margin:8px 0 4px;">Tên thánh - Họ và tên</label>
           <input class="adm-input" id="admGLVFormTen" placeholder="VD: Maria Nguyễn Thị A" style="width:100%; box-sizing:border-box;">
-          <label style="font-size:12px; font-weight:bold; display:block; margin:8px 0 4px;">Lớp Giáo Lí phụ trách</label>
-          <input class="adm-input" id="admGLVFormLop" placeholder="VD: Rước Lễ 1" style="width:100%; box-sizing:border-box;">
+          <label style="font-size:12px; font-weight:bold; display:block; margin:8px 0 4px;">
+            Lớp Giáo Lí phụ trách
+            <button type="button" class="adm-btn adm-btn-outline adm-btn-sm" style="float:right; padding:1px 7px; font-size:11px;" onclick="admGLVNapDanhSachLop(null, true)" title="Tải lại danh sách lớp từ CSDL gốc"><i class="fas fa-rotate"></i> Đổi mới</button>
+          </label>
+          <select class="adm-input" id="admGLVFormLop" style="width:100%; box-sizing:border-box;" title="Danh sách lấy từ CSDL gốc — chọn đúng tên lớp để GLV thấy tiến độ">
+            <option value="">-- Chưa gán lớp --</option>
+          </select>
           <label style="font-size:12px; font-weight:bold; display:block; margin:8px 0 4px;">Số điện thoại liên hệ</label>
           <input class="adm-input" id="admGLVFormSdt" placeholder="VD: 0912345678" style="width:100%; box-sizing:border-box;">
         </div>
@@ -12401,7 +12406,60 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   }
 
   // ---------------- QUẢN LÝ TÀI KHOẢN GIÁO LÝ VIÊN ----------------
-  var admGLVState = { ds: [] };
+  var admGLVState = { ds: [], dsLop: [] };
+
+  // Combobox "Lớp Giáo Lí phụ trách": lấy danh sách lớp hiện tại từ CSDL gốc
+  // (dùng hàm cũ admLayDanhSachLopGiaoLy, không thêm endpoint/hàm mới).
+  function admGLVVeSelectLop(giaTriChon) {
+    var sel = document.getElementById("admGLVFormLop");
+    if (!sel) return;
+    var ds = admGLVState.dsLop || [];
+    var op = '<option value="">-- Chưa gán lớp --</option>';
+    var cur = (giaTriChon != null ? giaTriChon : (sel.getAttribute("data-gia-tri") || sel.value || ""));
+    cur = String(cur || "").trim();
+    var co = !cur;
+    ds.forEach(function (l) {
+      var ten = String((l && (l.ten || l.maLop)) || "").trim();
+      if (!ten) return;
+      if (ten === cur) co = true;
+      op += '<option value="' + escapeHtml(ten) + '">' + escapeHtml(ten) + '</option>';
+    });
+    // Giữ lại giá trị cũ nếu tên lớp đã gán không còn trong CSDL, để bấm Lưu
+    // không làm mất dữ liệu của GLV.
+    if (cur && !co) op += '<option value="' + escapeHtml(cur) + '">' + escapeHtml(cur) + ' (giá trị cũ)</option>';
+    sel.innerHTML = op;
+    sel.value = cur;
+    sel.setAttribute("data-gia-tri", cur);
+  }
+
+  function admGLVNapDanhSachLop(giaTriChon, batBuocTai) {
+    var sel = document.getElementById("admGLVFormLop");
+    if (!sel) return;
+    if (giaTriChon != null) sel.setAttribute("data-gia-tri", String(giaTriChon || "").trim());
+    var dsCache = (typeof admLopGLState !== "undefined" && admLopGLState && admLopGLState.ds && admLopGLState.ds.length)
+      ? admLopGLState.ds : null;
+    if (!batBuocTai && ((dsCache && dsCache.length) || (admGLVState.dsLop && admGLVState.dsLop.length))) {
+      if (dsCache) admGLVState.dsLop = dsCache;
+      admGLVVeSelectLop();
+      return;
+    }
+    var cur = sel.getAttribute("data-gia-tri") || "";
+    var disabledCu = sel.disabled;
+    sel.disabled = true;
+    google.script.run
+      .withSuccessHandler(function (res) {
+        sel.disabled = disabledCu;
+        if (res && res.success) admGLVState.dsLop = res.list || [];
+        else if (!(admGLVState.dsLop || []).length) showToast((res && res.error) || "Không tải được danh sách lớp.", "error");
+        admGLVVeSelectLop(cur);
+      })
+      .withFailureHandler(function (err) {
+        sel.disabled = disabledCu;
+        showToast("Không tải được danh sách lớp: " + err, "error");
+        admGLVVeSelectLop(cur);
+      })
+      .admLayDanhSachLopGiaoLy(currentUserToken);
+  }
 
   function admGLVKhoiTao() {
     var table = document.getElementById("admGLVTable");
@@ -12417,6 +12475,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         }
         admGLVState.ds = res.list || [];
         admGLVVeBang();
+        admGLVNapDanhSachLop();
       })
       .withFailureHandler(function (err) { empty.innerHTML = '<i class="fas fa-triangle-exclamation" style="font-size:26px; display:block; margin-bottom:8px; color:#ff4d6d;"></i>Lỗi kết nối: ' + err; })
       .admLayDanhSachGLV(currentUserToken);
@@ -12500,7 +12559,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     document.getElementById("admGLVFormMaSo").value = "";
     document.getElementById("admGLVFormMaSo").disabled = false;
     document.getElementById("admGLVFormTen").value = "";
-    document.getElementById("admGLVFormLop").value = "";
+    admGLVNapDanhSachLop("");
     document.getElementById("admGLVFormSdt").value = "";
     document.getElementById("admGLVModalBg").classList.add("open");
   }
@@ -12511,7 +12570,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     document.getElementById("admGLVFormMaSo").value = g.maSo;
     document.getElementById("admGLVFormMaSo").disabled = true; // không cho đổi mã số khi sửa
     document.getElementById("admGLVFormTen").value = g.ten || "";
-    document.getElementById("admGLVFormLop").value = g.lop || "";
+    admGLVNapDanhSachLop(g.lop || "");
     document.getElementById("admGLVFormSdt").value = g.sdt || "";
     document.getElementById("admGLVModalBg").classList.add("open");
   }
