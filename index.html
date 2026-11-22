@@ -9846,6 +9846,25 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   .adm-empty { text-align: center; padding: 40px 10px; color: var(--adm-sub); }
   .adm-info-bar { font-size: 11.5px; color: var(--adm-sub); margin: 8px 2px; }
 
+  /* Phân trang bảng Duyệt dữ liệu: mỗi trang 15 dòng */
+  .adm-pagination { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .adm-pagination:empty { display: none; }
+  .adm-page-btn {
+    min-width: 32px; height: 32px; padding: 0 9px; border-radius: 8px;
+    border: 1px solid var(--adm-border); background: rgba(255,255,255,.03); color: var(--adm-sub);
+    font-size: 12.5px; font-weight: 600; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .adm-page-btn:hover:not(:disabled) { background: rgba(18,224,255,.08); color: var(--adm-text); }
+  .adm-page-btn.active { background: linear-gradient(135deg, var(--adm-blue-dim), var(--adm-blue)); color: #041022; border-color: transparent; }
+  .adm-page-btn:disabled { opacity: .35; cursor: not-allowed; }
+  .adm-page-dots { color: var(--adm-sub); padding: 0 2px; }
+  .adm-page-info { font-size: 12px; color: var(--adm-sub); margin-left: 6px; }
+  @media (max-width: 640px) {
+    .adm-page-btn { min-width: 36px; height: 36px; }
+    .adm-page-info { width: 100%; text-align: center; margin: 4px 0 0; }
+  }
+
   /* ---- Modal thêm / sửa dòng ---- */
   .adm-modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 21000; display: none; align-items: center; justify-content: center; padding: 14px; }
   .adm-modal-bg.open { display: flex; }
@@ -9967,6 +9986,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         </table>
         <div class="adm-empty" id="admTableEmpty"><i class="fas fa-database" style="font-size:26px; display:block; margin-bottom:8px;"></i>Chọn một file và một bảng dữ liệu ở trên để bắt đầu.</div>
       </div>
+      <div class="adm-pagination" id="admPagination"></div>
     </div>
 
     <!-- ===== TAB QUÊN MẬT KHẨU ===== -->
@@ -11465,6 +11485,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     dbList: [], dbId: "", sheetName: "",
     headers: [], rows: [], filteredRows: [],
     selected: {}, editMode: "add", editRowIndex: null,
+    page: 1, pageSize: 15,
     chiDoanChart: null, lopChart: null,
     tienQuyChiDoanChart: null, tienQuyHTChart: null, onDinhChart: null, dashLoaded: false
   };
@@ -13537,6 +13558,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         admState.rows = res.rows;
         admState.filteredRows = res.rows;
         admState.selected = {};
+        admState.page = 1;
         admRenderTable();
         ['admSearchInput', 'admBtnRefresh', 'admBtnAdd'].forEach(function (id) { document.getElementById(id).disabled = false; });
       })
@@ -13548,6 +13570,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 
   function admResetTable() {
     admState.headers = []; admState.rows = []; admState.filteredRows = []; admState.selected = {};
+    admState.page = 1;
+    document.getElementById("admPagination").innerHTML = "";
     document.getElementById("admTable").style.display = "none";
     document.getElementById("admTableEmpty").style.display = "block";
     document.getElementById("admTableEmpty").innerHTML = '<i class="fas fa-database" style="font-size:26px; display:block; margin-bottom:8px;"></i>Chọn một file và một bảng dữ liệu ở trên để bắt đầu.';
@@ -13556,25 +13580,40 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     document.getElementById("admSelCount").innerText = "0";
   }
 
+  // Mỗi trang chỉ hiện 15 dòng; rowIndex vẫn là số dòng thật của Sheet nên
+  // sửa/xóa ở trang 2, 3... vẫn đúng dòng tương ứng.
   function admRenderTable() {
     var rows = admState.filteredRows;
-    document.getElementById("admInfoBar").innerText = rows.length + " dòng × " + admState.headers.length + " cột — Bảng: " + admState.sheetName;
+    var total = rows.length;
+    var size = admState.pageSize || 15;
+    var totalPages = Math.max(1, Math.ceil(total / size));
+    if (admState.page > totalPages) admState.page = totalPages;
+    if (admState.page < 1) admState.page = 1;
+    var start = (admState.page - 1) * size;
+    var pageRows = rows.slice(start, start + size);
 
-    if (rows.length === 0) {
+    var tu = total ? (start + 1) : 0;
+    var den = Math.min(start + size, total);
+    document.getElementById("admInfoBar").innerText =
+      "Đang hiện " + tu + "–" + den + " / " + total + " dòng × " + admState.headers.length +
+      " cột — Trang " + admState.page + "/" + totalPages + " — Bảng: " + admState.sheetName;
+
+    if (total === 0) {
       document.getElementById("admTable").style.display = "none";
       document.getElementById("admTableEmpty").style.display = "block";
       document.getElementById("admTableEmpty").innerHTML = '<i class="fas fa-inbox" style="font-size:26px; display:block; margin-bottom:8px;"></i>Không có dữ liệu.';
+      document.getElementById("admPagination").innerHTML = "";
       return;
     }
     document.getElementById("admTableEmpty").style.display = "none";
     document.getElementById("admTable").style.display = "table";
 
-    var headHtml = '<th style="width:32px;"><input type="checkbox" onclick="admToggleAll(this)"></th>' +
+    var headHtml = '<th style="width:32px;"><input type="checkbox" onclick="admToggleAll(this)" title="Chọn tất cả dòng đang lọc (mọi trang)"></th>' +
       admState.headers.map(function (h) { return '<th>' + h + '</th>'; }).join('') +
       '<th style="width:80px;">Thao tác</th>';
     document.getElementById("admTableHead").innerHTML = headHtml;
 
-    var bodyHtml = rows.map(function (r) {
+    var bodyHtml = pageRows.map(function (r) {
       var checked = admState.selected[r.rowIndex] ? 'checked' : '';
       var cells = r.values.map(function (v) { return '<td title="' + admEsc(v) + '">' + (admEsc(v) || '&nbsp;') + '</td>'; }).join('');
       return '<tr>' +
@@ -13586,6 +13625,39 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         '</td></tr>';
     }).join('');
     document.getElementById("admTableBody").innerHTML = bodyHtml;
+    admRenderPagination(total, totalPages, den);
+  }
+
+  function admRenderPagination(total, totalPages, den) {
+    var box = document.getElementById("admPagination");
+    if (!box) return;
+    var p = admState.page;
+    var html = '<button class="adm-page-btn" onclick="admGoPage(1)" ' + (p === 1 ? 'disabled' : '') + ' title="Trang đầu"><i class="fas fa-angles-left"></i></button>' +
+      '<button class="adm-page-btn" onclick="admGoPage(' + (p - 1) + ')" ' + (p === 1 ? 'disabled' : '') + ' title="Trang trước"><i class="fas fa-angle-left"></i></button>';
+
+    var from = Math.max(1, p - 3);
+    var to = Math.min(totalPages, from + 6);
+    from = Math.max(1, to - 6);
+    if (from > 1) html += '<button class="adm-page-btn" onclick="admGoPage(1)">1</button><span class="adm-page-dots">…</span>';
+    for (var i = from; i <= to; i++) {
+      html += '<button class="adm-page-btn' + (i === p ? ' active' : '') + '" onclick="admGoPage(' + i + ')"' + (i === p ? ' aria-current="page"' : '') + '>' + i + '</button>';
+    }
+    if (to < totalPages) html += '<span class="adm-page-dots">…</span><button class="adm-page-btn" onclick="admGoPage(' + totalPages + ')">' + totalPages + '</button>';
+
+    html += '<button class="adm-page-btn" onclick="admGoPage(' + (p + 1) + ')" ' + (p === totalPages ? 'disabled' : '') + ' title="Trang sau"><i class="fas fa-angle-right"></i></button>' +
+      '<button class="adm-page-btn" onclick="admGoPage(' + totalPages + ')" ' + (p === totalPages ? 'disabled' : '') + ' title="Trang cuối"><i class="fas fa-angles-right"></i></button>' +
+      '<span class="adm-page-info">Trang ' + p + '/' + totalPages + ' · ' + den + '/' + total + ' dòng</span>';
+    box.innerHTML = html;
+  }
+
+  function admGoPage(n) {
+    var totalPages = Math.max(1, Math.ceil(admState.filteredRows.length / (admState.pageSize || 15)));
+    if (n < 1) n = 1;
+    if (n > totalPages) n = totalPages;
+    admState.page = n;
+    admRenderTable();
+    var wrap = document.querySelector("#admViewExplorer .adm-table-wrap");
+    if (wrap) wrap.scrollTop = 0;
   }
 
   function admEsc(v) {
@@ -13595,6 +13667,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 
   function admFilterTable() {
     var q = document.getElementById("admSearchInput").value.toLowerCase().trim();
+    admState.page = 1;
     if (!q) { admState.filteredRows = admState.rows; admRenderTable(); return; }
     admState.filteredRows = admState.rows.filter(function (r) {
       return r.values.some(function (v) { return String(v).toLowerCase().indexOf(q) !== -1; });
