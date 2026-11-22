@@ -1753,6 +1753,41 @@
       body.dark-mode .desktop-footerbar-btn { background: #26272c; border-color: #3a3b42; color: #e1e3e6; }
       body.dark-mode .desktop-settings-btn { background: #26272c; border-color: #3a3b42; color: #e1e3e6; }
 
+      /* ---- TIỆN ÍCH: lôi các chức năng hay dùng từ menu Cài đặt ra sidebar ----
+         Xếp lưới 2 cột, nhãn ngắn để hành trình bấm trên laptop ngắn lại
+         (không phải mở Cài đặt -> tìm -> bấm nữa). Vẫn giữ nguyên mục trong
+         Cài đặt để không ai bị mất thói quen cũ. */
+      #desktop-quicktools {
+        display: flex; flex-direction: column; gap: 8px;
+        width: 100%; box-sizing: border-box;
+      }
+      .desktop-quicktools-title {
+        display: flex; align-items: center; gap: 7px;
+        font-size: 11px; font-weight: 800; letter-spacing: .7px; color: #7f8c8d;
+        padding: 0 2px;
+      }
+      .desktop-quicktools-title i { color: #d32f2f; }
+      .desktop-quicktools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+      .desktop-tool-btn {
+        background: rgba(255,255,255,.9); border: 1px solid rgba(0,0,0,.08);
+        color: #2c3e50; border-radius: 10px; cursor: pointer;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 5px; padding: 9px 4px; min-height: 56px; box-sizing: border-box;
+        font-size: 10.5px; font-weight: 700; line-height: 1.2; text-align: center;
+        font-family: inherit;
+        box-shadow: 0 3px 10px rgba(0,0,0,.04);
+        transition: transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease;
+      }
+      .desktop-tool-btn i { font-size: 15px; color: #d32f2f; transition: color .18s ease; }
+      .desktop-tool-btn:hover {
+        background: #d32f2f; color: #fff; transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(211,47,47,.25);
+      }
+      .desktop-tool-btn:hover i { color: #fff; }
+      .desktop-tool-btn:active { transform: scale(.96); }
+      body.dark-mode .desktop-quicktools-title { color: #9aa0a6; }
+      body.dark-mode .desktop-tool-btn { background: #26272c; border-color: #3a3b42; color: #e1e3e6; }
+
       /* ---- Các trang phụ (Thiếu nhi, Báo cáo, Duyệt, Quỹ, Home) hiện dạng cửa sổ nổi ----
          Nâng cấp UX laptop: mở rộng từ 640px -> ~920px và tăng khoảng đệm/độ cao để
          thoáng hơn, đỡ chật khi xem trên màn hình lớn (danh sách dài đỡ phải cuộn nhiều).
@@ -2801,6 +2836,25 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         <button class="desktop-footerbar-btn" onclick="showPage('report', null)"><i class="fas fa-chart-bar"></i> BÁO CÁO</button>
         <button class="desktop-footerbar-btn" onclick="showPage('quy-page', null); quyKhoiTao();"><i class="fas fa-coins"></i> THU QUỸ</button>
         <button id="desktop-btn-duyet" class="desktop-footerbar-btn" style="display:none; position:relative;" onclick="showPage('approval-page', null)"><i class="fas fa-clipboard-check"></i> DUYỆT<span id="approval-badge-desktop" class="approval-unread-dot" style="display:none;"></span></button>
+      </div>
+      <!-- Các chức năng lấy từ menu Cài đặt ra, bấm nhanh không cần mở menu.
+           onclick giữ y hệt menu để dùng chung logic (không nhân bản code). -->
+      <div id="desktop-quicktools" class="desktop-only">
+        <div class="desktop-quicktools-title"><i class="fas fa-bolt"></i> TIỆN ÍCH</div>
+        <div class="desktop-quicktools-grid">
+          <button class="desktop-tool-btn" onclick="openDiemDanh()"><i class="fas fa-qrcode"></i><span>Điểm danh QR</span></button>
+          <button class="desktop-tool-btn" onclick="openKhanCap()"><i class="fas fa-triangle-exclamation"></i><span>Khẩn cấp</span></button>
+          <button class="desktop-tool-btn" onclick="openThiDua()"><i class="fas fa-trophy"></i><span>Thi đua</span></button>
+          <button class="desktop-tool-btn" onclick="openKiemTra()"><i class="fas fa-file-signature"></i><span>Bài kiểm tra</span></button>
+          <button class="desktop-tool-btn" onclick="openSoBoHT()"><i class="fas fa-address-card"></i><span>Sổ bộ HT</span></button>
+          <button class="desktop-tool-btn" onclick="openVanBanBieuMau()"><i class="fas fa-file-alt"></i><span>Văn bản</span></button>
+          <button class="desktop-tool-btn" onclick="openBaoCaoVangLe()"><i class="fas fa-file-pdf"></i><span>Báo cáo vắng</span></button>
+          <button class="desktop-tool-btn" onclick="window.XDThongBao && XDThongBao.moLichSu()"><i class="fas fa-bullhorn"></i><span>Thông báo</span></button>
+          <button class="desktop-tool-btn" onclick="window.XDPush && XDPush.bamNut()"><i id="desktop-push-icon" class="fas fa-bell"></i><span id="desktop-push-label">Bật thông báo</span></button>
+          <button id="desktop-tool-lichsu" class="desktop-tool-btn" style="display:none;" onclick="openLichSuChinhSuaTN()"><i class="fas fa-history"></i><span>Lịch sử TN</span></button>
+          <button id="desktop-tool-admin" class="desktop-tool-btn" style="display:none;" onclick="openAdminPanel()"><i class="fas fa-server"></i><span>Quản trị</span></button>
+          <button id="desktop-tool-bao-tri" class="desktop-tool-btn" style="display:none;" onclick="openBaoTriModal()"><i class="fas fa-wrench"></i><span>Bảo trì</span></button>
+        </div>
       </div>
     </div>
     <div class="header">
@@ -4098,6 +4152,13 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
             document.getElementById("menu-diem-danh").style.display = "flex"; // Điểm danh QR: mọi Huynh Trưởng đều dùng được
             document.getElementById("desktop-btn-duyet").style.display = "none";
           }
+          // Sidebar laptop: 3 nút tiện ích nhạy cảm phải ăn quyền y hệt menu Cài đặt.
+          var qtLichSu = document.getElementById("desktop-tool-lichsu");
+          if (qtLichSu) qtLichSu.style.display = res.isAdmin ? "" : "none";
+          var qtAdmin = document.getElementById("desktop-tool-admin");
+          if (qtAdmin) qtAdmin.style.display = res.isAdmin ? "" : "none";
+          var qtBaoTri = document.getElementById("desktop-tool-bao-tri");
+          if (qtBaoTri) qtBaoTri.style.display = currentUserIsSuperAdmin ? "" : "none";
           // Mục "Duyệt Dữ Liệu" trong khu Quản Trị: CHỈ tài khoản có Quyền Tối Cao
           // (cột H) mới được thấy/vào - server cũng tự kiểm tra lại nên đây chỉ là
           // ẩn UI cho gọn, không phải lớp bảo mật duy nhất.
