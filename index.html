@@ -1766,7 +1766,6 @@
         font-size: 11px; font-weight: 800; letter-spacing: .7px; color: #7f8c8d;
         padding: 0 2px;
       }
-      .desktop-quicktools-title i { color: #d32f2f; }
       .desktop-quicktools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
       .desktop-tool-btn {
         background: rgba(255,255,255,.9); border: 1px solid rgba(0,0,0,.08);
@@ -1787,6 +1786,11 @@
       .desktop-tool-btn:active { transform: scale(.96); }
       body.dark-mode .desktop-quicktools-title { color: #9aa0a6; }
       body.dark-mode .desktop-tool-btn { background: #26272c; border-color: #3a3b42; color: #e1e3e6; }
+
+      /* Chức năng đã có nút riêng trong Tiện ích thì ẩn khỏi menu Cài đặt trên laptop.
+         Dùng !important vì JS quyền còn gán style.display="flex" cho vài mục.
+         Trên điện thoại (không có sidebar Tiện ích) các mục này vẫn hiện bình thường. */
+      .settings-item-chuyen-sidebar { display: none !important; }
 
       /* ---- Các trang phụ (Thiếu nhi, Báo cáo, Duyệt, Quỹ, Home) hiện dạng cửa sổ nổi ----
          Nâng cấp UX laptop: mở rộng từ 640px -> ~920px và tăng khoảng đệm/độ cao để
@@ -2840,7 +2844,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       <!-- Các chức năng lấy từ menu Cài đặt ra, bấm nhanh không cần mở menu.
            onclick giữ y hệt menu để dùng chung logic (không nhân bản code). -->
       <div id="desktop-quicktools" class="desktop-only">
-        <div class="desktop-quicktools-title"><i class="fas fa-bolt"></i> TIỆN ÍCH</div>
+        <div class="desktop-quicktools-title">TIỆN ÍCH</div>
         <div class="desktop-quicktools-grid">
           <button class="desktop-tool-btn" onclick="openDiemDanh()"><i class="fas fa-qrcode"></i><span>Điểm danh QR</span></button>
           <button class="desktop-tool-btn" onclick="openKhanCap()"><i class="fas fa-triangle-exclamation"></i><span>Khẩn cấp</span></button>
@@ -2850,7 +2854,6 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           <button class="desktop-tool-btn" onclick="openVanBanBieuMau()"><i class="fas fa-file-alt"></i><span>Văn bản</span></button>
           <button class="desktop-tool-btn" onclick="openBaoCaoVangLe()"><i class="fas fa-file-pdf"></i><span>Báo cáo vắng</span></button>
           <button class="desktop-tool-btn" onclick="window.XDThongBao && XDThongBao.moLichSu()"><i class="fas fa-bullhorn"></i><span>Thông báo</span></button>
-          <button class="desktop-tool-btn" onclick="window.XDPush && XDPush.bamNut()"><i id="desktop-push-icon" class="fas fa-bell"></i><span id="desktop-push-label">Bật thông báo</span></button>
           <button id="desktop-tool-lichsu" class="desktop-tool-btn" style="display:none;" onclick="openLichSuChinhSuaTN()"><i class="fas fa-history"></i><span>Lịch sử TN</span></button>
           <button id="desktop-tool-admin" class="desktop-tool-btn" style="display:none;" onclick="openAdminPanel()"><i class="fas fa-server"></i><span>Quản trị</span></button>
           <button id="desktop-tool-bao-tri" class="desktop-tool-btn" style="display:none;" onclick="openBaoTriModal()"><i class="fas fa-wrench"></i><span>Bảo trì</span></button>
@@ -2881,21 +2884,26 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           <div onclick="openPasswordModal()"><i class="fas fa-key"></i> Đổi mật khẩu</div>
           <div onclick="toggleDarkMode()"><i class="fas fa-moon"></i> Giao diện Tối</div>
           <div onclick="window.hienGioiThieuPhienBan && window.hienGioiThieuPhienBan(true)"><i class="fas fa-rocket"></i> Bản cập nhật</div>
-          <div onclick="window.XDThongBao && XDThongBao.moLichSu()"><i class="fas fa-bullhorn"></i> Thông báo chung</div>
           <div onclick="window.XDPush && XDPush.bamNut()"><i id="menu-push-icon" class="fas fa-bell"></i> <span id="menu-push-label">Bật thông báo</span></div>
-          <div onclick="openThiDua()" class="settings-item-o-func-grid"><i class="fas fa-trophy"></i> Thi Đua Huynh Trưởng</div>
-          <div onclick="openKiemTra()" class="settings-item-o-func-grid"><i class="fas fa-file-signature"></i> Bài Kiểm Tra</div>
-          <div onclick="openGiaoLy()" class="settings-item-o-func-grid"><i class="fas fa-cross"></i> Giáo Lý</div>
-          <div onclick="openSoBoHT()" class="settings-item-o-func-grid"><i class="fas fa-address-card"></i> Sổ Bộ HT</div>
-          <div onclick="openVanBanBieuMau()" class="settings-item-o-func-grid"><i class="fas fa-file-alt"></i> Văn Bản, Biểu Mẫu</div>
-          <div onclick="openBaoCaoVangLe()"><i class="fas fa-file-pdf"></i> Báo Cáo Vắng Lễ TN</div>
-          <div id="menu-lichsu-tn" onclick="openLichSuChinhSuaTN()" style="display:none;"><i class="fas fa-history"></i> Lịch sử chỉnh sửa TN</div>
-          <div id="menu-admin-panel" onclick="openAdminPanel()" style="display:none;"><i class="fas fa-server"></i> Quản Trị</div>
-          <div id="menu-diem-danh" onclick="openDiemDanh()" style="display:none;"><i class="fas fa-qrcode"></i> Điểm danh QR</div>
-          <div onclick="openKhanCap()"><i class="fas fa-triangle-exclamation"></i> Điểm danh khẩn cấp</div>
-          <div id="menu-bao-tri" onclick="openBaoTriModal()" style="display:none;"><i class="fas fa-triangle-exclamation"></i> Bảo trì ứng dụng</div>
+          <div onclick="openGiaoLy()"><i class="fas fa-cross"></i> Giáo Lý</div>
           <div onclick="openAboutUs()"><i class="fas fa-info-circle"></i> Về chúng tôi</div>
           <div onclick="logout()"><i class="fas fa-sign-out-alt"></i> Đăng xuất</div>
+
+          <!-- Đã có nút riêng trong khối TIỆN ÍCH trên laptop -> ẩn khỏi Cài đặt ở màn hình
+               >=992px. Trên điện thoại vẫn giữ lại (sidebar Tiện ích chỉ tồn tại trên laptop),
+               giữ nguyên id để JS phân quyền bên dưới không phải đổi. class
+               settings-item-o-func-grid vẫn giữ để tránh trùng với lưới chức năng trên mobile. -->
+          <div class="settings-item-chuyen-sidebar" onclick="window.XDThongBao && XDThongBao.moLichSu()"><i class="fas fa-bullhorn"></i> Thông báo chung</div>
+          <div class="settings-item-chuyen-sidebar settings-item-o-func-grid" onclick="openThiDua()"><i class="fas fa-trophy"></i> Thi Đua Huynh Trưởng</div>
+          <div class="settings-item-chuyen-sidebar settings-item-o-func-grid" onclick="openKiemTra()"><i class="fas fa-file-signature"></i> Bài Kiểm Tra</div>
+          <div class="settings-item-chuyen-sidebar settings-item-o-func-grid" onclick="openSoBoHT()"><i class="fas fa-address-card"></i> Sổ Bộ HT</div>
+          <div class="settings-item-chuyen-sidebar settings-item-o-func-grid" onclick="openVanBanBieuMau()"><i class="fas fa-file-alt"></i> Văn Bản, Biểu Mẫu</div>
+          <div class="settings-item-chuyen-sidebar" onclick="openBaoCaoVangLe()"><i class="fas fa-file-pdf"></i> Báo Cáo Vắng Lễ TN</div>
+          <div id="menu-lichsu-tn" class="settings-item-chuyen-sidebar" onclick="openLichSuChinhSuaTN()" style="display:none;"><i class="fas fa-history"></i> Lịch sử chỉnh sửa TN</div>
+          <div id="menu-admin-panel" class="settings-item-chuyen-sidebar" onclick="openAdminPanel()" style="display:none;"><i class="fas fa-server"></i> Quản Trị</div>
+          <div id="menu-diem-danh" class="settings-item-chuyen-sidebar" onclick="openDiemDanh()" style="display:none;"><i class="fas fa-qrcode"></i> Điểm danh QR</div>
+          <div class="settings-item-chuyen-sidebar" onclick="openKhanCap()"><i class="fas fa-triangle-exclamation"></i> Điểm danh khẩn cấp</div>
+          <div id="menu-bao-tri" class="settings-item-chuyen-sidebar" onclick="openBaoTriModal()" style="display:none;"><i class="fas fa-triangle-exclamation"></i> Bảo trì ứng dụng</div>
         </div>
       </div>
     </div>

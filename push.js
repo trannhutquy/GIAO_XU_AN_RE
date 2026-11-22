@@ -138,11 +138,9 @@
 
   function capNhatNhan() {
     var on = daBat() && "Notification" in window && Notification.permission === "granted";
-    // Đồng bộ cả 2 chỗ: mục trong Cài đặt và nút Tiện ích trên sidebar laptop.
-    var lbs = document.querySelectorAll("#menu-push-label, #desktop-push-label");
-    var ics = document.querySelectorAll("#menu-push-icon, #desktop-push-icon");
-    for (var i = 0; i < lbs.length; i++) lbs[i].textContent = on ? "Tắt thông báo" : "Bật thông báo";
-    for (var j = 0; j < ics.length; j++) ics[j].className = "fas " + (on ? "fa-bell-slash" : "fa-bell");
+    var lb = document.getElementById("menu-push-label"), ic = document.getElementById("menu-push-icon");
+    if (lb) lb.textContent = on ? "Tắt thông báo" : "Bật thông báo";
+    if (ic) ic.className = "fas " + (on ? "fa-bell-slash" : "fa-bell");
   }
 
   var dangXuLy = false;
