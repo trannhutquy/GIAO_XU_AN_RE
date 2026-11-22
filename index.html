@@ -1755,9 +1755,12 @@
 
       /* ---- Các trang phụ (Thiếu nhi, Báo cáo, Duyệt, Quỹ, Home) hiện dạng cửa sổ nổi ----
          Nâng cấp UX laptop: mở rộng từ 640px -> ~920px và tăng khoảng đệm/độ cao để
-         thoáng hơn, đỡ chật khi xem trên màn hình lớn (danh sách dài đỡ phải cuộn nhiều). */
+         thoáng hơn, đỡ chật khi xem trên màn hình lớn (danh sách dài đỡ phải cuộn nhiều).
+         ⚠️ Điểm danh QR phải có mặt ở ĐẢY CẢ 4 danh sách bên dưới. Trước đây trang này
+         chỉ có trong DESKTOP_OVERLAY_IDS nên bấm menu hiện lớp nền mờ nhưng nội dung
+         bị rớt xuống cuối lưới .content -> người dùng thấy "không mở được". */
       #home { display: none !important; }
-      #thieunhi-page, #report, #approval-page, #quy-page, #thidua-page, #kiemtra-page, #khancap-page {
+      #thieunhi-page, #report, #approval-page, #quy-page, #thidua-page, #kiemtra-page, #khancap-page, #diemdanhqr-page {
         display: none !important;
         position: fixed !important; top: 50%; left: calc(50% + var(--sb-w) / 2);
         transform: translate(-50%, -50%);
@@ -1772,12 +1775,12 @@
       #thidua-page > h2, #kiemtra-page > h2, #khancap-page > h2 {
         font-size: 19px; margin-bottom: 6px;
       }
-      #thieunhi-page.active, #report.active, #approval-page.active, #quy-page.active, #thidua-page.active, #kiemtra-page.active, #khancap-page.active {
+      #thieunhi-page.active, #report.active, #approval-page.active, #quy-page.active, #thidua-page.active, #kiemtra-page.active, #khancap-page.active, #diemdanhqr-page.active {
         display: block !important;
         animation: desktopModalPopIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
       }
       #thieunhi-page.desktop-modal-exit, #report.desktop-modal-exit,
-      #approval-page.desktop-modal-exit, #quy-page.desktop-modal-exit, #thidua-page.desktop-modal-exit, #kiemtra-page.desktop-modal-exit, #khancap-page.desktop-modal-exit {
+      #approval-page.desktop-modal-exit, #quy-page.desktop-modal-exit, #thidua-page.desktop-modal-exit, #kiemtra-page.desktop-modal-exit, #khancap-page.desktop-modal-exit, #diemdanhqr-page.desktop-modal-exit {
         display: block !important;
         animation: desktopModalPopOut 0.2s cubic-bezier(0.4, 0, 1, 1) forwards !important;
       }
@@ -1789,7 +1792,7 @@
       body.dark-mode #thieunhi-page, body.dark-mode #report,
       body.dark-mode #approval-page, body.dark-mode #quy-page,
       body.dark-mode #thidua-page, body.dark-mode #kiemtra-page,
-      body.dark-mode #khancap-page {
+      body.dark-mode #khancap-page, body.dark-mode #diemdanhqr-page {
         background: #121214;
         box-shadow: 0 24px 70px rgba(0,0,0,0.6);
       }
@@ -4080,6 +4083,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           
           document.getElementById("cttt-unit-title").innerText = res.unit;
           document.getElementById("detail-qr-img").src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(u);
+          qrKhoiTaoNeuLaptop(); // laptop: ô QR đã hiện sẵn trên dashboard nên phải tự khởi tạo ở đây
           if(res.isAdmin) {
             document.getElementById("nav-approval").style.display = "flex";
             document.getElementById("menu-lichsu-tn").style.display = "flex";
@@ -6621,6 +6625,23 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       return R * c;
     }
 
+    // Hiện ảnh QR — dùng chung cho nhánh đúng vị trí và nhánh fallback trên laptop.
+    function qrHienMa(ghiChu) {
+      var msg = document.getElementById("qr-vitri-msg");
+      var img = document.getElementById("detail-qr-img");
+      var retryBtn = document.getElementById("qr-vitri-retry");
+      var dlBtn = document.getElementById("qr-download-btn");
+      if (msg) {
+        if (ghiChu) {
+          msg.style.display = "block";
+          msg.innerHTML = '<i class="fas fa-circle-info" style="color:#2979ff; font-size:15px;"></i><br>' + ghiChu;
+        } else { msg.style.display = "none"; }
+      }
+      if (retryBtn) retryBtn.style.display = "none";
+      if (img) img.style.display = "inline-block";
+      if (dlBtn) dlBtn.style.display = "inline-block";
+    }
+
     function qrKiemTraViTri() {
       var msg = document.getElementById("qr-vitri-msg");
       var img = document.getElementById("detail-qr-img");
@@ -6635,8 +6656,16 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       msg.style.display = "block";
       msg.innerHTML = '<i class="fas fa-map-marker-alt" style="color:#d32f2f; font-size:16px;"></i><br>Đang kiểm tra vị trí...';
 
+      // Laptop phần lớn không có GPS. Nếu không lấy được vị trí thì vẫn hiện mã
+      // (có chú thích) để Trưởng ở nhà thờ dùng được; điện thoại giữ nguyên geofence 150m.
+      var laLaptop = isDesktopLayout();
+
       if (!navigator.geolocation) {
         qrDangKiemTraViTri = false;
+        if (laLaptop) {
+          qrHienMa("Laptop không có GPS — đã hiện mã QR.<br>Chỉ đưa mã cho Huynh Trưởng trực tiếp.");
+          return;
+        }
         msg.innerHTML = '<i class="fas fa-triangle-exclamation" style="color:#e74c3c; font-size:16px;"></i><br>Thiết bị không hỗ trợ định vị.';
         return;
       }
@@ -6645,10 +6674,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         qrDangKiemTraViTri = false;
         var kc = _tinhKhoangCachMet(pos.coords.latitude, pos.coords.longitude, NHATHO_LAT, NHATHO_LNG);
         if (kc <= QR_BAN_KINH_MET) {
-          msg.style.display = "none";
-          retryBtn.style.display = "none";
-          img.style.display = "inline-block";
-          dlBtn.style.display = "inline-block";
+          qrHienMa("");
         } else {
           img.style.display = "none";
           dlBtn.style.display = "none";
@@ -6658,12 +6684,35 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         }
       }, function () {
         qrDangKiemTraViTri = false;
+        if (laLaptop) {
+          qrHienMa("Không lấy được vị trí trên laptop — đã hiện mã QR.<br>Chỉ đưa mã cho Huynh Trưởng trực tiếp.");
+          return;
+        }
         img.style.display = "none";
         dlBtn.style.display = "none";
         msg.style.display = "block";
         msg.innerHTML = '<i class="fas fa-location-crosshairs" style="color:#e74c3c; font-size:16px;"></i><br>Không lấy được vị trí. Vui lòng bật định vị (GPS) và cho phép App truy cập vị trí.';
         retryBtn.style.display = "inline-block";
-      }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 20000 });
+      }, { enableHighAccuracy: true, timeout: laLaptop ? 4000 : 10000, maximumAge: 20000 });
+    }
+
+    // Trên laptop ô QR nằm sẵn trên dashboard (profile-page luôn display:block)
+    // nên showPage('profile-page') KHÔNG bao giờ chạy -> qrKiemTraViTri() không được
+    // gọi, ảnh QR giữ nguyên display:none từ HTML. Gọi ở đây sau khi đăng nhập /
+    // khôi phục phiên, và thêm 1 lần lúc load đề phòng các đường vào khác.
+    function qrKhoiTaoNeuLaptop() {
+      if (!isDesktopLayout() || qrDangKiemTraViTri) return;
+      var img = document.getElementById("detail-qr-img");
+      if (!img || img.style.display === "inline-block") return;
+      if (!img.src || img.src.indexOf("create-qr-code") === -1) return; // chưa có mã số người dùng
+      qrKiemTraViTri();
+    }
+    if (document.readyState === "complete") {
+      setTimeout(function () { try { qrKhoiTaoNeuLaptop(); } catch (e) {} }, 400);
+    } else {
+      window.addEventListener("load", function () {
+        setTimeout(function () { try { qrKhoiTaoNeuLaptop(); } catch (e) {} }, 400);
+      });
     }
 
     function openThiDua() {
