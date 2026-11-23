@@ -1820,7 +1820,7 @@
          chỉ có trong DESKTOP_OVERLAY_IDS nên bấm menu hiện lớp nền mờ nhưng nội dung
          bị rớt xuống cuối lưới .content -> người dùng thấy "không mở được". */
       #home { display: none !important; }
-      #thieunhi-page, #report, #approval-page, #quy-page, #thidua-page, #kiemtra-page, #khancap-page, #diemdanhqr-page {
+      #thieunhi-page, #report, #approval-page, #quy-page, #thidua-page, #kiemtra-page, #khancap-page, #diemdanhqr-page, #diemdanhbuoi-page {
         display: none !important;
         position: fixed !important; top: 50%; left: calc(50% + var(--sb-w) / 2);
         transform: translate(-50%, -50%);
@@ -1832,15 +1832,15 @@
       }
       /* Tiêu đề & phần tử đầu trang giãn cách rộng rãi hơn cho tương xứng với khung to hơn */
       #thieunhi-page > h2, #report > h2, #approval-page > h2, #quy-page > h2,
-      #thidua-page > h2, #kiemtra-page > h2, #khancap-page > h2 {
+      #thidua-page > h2, #kiemtra-page > h2, #khancap-page > h2, #diemdanhbuoi-page > h2 {
         font-size: 19px; margin-bottom: 6px;
       }
-      #thieunhi-page.active, #report.active, #approval-page.active, #quy-page.active, #thidua-page.active, #kiemtra-page.active, #khancap-page.active, #diemdanhqr-page.active {
+      #thieunhi-page.active, #report.active, #approval-page.active, #quy-page.active, #thidua-page.active, #kiemtra-page.active, #khancap-page.active, #diemdanhqr-page.active, #diemdanhbuoi-page.active {
         display: block !important;
         animation: desktopModalPopIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
       }
       #thieunhi-page.desktop-modal-exit, #report.desktop-modal-exit,
-      #approval-page.desktop-modal-exit, #quy-page.desktop-modal-exit, #thidua-page.desktop-modal-exit, #kiemtra-page.desktop-modal-exit, #khancap-page.desktop-modal-exit, #diemdanhqr-page.desktop-modal-exit {
+      #approval-page.desktop-modal-exit, #quy-page.desktop-modal-exit, #thidua-page.desktop-modal-exit, #kiemtra-page.desktop-modal-exit, #khancap-page.desktop-modal-exit, #diemdanhqr-page.desktop-modal-exit, #diemdanhbuoi-page.desktop-modal-exit {
         display: block !important;
         animation: desktopModalPopOut 0.2s cubic-bezier(0.4, 0, 1, 1) forwards !important;
       }
@@ -1852,7 +1852,7 @@
       body.dark-mode #thieunhi-page, body.dark-mode #report,
       body.dark-mode #approval-page, body.dark-mode #quy-page,
       body.dark-mode #thidua-page, body.dark-mode #kiemtra-page,
-      body.dark-mode #khancap-page, body.dark-mode #diemdanhqr-page {
+      body.dark-mode #khancap-page, body.dark-mode #diemdanhqr-page, body.dark-mode #diemdanhbuoi-page {
         background: #121214;
         box-shadow: 0 24px 70px rgba(0,0,0,0.6);
       }
@@ -2867,7 +2867,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       <div id="desktop-quicktools" class="desktop-only">
         <div class="desktop-quicktools-title">TIỆN ÍCH</div>
         <div class="desktop-quicktools-grid">
-          <button class="desktop-tool-btn" onclick="openDiemDanh()"><i class="fas fa-qrcode"></i><span>Điểm danh QR</span></button>
+          <button class="desktop-tool-btn" onclick="openDiemDanhBuoi()"><i class="fas fa-qrcode"></i><span>Điểm danh buổi</span></button>
           <button class="desktop-tool-btn" onclick="openKhanCap()"><i class="fas fa-triangle-exclamation"></i><span>Khẩn cấp</span></button>
           <button class="desktop-tool-btn" onclick="openThiDua()"><i class="fas fa-trophy"></i><span>Thi đua</span></button>
           <button class="desktop-tool-btn" onclick="openKiemTra()"><i class="fas fa-file-signature"></i><span>Bài kiểm tra</span></button>
@@ -2922,7 +2922,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           <div class="settings-item-chuyen-sidebar" onclick="openBaoCaoVangLe()"><i class="fas fa-file-pdf"></i> Báo Cáo Vắng Lễ TN</div>
           <div id="menu-lichsu-tn" class="settings-item-chuyen-sidebar" onclick="openLichSuChinhSuaTN()" style="display:none;"><i class="fas fa-history"></i> Lịch sử chỉnh sửa TN</div>
           <div id="menu-admin-panel" class="settings-item-chuyen-sidebar" onclick="openAdminPanel()" style="display:none;"><i class="fas fa-server"></i> Quản Trị</div>
-          <div id="menu-diem-danh" class="settings-item-chuyen-sidebar" onclick="openDiemDanh()" style="display:none;"><i class="fas fa-qrcode"></i> Điểm danh QR</div>
+          <div id="menu-diem-danh" class="settings-item-chuyen-sidebar" onclick="openDiemDanhBuoi()" style="display:none;"><i class="fas fa-qrcode"></i> Điểm danh buổi</div>
           <div class="settings-item-chuyen-sidebar" onclick="openKhanCap()"><i class="fas fa-triangle-exclamation"></i> Điểm danh khẩn cấp</div>
           <div id="menu-bao-tri" class="settings-item-chuyen-sidebar" onclick="openBaoTriModal()" style="display:none;"><i class="fas fa-triangle-exclamation"></i> Bảo trì ứng dụng</div>
         </div>
@@ -3356,6 +3356,75 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         <div class="card" style="padding:14px;">
           <div style="font-size:14px; font-weight:bold; color:#2c3e50; margin-bottom:8px;"><i class="fas fa-check-circle" style="color:#2ecc71;"></i> Đã gửi hôm nay</div>
           <div id="ddqr-ds-dagui"></div>
+        </div>
+      </div>
+
+      <!-- ======================================================
+           ĐIỂM DANH CÁC BUỔI TRONG TUẦN — MÃ XOAY 10 GIÂY
+           Trang mới này thay thế lối vào cũ. Trang #diemdanhqr-page và toàn
+           bộ hàm ddqr* vẫn giữ nguyên trong code nhưng không còn nút dẫn tới
+           (ẩn nhưng không xóa, có thể bật lại khi cần dự phòng).
+      ====================================================== -->
+      <div id="diemdanhbuoi-page" class="page">
+        <button class="desktop-only desktop-modal-close" onclick="buoiDongTrang(); closeDesktopOverlay('diemdanhbuoi-page')"><i class="fas fa-times"></i></button>
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:15px;">
+          <h2 style="margin:0;"><i class="fas fa-qrcode" style="color:#d32f2f;"></i> Điểm Danh Buổi</h2>
+          <button onclick="buoiDongTrang(); showPage('home', document.querySelector('.nav-item'))" style="border:none; background:#f1f3f5; padding:8px 12px; border-radius:8px; cursor:pointer; color:#2c3e50;"><i class="fas fa-arrow-left"></i></button>
+        </div>
+
+        <div class="card" style="padding:14px; margin-bottom:12px;">
+          <div id="buoi-khunggio" style="border-radius:10px; padding:10px 12px; font-size:13px; font-weight:bold; text-align:center; background:#f8f9fa; color:#7f8c8d;">Đang kiểm tra khung giờ...</div>
+          <div id="buoi-vitri" style="font-size:12px; color:#7f8c8d; margin-top:8px; text-align:center; min-height:17px;">Đang kiểm tra vị trí...</div>
+        </div>
+
+        <div class="card" style="padding:14px; margin-bottom:12px;">
+          <div style="font-size:14px; font-weight:bold; color:#2c3e50; margin-bottom:10px;"><i class="fas fa-user-check" style="color:#2e7d32;"></i> Trưởng trực buổi</div>
+          <div style="display:flex; gap:8px;">
+            <button id="buoi-nut-mo" onclick="buoiBatDauUI()" style="flex:2; border:none; background:#d32f2f; color:white; font-weight:bold; padding:11px; border-radius:10px; cursor:pointer; font-size:13px;">Mở phiên điểm danh</button>
+            <button id="buoi-nut-dong" onclick="buoiDongUI()" style="flex:1; border:1px solid #c62828; background:white; color:#c62828; font-weight:bold; padding:11px; border-radius:10px; cursor:pointer; font-size:13px;">Kết thúc</button>
+          </div>
+          <div id="buoi-quanly-msg" style="font-size:12px; color:#7f8c8d; margin-top:8px; text-align:center; min-height:17px;"></div>
+        </div>
+
+        <div id="buoi-hienma-box" class="card" style="display:none; padding:16px; margin-bottom:12px; text-align:center;">
+          <div id="buoi-tenphien" style="font-size:13px; color:#7f8c8d; margin-bottom:8px;"></div>
+          <div style="width:206px; max-width:72vw; margin:0 auto 12px; background:white; border:1px solid #e6e6e6; border-radius:14px; padding:8px; box-sizing:border-box;">
+            <div id="buoi-qr-anh" style="min-height:60px; display:flex; align-items:center; justify-content:center;"></div>
+          </div>
+          <div style="font-size:12px; color:#95a5a6; margin-bottom:2px;">Hoặc nhập tay mã số</div>
+          <div id="buoi-maso-text" style="font-size:30px; font-weight:bold; letter-spacing:6px; color:#d32f2f; margin:0 0 4px;">------</div>
+          <div style="font-size:12px; color:#7f8c8d;">Mã đổi sau <span id="buoi-demnguoc" style="font-weight:bold; color:#2c3e50;">…</span> giây</div>
+          <div style="margin-top:12px; background:#f8f9fa; border-radius:10px; padding:10px; font-size:14px; font-weight:bold; color:#2c3e50;">
+            Đã điểm danh: <span id="buoi-sodadiemdanh" style="color:#2ecc71;">0 / 0</span>
+          </div>
+          <div style="font-size:11.5px; color:#95a5a6; margin-top:8px;">Mã tự đổi mỗi 10 giây — chụp màn hình gửi lại sẽ không dùng được.</div>
+        </div>
+
+        <div class="card" style="padding:16px; text-align:center;">
+          <p style="color:#7f8c8d; font-size:13px; margin-top:0;">Quét mã đang hiện trên màn hình Trưởng để ghi nhận buổi này — hoặc nhập tay mã 4 chữ số.</p>
+          <button id="buoi-nut-quet" onclick="buoiMoQuet()" style="width:100%; border:none; background:#d32f2f; color:white; font-weight:bold; padding:13px; border-radius:12px; cursor:pointer; font-size:15px;"><i class="fas fa-qrcode"></i> Quét mã QR</button>
+
+          <div id="buoi-quet-khung" style="display:none; margin-top:14px;">
+            <div style="position:relative; border-radius:14px; overflow:hidden; background:#000; aspect-ratio:1 / 1; max-height:56vh; margin:0 auto;">
+              <video id="buoi-quet-video" playsinline muted autoplay style="width:100%; height:100%; object-fit:cover; display:block;"></video>
+              <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;">
+                <div style="width:64%; aspect-ratio:1 / 1; border:3px solid rgba(255,255,255,0.92); border-radius:18px; box-shadow:0 0 0 9999px rgba(0,0,0,0.38);"></div>
+              </div>
+            </div>
+            <div id="buoi-quet-trangthai" style="font-size:12.5px; color:#7f8c8d; margin-top:8px; min-height:18px;">Đưa mã QR vào giữa khung…</div>
+            <button onclick="buoiDungQuet(true)" style="width:100%; margin-top:10px; border:none; background:#95a5a6; color:white; font-weight:bold; padding:11px; border-radius:10px; cursor:pointer; font-size:13px;">Đóng camera</button>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:10px; margin:16px 0 10px; color:#95a5a6; font-size:12px;">
+            <div style="flex:1; height:1px; background:#e6e6e6;"></div>
+            <div>hoặc nhập tay</div>
+            <div style="flex:1; height:1px; background:#e6e6e6;"></div>
+          </div>
+          <div>
+            <input id="buoi-ma-input" type="text" maxlength="4" inputmode="numeric" placeholder="0000" style="width:100%; box-sizing:border-box; padding:12px; text-align:center; font-size:22px; letter-spacing:6px; border:1px solid #ddd; border-radius:8px; margin-bottom:10px;">
+            <button onclick="buoiNhapTay()" style="width:100%; border:none; background:#2c3e50; color:white; font-weight:bold; padding:12px; border-radius:10px; cursor:pointer; font-size:14px;">Xác nhận điểm danh</button>
+          </div>
+          <div id="buoi-ketqua" style="font-size:12.5px; margin-top:12px; min-height:18px;"></div>
         </div>
       </div>
 
@@ -6324,7 +6393,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     }
 
     // ĐIỀU HƯỚNG APP VÀ CÀI ĐẶT
-    var DESKTOP_OVERLAY_IDS = ['thieunhi-page', 'report', 'approval-page', 'quy-page', 'thidua-page', 'kiemtra-page', 'khancap-page', 'diemdanhqr-page'];
+    var DESKTOP_OVERLAY_IDS = ['thieunhi-page', 'report', 'approval-page', 'quy-page', 'thidua-page', 'kiemtra-page', 'khancap-page', 'diemdanhqr-page', 'diemdanhbuoi-page'];
     function isDesktopLayout() { return window.matchMedia('(min-width: 992px)').matches; }
     function showOverlayBackdrop() {
       var bd = document.getElementById('desktop-overlay-backdrop');
@@ -6340,7 +6409,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       setTimeout(function() { bd.classList.remove('hide'); }, 200);
     }
     function closeDesktopOverlayByBackdrop() {
-      var openOverlay = document.querySelector('#thieunhi-page.active, #report.active, #approval-page.active, #quy-page.active, #thidua-page.active, #kiemtra-page.active, #khancap-page.active, #diemdanhqr-page.active');
+      var openOverlay = document.querySelector('#thieunhi-page.active, #report.active, #approval-page.active, #quy-page.active, #thidua-page.active, #kiemtra-page.active, #khancap-page.active, #diemdanhqr-page.active, #diemdanhbuoi-page.active');
       if (openOverlay) closeDesktopOverlay(openOverlay.id);
     }
     function showPage(id, navEl) {
@@ -9133,6 +9202,9 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       }
       if (id !== 'diemdanhqr-page') {
         ddqrDonDep(); // rời trang Điểm danh QR -> tắt camera + đồng hồ đếm ngược
+      }
+      if (id !== 'diemdanhbuoi-page') {
+        buoiDongTrang(); // rời trang Điểm danh buổi -> tắt camera + đồng hồ đổi mã
       }
     }
     
@@ -14532,6 +14604,339 @@ var APP_PHIEN_BAN = {
     }).admThuHoiThongBaoChung(currentUserToken, id);
   };
 })();
+</script>
+<script>
+// ============================================================
+// ĐIỂM DANH CÁC BUỔI TRONG TUẦN — MÃ XOAY 10 GIÂY
+// Giao diện gọi 4 hàm mới: buoiMoTrang / buoiBatDauPhien /
+// buoiDongPhien / buoiDiemDanh (cần deploy CODE.txt + API.txt mới).
+// Trang cũ #diemdanhqr-page và các hàm ddqr* vẫn giữ nguyên để dự phòng.
+// ============================================================
+var buoiState = {
+  dangXem: false, dangTai: false, dangGui: false,
+  mo: false, buoi: '', khungGio: '', coPhien: false,
+  phienId: '', maSo: '', hetHan: 0, lech: 0,
+  timer: null, qrDaLuu: '',
+  viTri: null, viTriDangLay: false,
+  quet: { dangMo: false, dangXuLy: false, stream: null, canvas: null, ctx: null, raf: null, lanCuoi: 0, choDen: 0, loi: '' }
+};
+
+function buoiEl(id) { return document.getElementById(id); }
+
+function openDiemDanhBuoi() {
+  try { document.getElementById('settingsDropdown').style.display = 'none'; } catch (e) {}
+  buoiState.dangXem = true;
+  showPage('diemdanhbuoi-page', null);
+  buoiLayViTri();
+  buoiTai();
+  if (buoiState.timer) clearInterval(buoiState.timer);
+  buoiState.timer = setInterval(function () { if (buoiState.dangXem) buoiCapNhatDongHo(); }, 250);
+}
+
+function buoiDongTrang() {
+  buoiState.dangXem = false;
+  if (buoiState.timer) { clearInterval(buoiState.timer); buoiState.timer = null; }
+  buoiDungQuet(true);
+  buoiState.qrDaLuu = '';
+}
+
+function buoiLayViTri() {
+  var msg = buoiEl('buoi-vitri');
+  function dat(chu) { if (msg) msg.innerHTML = chu; }
+  dat('<i class="fas fa-map-marker-alt" style="color:#d32f2f;"></i> Đang kiểm tra vị trí…');
+  if (!navigator.geolocation) {
+    dat('<i class="fas fa-triangle-exclamation" style="color:#e74c3c;"></i> Thiết bị không hỗ trợ định vị.');
+    return;
+  }
+  if (buoiState.viTriDangLay) return;
+  buoiState.viTriDangLay = true;
+  navigator.geolocation.getCurrentPosition(function (pos) {
+    buoiState.viTriDangLay = false;
+    buoiState.viTri = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+    dat('<i class="fas fa-check-circle" style="color:#2ecc71;"></i> Đã xác định vị trí — sẵn sàng điểm danh.');
+  }, function () {
+    buoiState.viTriDangLay = false;
+    dat('<i class="fas fa-triangle-exclamation" style="color:#e74c3c;"></i> Không lấy được vị trí. Bật định vị (GPS) rồi mở lại trang để điểm danh.');
+  }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 20000 });
+}
+
+function buoiBaoLoi(msg) {
+  var el = buoiEl('buoi-quanly-msg'); if (el) el.innerText = msg;
+}
+
+function buoiTai() {
+  if (buoiState.dangTai) return;
+  buoiState.dangTai = true;
+  google.script.run
+    .withSuccessHandler(function (res) {
+      buoiState.dangTai = false;
+      if (!res || !res.success) { buoiBaoLoi((res && res.error) || 'Không tải được trạng thái điểm danh.'); return; }
+      buoiApDung(res);
+    })
+    .withFailureHandler(function (err) {
+      buoiState.dangTai = false;
+      buoiBaoLoi('Lỗi kết nối: ' + err);
+    })
+    .buoiMoTrang(currentUserToken);
+}
+
+function buoiApDung(res) {
+  buoiState.mo = !!res.mo;
+  buoiState.buoi = res.buoi || '';
+  buoiState.khungGio = res.khungGio || '';
+  buoiState.coPhien = !!res.coPhien;
+  if (res.serverNowMs) buoiState.lech = Date.now() - res.serverNowMs;
+
+  var kg = buoiEl('buoi-khunggio');
+  if (kg) {
+    kg.innerText = buoiState.mo
+      ? 'ĐANG MỞ ĐIỂM DANH ' + buoiState.buoi + ' · ' + buoiState.khungGio
+      : 'Ngoài khung giờ điểm danh (' + buoiState.khungGio + '). Chỉ mở Thứ 3, Thứ 5 và Chúa Nhật.';
+    kg.style.background = buoiState.mo ? '#e8f5e9' : '#f8f9fa';
+    kg.style.color = buoiState.mo ? '#2e7d32' : '#7f8c8d';
+  }
+  var nutMo = buoiEl('buoi-nut-mo'); if (nutMo) nutMo.disabled = !buoiState.mo;
+  var nutDong = buoiEl('buoi-nut-dong'); if (nutDong) nutDong.disabled = !buoiState.coPhien;
+
+  var hop = buoiEl('buoi-hienma-box');
+  if (hop) hop.style.display = buoiState.coPhien ? 'block' : 'none';
+
+  if (buoiState.coPhien) {
+    buoiState.phienId = res.phienId || '';
+    buoiState.hetHan = res.hetHanMs || 0;
+    var ten = buoiEl('buoi-tenphien'); if (ten) ten.innerText = res.tenPhien || '';
+    if (res.maSo && res.maSo !== buoiState.maSo) { buoiState.maSo = res.maSo; buoiVeQR(); }
+    var matxt = buoiEl('buoi-maso-text'); if (matxt && res.maSo) matxt.innerText = res.maSo;
+    var sl = buoiEl('buoi-sodadiemdanh'); if (sl) sl.innerText = (res.soDaDiemDanh || 0) + ' / ' + (res.tongSoHT || 0);
+    buoiBaoLoi('Phiên đang mở. Mã tự đổi mỗi 10 giây.');
+    buoiCapNhatDongHo();
+  } else {
+    buoiState.maSo = '';
+    var hopQR = buoiEl('buoi-qr-anh'); if (hopQR) hopQR.innerHTML = '';
+    var matxt2 = buoiEl('buoi-maso-text'); if (matxt2) matxt2.innerText = '------';
+    buoiBaoLoi(buoiState.mo ? 'Chưa có phiên — bấm "Mở phiên điểm danh".' : '');
+  }
+}
+
+function buoiCapNhatDongHo() {
+  if (!buoiState.coPhien || !buoiState.hetHan) return;
+  var con = Math.max(0, Math.ceil((buoiState.hetHan - (Date.now() - buoiState.lech)) / 1000));
+  var el = buoiEl('buoi-demnguoc'); if (el) el.innerText = con;
+  if (con <= 0) buoiTai(); // hỏi server lấy mã mới ngay khi vừa qua mốc 10s
+}
+
+function buoiNapThuVien(duongDan, tenBien) {
+  if (typeof khanCapNapThuVien === 'function') return khanCapNapThuVien(duongDan, tenBien);
+  return new Promise(function (resolve, reject) {
+    var s = document.createElement('script');
+    s.src = duongDan; s.async = true;
+    s.onload = function () { window[tenBien] ? resolve(window[tenBien]) : reject(new Error('Không khởi tạo được ' + tenBien)); };
+    s.onerror = function () { reject(new Error('Không tải được ' + duongDan)); };
+    document.head.appendChild(s);
+  });
+}
+
+function buoiVeQR() {
+  var hop = buoiEl('buoi-qr-anh');
+  if (!hop) return;
+  if (!buoiState.maSo || !buoiState.phienId) { hop.innerHTML = ''; buoiState.qrDaLuu = ''; return; }
+  var noiDung = 'XUANREBUOI:1:' + buoiState.phienId + ':' + buoiState.maSo;
+  if (noiDung === buoiState.qrDaLuu) return;
+  buoiNapThuVien('vendor/qrcode-generator.js', 'qrcode').then(function (qrcode) {
+    try {
+      var qr = qrcode(0, 'M');
+      qr.addData(noiDung); qr.make();
+      hop.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 6, scalable: true, alt: 'Mã QR điểm danh buổi' });
+      var svg = hop.querySelector('svg');
+      if (svg) { svg.style.width = '100%'; svg.style.height = 'auto'; svg.style.display = 'block'; }
+      buoiState.qrDaLuu = noiDung;
+    } catch (e) {
+      hop.innerHTML = '<div style="font-size:11.5px;color:#95a5a6;padding:16px 6px;">Không vẽ được mã QR — dùng mã số bên dưới.</div>';
+    }
+  }).catch(function () {
+    hop.innerHTML = '<div style="font-size:11.5px;color:#95a5a6;padding:16px 6px;">Không tải được bộ vẽ mã QR — dùng mã số bên dưới.</div>';
+  });
+}
+
+function buoiBatDauUI() {
+  var nut = buoiEl('buoi-nut-mo'); if (nut) nut.disabled = true;
+  google.script.run
+    .withSuccessHandler(function (res) {
+      if (!res || !res.success) showToast((res && res.error) || 'Không mở được phiên!', 'error');
+      else showToast(res.tiepTuc ? 'Đã có phiên đang mở sẵn.' : 'Đã mở phiên ' + (res.buoi || '') + '.', 'success');
+      buoiTai();
+    })
+    .withFailureHandler(function (err) { showToast('Lỗi kết nối: ' + err, 'error'); buoiTai(); })
+    .buoiBatDauPhien(currentUserToken);
+}
+
+function buoiDongUI() {
+  if (!confirm('Kết thúc phiên điểm danh này?')) return;
+  var nut = buoiEl('buoi-nut-dong'); if (nut) nut.disabled = true;
+  google.script.run
+    .withSuccessHandler(function (res) {
+      if (!res || !res.success) showToast((res && res.error) || 'Không đóng được phiên!', 'error');
+      else showToast('Đã kết thúc phiên ' + (res.tenPhien || '') + '.', 'success');
+      buoiTai();
+    })
+    .withFailureHandler(function (err) { showToast('Lỗi kết nối: ' + err, 'error'); buoiTai(); })
+    .buoiDongPhien(currentUserToken);
+}
+
+function buoiGui(maSo, kieu, xong) {
+  if (buoiState.dangGui) return;
+  if (!buoiState.viTri) {
+    buoiLayViTri();
+    showToast('Chưa xác định được vị trí — bật định vị (GPS) rồi thử lại.', 'error');
+    if (xong) xong(false);
+    return;
+  }
+  buoiState.dangGui = true;
+  google.script.run
+    .withSuccessHandler(function (res) {
+      buoiState.dangGui = false;
+      if (!res || !res.success) {
+        showToast((res && res.error) || 'Điểm danh thất bại!', 'error');
+        if (xong) xong(false);
+        return;
+      }
+      var ket = buoiEl('buoi-ketqua');
+      if (res.daDiemDanhTruoc) {
+        if (ket) ket.innerHTML = '<i class="fas fa-info-circle" style="color:#2979ff;"></i> Trưởng đã điểm danh buổi này rồi.';
+        showToast('Trưởng đã điểm danh buổi "' + (res.buoi || '') + '" rồi!', 'info');
+      } else {
+        if (ket) ket.innerHTML = '<i class="fas fa-check-circle" style="color:#2ecc71;"></i> Đã điểm danh ' + (res.buoi || '') + ' lúc ' + (res.gio || '') + (res.coCot ? ' — đã ghi vào bảng tuần.' : ' — bảng tuần chưa có cột phù hợp.');
+        showToast('Điểm danh thành công cho buổi ' + (res.buoi || '') + '!', 'success');
+      }
+      buoiTai();
+      if (xong) xong(true);
+    })
+    .withFailureHandler(function (err) {
+      buoiState.dangGui = false;
+      showToast('Lỗi kết nối: ' + err, 'error');
+      if (xong) xong(false);
+    })
+    .buoiDiemDanh(currentUserToken, maSo, kieu === 'qr' ? 'qr' : 'tay', buoiState.viTri.lat, buoiState.viTri.lng, buoiState.phienId);
+}
+
+function buoiNhapTay() {
+  var input = buoiEl('buoi-ma-input');
+  var v = String((input && input.value) || '').trim();
+  if (!/^\d{4}$/.test(v)) { showToast('Mã số phải gồm đúng 4 chữ số!', 'error'); return; }
+  buoiGui(v, 'tay', function (ok) { if (ok && input) input.value = ''; });
+}
+
+// ---------- Quét mã QR xoay ngay trong app ----------
+function buoiDatTrangThaiQuet(chu) { var el = buoiEl('buoi-quet-trangthai'); if (el) el.innerText = chu; }
+
+function buoiMoQuet() {
+  var q = buoiState.quet;
+  if (q.dangMo) return;
+  var khung = buoiEl('buoi-quet-khung'), video = buoiEl('buoi-quet-video'), nut = buoiEl('buoi-nut-quet');
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showToast('Thiết bị này không mở được camera. Trưởng nhập mã 4 chữ số bên dưới giúp.', 'error');
+    return;
+  }
+  q.dangMo = true; q.dangXuLy = false; q.choDen = 0; q.loi = '';
+  if (khung) khung.style.display = 'block';
+  if (nut) { nut.disabled = true; nut.innerHTML = '<i class="fas fa-qrcode"></i> Đang mở camera…'; }
+  buoiDatTrangThaiQuet('Đang mở camera…');
+
+  navigator.mediaDevices.getUserMedia({
+    audio: false,
+    video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }
+  }).then(function (stream) {
+    if (!q.dangMo) { try { stream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {} return null; }
+    q.stream = stream;
+    if (video) {
+      video.srcObject = stream;
+      try { video.setAttribute('playsinline', 'true'); } catch (e) {}
+      video.muted = true;
+      var p = video.play(); if (p && p.catch) p.catch(function () {});
+    }
+    buoiDatTrangThaiQuet('Đang chuẩn bị bộ quét mã…');
+    return buoiNapThuVien('vendor/jsqr.js', 'jsQR');
+  }).then(function () {
+    if (!q.dangMo) return;
+    if (!q.canvas) { q.canvas = document.createElement('canvas'); q.ctx = q.canvas.getContext('2d', { willReadFrequently: true }); }
+    if (nut) { nut.disabled = false; nut.innerHTML = '<i class="fas fa-qrcode"></i> Quét lại'; }
+    buoiDatTrangThaiQuet('Đưa mã QR vào giữa khung…');
+    q.lanCuoi = 0;
+    buoiVongQuet();
+  }).catch(function (err) {
+    buoiDungQuet(true);
+    showToast('Không mở được camera: ' + ((err && err.message) || 'Thiết bị không hỗ trợ.') + ' — nhập mã 4 chữ số giúp.', 'error');
+  });
+}
+
+function buoiDungQuet(imLang) {
+  var q = buoiState.quet;
+  if (q.raf) { try { cancelAnimationFrame(q.raf); } catch (e) {} q.raf = null; }
+  if (q.stream) { try { q.stream.getTracks().forEach(function (t) { try { t.stop(); } catch (e) {} }); } catch (e) {} q.stream = null; }
+  var video = buoiEl('buoi-quet-video');
+  if (video) { try { video.pause(); } catch (e) {} try { video.srcObject = null; } catch (e) {} }
+  q.dangMo = false; q.dangXuLy = false; q.loi = '';
+  var khung = buoiEl('buoi-quet-khung'); if (khung) khung.style.display = 'none';
+  var nut = buoiEl('buoi-nut-quet'); if (nut) { nut.disabled = false; nut.innerHTML = '<i class="fas fa-qrcode"></i> Quét mã QR'; }
+  if (!imLang) buoiDatTrangThaiQuet('Đưa mã QR vào giữa khung…');
+}
+
+function buoiVongQuet() {
+  var q = buoiState.quet;
+  if (!q.dangMo) return;
+  q.raf = requestAnimationFrame(buoiVongQuet);
+  var now = Date.now();
+  if (q.dangXuLy || now < q.choDen || now - q.lanCuoi < 110) return;
+  var video = buoiEl('buoi-quet-video');
+  if (!video || video.readyState < 2 || !video.videoWidth || !video.videoHeight) return;
+  q.lanCuoi = now;
+  var tiLe = Math.min(1, 720 / Math.max(video.videoWidth, video.videoHeight));
+  var rong = Math.max(1, Math.round(video.videoWidth * tiLe));
+  var cao = Math.max(1, Math.round(video.videoHeight * tiLe));
+  if (q.canvas.width !== rong || q.canvas.height !== cao) { q.canvas.width = rong; q.canvas.height = cao; }
+  var ketQua = null;
+  try {
+    q.ctx.drawImage(video, 0, 0, rong, cao);
+    var anh = q.ctx.getImageData(0, 0, rong, cao);
+    ketQua = window.jsQR(anh.data, rong, cao, { inversionAttempts: 'dontInvert' });
+  } catch (e) { return; }
+  if (ketQua && ketQua.data) buoiNhanMa(ketQua.data);
+}
+
+function buoiDocMa(noiDung) {
+  var s = String(noiDung || '').trim();
+  var m = s.match(/^XUANREBUOI:\d+:([0-9a-fA-F-]{8,40}):(\d{4})$/);
+  if (m) return { phienId: m[1], maSo: m[2] };
+  if (/^\d{4}$/.test(s)) return { phienId: '', maSo: s };
+  return null;
+}
+
+function buoiNhanMa(noiDung) {
+  var q = buoiState.quet;
+  if (!q.dangMo || q.dangXuLy || Date.now() < q.choDen) return;
+  var ma = buoiDocMa(noiDung);
+  if (!ma) {
+    if (q.loi !== noiDung) {
+      q.loi = noiDung;
+      buoiDatTrangThaiQuet('Mã này không phải mã điểm danh buổi của Xứ Đoàn. Đưa đúng mã vào khung…');
+    }
+    return;
+  }
+  q.loi = ''; q.dangXuLy = true;
+  buoiDatTrangThaiQuet('Đã đọc mã ' + ma.maSo + ' — đang ghi nhận…');
+  if (navigator.vibrate) { try { navigator.vibrate(60); } catch (e) {} }
+  buoiGui(ma.maSo, 'qr', function (ok) {
+    if (ok) { buoiDungQuet(true); return; }
+    var q2 = buoiState.quet;
+    q2.dangXuLy = false;
+    q2.choDen = Date.now() + 3500;
+    if (q2.dangMo) buoiDatTrangThaiQuet('Mã vừa quét không dùng được — quét mã mới nhất trên màn hình Trưởng…');
+  });
+}
+
+document.addEventListener('visibilitychange', function () {
+  if (document.hidden && buoiState.quet.dangMo) buoiDungQuet(true);
+});
 </script>
 <script>
 // Tự đăng nhập lại bằng token đã lưu (chạy sau khi toàn bộ hàm của app đã nạp xong)
