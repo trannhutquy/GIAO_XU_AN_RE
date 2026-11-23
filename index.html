@@ -393,6 +393,27 @@
                  introLogoOut 0.35s ease-in 3.1s forwards;
     }
 
+    /* MÀN HÌNH "ĐANG ĐĂNG NHẬP LẠI" (khôi phục phiên): dùng lại đúng chuỗi intro
+       logo Xứ Đoàn -> logo Hill. Tự lặp mỗi 4s để không bao giờ đứng hình trắng
+       nếu máy chủ trả lời chậm (splash gốc chỉ chạy 1 lần rồi ẩn). Chu kỳ đầu
+       được căn khớp với splash để hai hiệu ứng không bị giật khi overlay mất đi. */
+    @keyframes srIntroLogo1 {
+      0%     { opacity: 0; transform: translate(-50%, -50%) scale(0.86); }
+      10%    { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      32.5%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      41.25% { opacity: 0; transform: translate(-50%, -50%) scale(1.06); }
+      100%   { opacity: 0; transform: translate(-50%, -50%) scale(1.06); }
+    }
+    @keyframes srIntroLogo2 {
+      0%, 45% { opacity: 0; transform: translate(-50%, -50%) scale(0.86); }
+      55%     { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      77.5%   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      86.25%  { opacity: 0; transform: translate(-50%, -50%) scale(1.06); }
+      100%    { opacity: 0; transform: translate(-50%, -50%) scale(1.06); }
+    }
+    #session-restore.intro-run .intro-logo-1 { animation: srIntroLogo1 4s ease-in-out infinite; }
+    #session-restore.intro-run .intro-logo-2 { animation: srIntroLogo2 4s ease-in-out infinite; }
+
     /* MÀN HÌNH ĐĂNG NHẬP */
     #login-screen { display: flex; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(135deg, #c62828 0%, #2979ff 100%); }
     .login-box { 
@@ -14525,9 +14546,16 @@ var APP_PHIEN_BAN = {
   document.body.appendChild(ov);
 
   function setBusy() {
-    ov.innerHTML = '<i class="fas fa-circle-notch fa-spin" style="font-size:34px;color:#d32f2f"></i><div>Đang đăng nhập lại...</div>';
+    // Thay vòng tròn xoay + chữ "Đang đăng nhập lại..." bằng chính intro
+    // logo Xứ Đoàn -> logo Hill (tự lặp) để đồng nhất với lúc mở app.
+    ov.innerHTML = '<div class="intro-stage">' +
+      '<img src="icons/icon-512.png" class="intro-logo intro-logo-1" alt="Xứ Đoàn Thánh Anrê">' +
+      '<img src="icons/hill-community.png" class="intro-logo intro-logo-2" alt="Hill Community">' +
+      '</div>';
+    ov.classList.add('intro-run');
   }
   function setOffline() {
+    ov.classList.remove('intro-run');
     ov.innerHTML = '<i class="fas fa-wifi" style="font-size:34px;color:#d32f2f"></i>' +
       '<div>Không kết nối được máy chủ.<br><span style="font-weight:400;font-size:13px">Tài khoản của bạn vẫn được giữ lại.</span></div>' +
       '<div style="display:flex;gap:10px"><button id="sr-retry" style="padding:10px 18px;border:0;border-radius:10px;background:#d32f2f;color:#fff;font:inherit">Thử lại</button>' +
