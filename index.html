@@ -1975,6 +1975,38 @@
     body.dark-mode .kt-de-card h4 { color:#e1e3e6; }
     body.dark-mode .kt-anh-preview { border-color:#3a3b42; }
 
+    /* ---- NÂNG CẤP UI BÀI KIỂM TRA: stepper, mã đề, kho câu hỏi, preview ---- */
+    .kt-stepper { display:flex; gap:6px; margin-bottom:14px; }
+    .kt-step-tab { flex:1; text-align:center; padding:8px 4px; border-radius:9px; background:#f1f3f5; color:#7f8c8d; font-size:11.5px; font-weight:bold; cursor:pointer; }
+    .kt-step-tab.kt-step-active { background:#0277bd; color:#fff; box-shadow:0 3px 10px rgba(2,119,189,0.25); }
+    .kt-step-tab.kt-step-xong { background:#e8f5e9; color:#2e7d32; }
+    .kt-step-pane { display:none; }
+    .kt-step-pane.kt-step-hientai { display:block; }
+    .kt-nhom-label { display:block; font-size:12.5px; font-weight:bold; color:#2c3e50; margin:12px 0 6px; }
+    .kt-ma-de-chip { display:inline-flex; align-items:center; justify-content:center; min-width:38px; padding:7px 10px; margin:0 6px 6px 0; border:1px solid #cfd8dc; border-radius:9px; background:#fff; color:#546e7a; font-size:13px; font-weight:bold; cursor:pointer; user-select:none; }
+    .kt-ma-de-chip.kt-ma-de-chon { background:#0277bd; border-color:#0277bd; color:#fff; box-shadow:0 3px 9px rgba(2,119,189,0.25); }
+    body.dark-mode .kt-ma-de-chip { background:#2b2d33; border-color:#45474f; color:#cfd8dc; }
+    body.dark-mode .kt-ma-de-chip.kt-ma-de-chon { background:#0277bd; color:#fff; }
+    .kt-goi-y { font-size:11.5px; color:#95a5a6; line-height:1.45; margin:4px 0 10px; }
+    .kt-tong-hop { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; }
+    .kt-tong-hop-o { background:#f8f9fa; border:1px solid #eee; border-radius:10px; padding:10px 6px; text-align:center; }
+    .kt-tong-hop-so { display:block; font-size:19px; font-weight:bold; color:#0277bd; }
+    .kt-tong-hop-nhan { font-size:10.5px; color:#7f8c8d; }
+    body.dark-mode .kt-tong-hop-o { background:#26272c; border-color:#3a3b42; }
+    .kt-preview-item { border-left:3px solid #0277bd; background:#fafafa; border-radius:0 9px 9px 0; padding:9px 11px; margin-bottom:8px; font-size:12.5px; color:#37474f; }
+    body.dark-mode .kt-preview-item { background:#26272c; color:#cfd8dc; }
+    .kt-preview-loai { display:inline-block; font-size:10px; font-weight:bold; padding:2px 7px; border-radius:20px; background:#e3f2fd; color:#0277bd; margin-left:6px; }
+    .kt-btn-step { border:none; border-radius:9px; padding:10px 14px; font-weight:bold; font-size:12.5px; cursor:pointer; }
+    .kt-btn-step.xanh { background:#0277bd; color:#fff; }
+    .kt-btn-step.xam { background:#eceff1; color:#546e7a; }
+    .kt-kho-item { border:1px solid #eee; border-radius:10px; padding:10px; margin-bottom:8px; background:#fafafa; }
+    body.dark-mode .kt-kho-item { background:#26272c; border-color:#3a3b42; }
+    .kt-kho-item .kt-noidung { font-size:12.5px; color:#2c3e50; margin:6px 0; line-height:1.4; }
+    body.dark-mode .kt-kho-item .kt-noidung { color:#e1e3e6; }
+    .kt-kho-timkiem { width:100%; box-sizing:border-box; padding:10px; border:1px solid #ddd; border-radius:9px; margin-bottom:10px; font-size:13px; }
+    .kt-chip-ma-nho { display:inline-flex; gap:6px; flex-wrap:wrap; margin-top:7px; }
+    .kt-chip-ma-nho button { border:none; border-radius:8px; background:#e3f2fd; color:#0277bd; font-weight:bold; font-size:11.5px; padding:6px 10px; cursor:pointer; }
+
     /* ==========================================
        NÂNG CẤP GIAO DIỆN TRANG "THU QUỸ" — chỉ đổi hình thức (màu sắc, bố
        cục, hiệu ứng), KHÔNG đổi id hay hàm JS nên không ảnh hưởng luồng
@@ -3284,9 +3316,9 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         </div>
 
         <div style="display:flex; gap:8px; margin-bottom:14px;">
-          <div id="kt-tab-btn-dangmo" class="kt-tab-btn kt-tab-active" onclick="ktChonTab('dangmo')" style="flex:1; text-align:center; padding:10px; border-radius:8px; cursor:pointer; font-weight:bold; font-size:12.5px;">Đang mở</div>
-          <div id="kt-tab-btn-lichsu" class="kt-tab-btn" onclick="ktChonTab('lichsu')" style="flex:1; text-align:center; padding:10px; border-radius:8px; cursor:pointer; font-weight:bold; font-size:12.5px;">Lịch sử của tôi</div>
-          <div id="kt-tab-btn-quanly" class="kt-tab-btn" onclick="ktChonTab('quanly')" style="flex:1; text-align:center; padding:10px; border-radius:8px; cursor:pointer; font-weight:bold; font-size:12.5px; display:none;">Quản lý</div>
+          <div id="kt-tab-btn-dangmo" class="kt-tab-btn kt-tab-active" onclick="ktChonTab('dangmo')" style="flex:1; text-align:center; padding:10px; border-radius:8px; cursor:pointer; font-weight:bold; font-size:12.5px;"><i class="fas fa-hourglass-half"></i> Đang mở</div>
+          <div id="kt-tab-btn-lichsu" class="kt-tab-btn" onclick="ktChonTab('lichsu')" style="flex:1; text-align:center; padding:10px; border-radius:8px; cursor:pointer; font-weight:bold; font-size:12.5px;"><i class="fas fa-clock-rotate-left"></i> Lịch sử</div>
+          <div id="kt-tab-btn-quanly" class="kt-tab-btn" onclick="ktChonTab('quanly')" style="flex:1; text-align:center; padding:10px; border-radius:8px; cursor:pointer; font-weight:bold; font-size:12.5px; display:none;"><i class="fas fa-sliders"></i> Quản lý</div>
         </div>
 
         <div id="kt-tab-dangmo" class="kt-tab-content">
@@ -3300,7 +3332,10 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         </div>
 
         <div id="kt-tab-quanly" class="kt-tab-content" style="display:none;">
-          <button onclick="ktAdmMoModalTaoDe(null)" style="width:100%; border:none; background:#0277bd; color:white; font-weight:bold; padding:11px; border-radius:10px; cursor:pointer; font-size:13px; margin-bottom:14px;"><i class="fas fa-plus"></i> Tạo bài kiểm tra mới</button>
+          <div style="display:flex; gap:8px; margin-bottom:12px;">
+            <button onclick="ktAdmMoModalTaoDe(null)" style="flex:2; border:none; background:#0277bd; color:white; font-weight:bold; padding:11px; border-radius:10px; cursor:pointer; font-size:12.5px;"><i class="fas fa-plus"></i> Tạo bài mới</button>
+            <button onclick="ktAdmMoKhoCauHoi()" style="flex:1; border:none; background:#6a1b9a; color:white; font-weight:bold; padding:11px; border-radius:10px; cursor:pointer; font-size:12.5px;"><i class="fas fa-box-archive"></i> Kho câu hỏi</button>
+          </div>
           <div id="kt-ds-quanly"></div>
         </div>
       </div>
@@ -3528,40 +3563,111 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       </div>
 
       <div id="ktTaoDeModalBg" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:9999; align-items:center; justify-content:center; padding:14px;">
-        <div style="background:white; border-radius:14px; width:100%; max-width:560px; max-height:90vh; overflow-y:auto; padding:18px;">
+        <div style="background:white; border-radius:14px; width:100%; max-width:600px; max-height:92vh; overflow-y:auto; padding:18px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
             <h3 id="ktTaoDeTieuDeModal" style="margin:0; color:#2c3e50;">Tạo bài kiểm tra</h3>
             <button onclick="document.getElementById('ktTaoDeModalBg').style.display='none';" style="border:none; background:#f1f3f5; width:30px; height:30px; border-radius:50%; cursor:pointer;"><i class="fas fa-times"></i></button>
           </div>
+
+          <div class="kt-stepper">
+            <div id="kt-step-tab-1" class="kt-step-tab kt-step-active" onclick="ktAdmChuyenBuoc(1)">1. Thông tin</div>
+            <div id="kt-step-tab-2" class="kt-step-tab" onclick="ktAdmChuyenBuoc(2)">2. Câu hỏi</div>
+            <div id="kt-step-tab-3" class="kt-step-tab" onclick="ktAdmChuyenBuoc(3)">3. Xem &amp; lưu</div>
+          </div>
+
           <input type="hidden" id="ktTaoDeIdDangSua" value="">
-          <label style="font-size:12.5px; font-weight:bold; color:#2c3e50;">Tiêu đề</label>
-          <input type="text" id="ktTaoDeTieuDe" placeholder="VD: Kiểm tra Giáo Lý tháng 9" style="width:100%; padding:10px; margin:6px 0 12px; border:1px solid #ddd; border-radius:10px; box-sizing:border-box;">
 
-          <label style="font-size:12.5px; font-weight:bold; color:#2c3e50;">Mô tả (không bắt buộc)</label>
-          <textarea id="ktTaoDeMoTa" rows="2" placeholder="Ghi chú thêm cho bài kiểm tra..." style="width:100%; padding:10px; margin:6px 0 12px; border:1px solid #ddd; border-radius:10px; box-sizing:border-box; resize:vertical;"></textarea>
+          <!-- BƯỚC 1: THÔNG TIN CHUNG + MÃ ĐỀ -->
+          <div id="kt-step-pane-1" class="kt-step-pane kt-step-hientai">
+            <span class="kt-nhom-label">Tiêu đề bài kiểm tra</span>
+            <input type="text" id="ktTaoDeTieuDe" placeholder="VD: Kiểm tra Giáo Lý tháng 9" style="width:100%; padding:10px; margin:0 0 12px; border:1px solid #ddd; border-radius:10px; box-sizing:border-box;">
+            <span class="kt-nhom-label">Mô tả (không bắt buộc)</span>
+            <textarea id="ktTaoDeMoTa" rows="2" placeholder="Ghi chú thêm cho bài kiểm tra..." style="width:100%; padding:10px; margin:0 0 12px; border:1px solid #ddd; border-radius:10px; box-sizing:border-box; resize:vertical;"></textarea>
 
-          <div style="display:flex; gap:10px;">
-            <div style="flex:1;">
-              <label style="font-size:12.5px; font-weight:bold; color:#2c3e50;">Thời gian làm (phút)</label>
-              <input type="number" id="ktTaoDeThoiGianLam" min="1" placeholder="Không giới hạn" style="width:100%; padding:10px; margin:6px 0 12px; border:1px solid #ddd; border-radius:10px; box-sizing:border-box;">
+            <div style="display:flex; gap:10px;">
+              <div style="flex:1;">
+                <span class="kt-nhom-label">Thời gian làm (phút)</span>
+                <input type="number" id="ktTaoDeThoiGianLam" min="1" placeholder="Không giới hạn" style="width:100%; padding:10px; margin:0 0 12px; border:1px solid #ddd; border-radius:10px; box-sizing:border-box;">
+              </div>
+              <div style="flex:1;">
+                <span class="kt-nhom-label">Hạn nộp</span>
+                <input type="datetime-local" id="ktTaoDeHanNop" style="width:100%; padding:10px; margin:0 0 12px; border:1px solid #ddd; border-radius:10px; box-sizing:border-box;">
+              </div>
             </div>
-            <div style="flex:1;">
-              <label style="font-size:12.5px; font-weight:bold; color:#2c3e50;">Hạn nộp</label>
-              <input type="datetime-local" id="ktTaoDeHanNop" style="width:100%; padding:10px; margin:6px 0 12px; border:1px solid #ddd; border-radius:10px; box-sizing:border-box;">
+
+            <span class="kt-nhom-label">Số lần cho phép chuyển tab / rời màn hình</span>
+            <input type="number" id="ktTaoDeSoLanChuyenTab" min="0" placeholder="0 = không giới hạn" style="width:100%; padding:10px; margin:0 0 4px; border:1px solid #ddd; border-radius:10px; box-sizing:border-box;">
+            <div class="kt-goi-y">Quá số lần này khi đang làm bài → bài tự nộp và bị đánh dấu "Không thành công".</div>
+
+            <span class="kt-nhom-label"><i class="fas fa-tags" style="color:#0277bd;"></i> Mã đề cho Huynh Trưởng chọn</span>
+            <div id="ktMaDeChips">
+              <span class="kt-ma-de-chip kt-ma-de-chon" data-ma="A" onclick="ktAdmChonMaDe('A', this)">A</span>
+              <span class="kt-ma-de-chip kt-ma-de-chon" data-ma="B" onclick="ktAdmChonMaDe('B', this)">B</span>
+              <span class="kt-ma-de-chip kt-ma-de-chon" data-ma="C" onclick="ktAdmChonMaDe('C', this)">C</span>
+              <span class="kt-ma-de-chip" data-ma="D" onclick="ktAdmChonMaDe('D', this)">D</span>
+              <span class="kt-ma-de-chip" data-ma="E" onclick="ktAdmChonMaDe('E', this)">E</span>
+            </div>
+            <input type="text" id="ktTaoDeMaDeKhac" placeholder="Mã khác (VD: De1, De2 — cách nhau bằng dấu phẩy)" style="width:100%; padding:9px; border:1px solid #ddd; border-radius:9px; box-sizing:border-box; font-size:12.5px;">
+            <label style="display:flex; align-items:center; gap:7px; margin:10px 0 6px; font-size:12.5px; color:#37474f; cursor:pointer;">
+              <input type="checkbox" id="ktTaoDeXaoTron" checked style="width:17px; height:17px; accent-color:#0277bd;">
+              Xáo trộn thứ tự câu &amp; đáp án theo từng mã đề
+            </label>
+            <div class="kt-goi-y">Cùng 1 đề nhưng mỗi mã A/B/C ra một thứ tự riêng. Chấm điểm vẫn đúng vì hệ thống đối chiếu về đáp án gốc. Bỏ chọn tất cả mã đề nếu muốn làm không cần chọn mã.</div>
+
+            <div style="display:flex; justify-content:flex-end; margin-top:16px;">
+              <button class="kt-btn-step xanh" onclick="ktAdmChuyenBuoc(2)">Tiếp: thêm câu hỏi <i class="fas fa-arrow-right"></i></button>
             </div>
           </div>
 
-          <label style="font-size:12.5px; font-weight:bold; color:#2c3e50;">Số lần cho phép chuyển tab / rời màn hình làm bài</label>
-          <input type="number" id="ktTaoDeSoLanChuyenTab" min="0" placeholder="0 = không giới hạn" style="width:100%; padding:10px; margin:6px 0 4px; border:1px solid #ddd; border-radius:10px; box-sizing:border-box;">
-          <div style="font-size:11.5px; color:#95a5a6; margin-bottom:12px;">Nếu Huynh Trưởng chuyển sang tab/ứng dụng khác quá số lần này khi đang làm bài, bài làm sẽ tự nộp và bị đánh dấu "Không thành công". Để trống hoặc 0 nếu không muốn giới hạn.</div>
-
-          <div style="display:flex; justify-content:space-between; align-items:center; margin:10px 0;">
-            <label style="font-size:13px; font-weight:bold; color:#2c3e50;">Câu hỏi</label>
-            <button onclick="ktAdmThemCauHoi(null)" style="border:none; background:#e1f5fe; color:#0277bd; font-weight:bold; padding:7px 12px; border-radius:8px; cursor:pointer; font-size:12px;"><i class="fas fa-plus"></i> Thêm câu hỏi</button>
+          <!-- BƯỚC 2: BUILDER CÂU HỎI -->
+          <div id="kt-step-pane-2" class="kt-step-pane">
+            <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-bottom:12px;">
+              <button onclick="ktAdmThemCauHoi(null)" class="kt-btn-nho" style="background:#e1f5fe; color:#0277bd; font-weight:bold;"><i class="fas fa-plus"></i> Thêm câu hỏi</button>
+              <button onclick="ktAdmMoKhoCauHoi()" class="kt-btn-nho" style="background:#f3e5f5; color:#6a1b9a; font-weight:bold;"><i class="fas fa-box-archive"></i> Chọn từ kho câu hỏi</button>
+              <span id="ktBuilderDem" style="margin-left:auto; font-size:11.5px; color:#7f8c8d;">0 câu · 0 điểm</span>
+            </div>
+            <div id="ktCauHoiBuilder"></div>
+            <div style="display:flex; justify-content:space-between; margin-top:14px;">
+              <button class="kt-btn-step xam" onclick="ktAdmChuyenBuoc(1)"><i class="fas fa-arrow-left"></i> Quay lại</button>
+              <button class="kt-btn-step xanh" onclick="ktAdmChuyenBuoc(3)">Xem trước &amp; lưu <i class="fas fa-arrow-right"></i></button>
+            </div>
           </div>
-          <div id="ktCauHoiBuilder"></div>
 
-          <button onclick="ktAdmLuuDe()" style="width:100%; margin-top:14px; border:none; background:#27ae60; color:white; font-weight:bold; padding:12px; border-radius:10px; cursor:pointer; font-size:13.5px;"><i class="fas fa-save"></i> Lưu bài kiểm tra</button>
+          <!-- BƯỚC 3: TỔNG HỢP + PREVIEW + LƯU -->
+          <div id="kt-step-pane-3" class="kt-step-pane">
+            <div class="kt-tong-hop">
+              <div class="kt-tong-hop-o"><span id="ktTongHopCau" class="kt-tong-hop-so">0</span><span class="kt-tong-hop-nhan">câu hỏi</span></div>
+              <div class="kt-tong-hop-o"><span id="ktTongHopDiem" class="kt-tong-hop-so">0</span><span class="kt-tong-hop-nhan">tổng điểm</span></div>
+              <div class="kt-tong-hop-o"><span id="ktTongHopMaDe" class="kt-tong-hop-so">0</span><span class="kt-tong-hop-nhan">mã đề</span></div>
+            </div>
+            <div id="ktXemTruocDe" style="max-height:42vh; overflow-y:auto; border:1px solid #eee; border-radius:10px; padding:10px; background:#fcfcfc;"></div>
+            <div style="display:flex; justify-content:space-between; margin-top:14px; gap:8px;">
+              <button class="kt-btn-step xam" onclick="ktAdmChuyenBuoc(2)"><i class="fas fa-arrow-left"></i> Sửa câu hỏi</button>
+              <button class="kt-btn-step xanh" style="background:#27ae60;" onclick="ktAdmLuuDe()"><i class="fas fa-save"></i> Lưu bài kiểm tra</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KHO CÂU HỎI DÙNG LẠI -->
+      <div id="ktKhoCauHoiModalBg" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:10000; align-items:center; justify-content:center; padding:14px;">
+        <div style="background:white; border-radius:14px; width:100%; max-width:520px; max-height:88vh; overflow-y:auto; padding:18px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3 style="margin:0; color:#2c3e50; font-size:15px;"><i class="fas fa-box-archive" style="color:#6a1b9a;"></i> Kho câu hỏi</h3>
+            <button onclick="document.getElementById('ktKhoCauHoiModalBg').style.display='none';" style="border:none; background:#f1f3f5; width:30px; height:30px; border-radius:50%; cursor:pointer;"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="kt-goi-y" style="margin-bottom:10px;">Chọn câu hỏi để thêm vào bài đang soạn. Câu đã lưu trong kho có thể dùng lại ở nhiều đề.</div>
+          <input id="ktKhoTimKiem" class="kt-kho-timkiem" type="text" placeholder="Tìm nội dung câu hỏi hoặc chủ đề..." oninput="ktKhoTaiDanhSach()">
+          <div style="display:flex; gap:6px; margin-bottom:10px;">
+            <select id="ktKhoLocLoai" onchange="ktKhoTaiDanhSach()" style="flex:1; padding:8px; border:1px solid #ddd; border-radius:9px; font-size:12.5px;">
+              <option value="">Tất cả dạng câu</option>
+              <option value="mot_dap_an">Một đáp án đúng</option>
+              <option value="nhieu_dap_an">Nhiều đáp án đúng</option>
+              <option value="tu_luan">Tự luận</option>
+            </select>
+            <button onclick="ktKhoTaiDanhSach()" class="kt-btn-nho" style="background:#6a1b9a; color:white;"><i class="fas fa-rotate"></i> Tải lại</button>
+          </div>
+          <div id="ktKhoDanhSach" style="min-height:80px;"></div>
         </div>
       </div>
 
@@ -6885,6 +6991,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
        ============================================================ */
     var KT_DU_LIEU_LAM_BAI = null;   // đề đang làm dở (đầy đủ câu hỏi + đáp án đã chọn)
     var KT_DEM_NGUOC_TIMER = null;
+    var KT_MA_DE_DANG_CHON = '';     // mã đề Huynh Trưởng vừa chọn trước khi vào làm
+    var KT_BUOC_HIEN_TAI = 1;        // bước hiện tại của form tạo/sửa đề
 
     /* ---------- CHỐNG GIAN LẬN KHI LÀM BÀI (chỉ mang tính RĂN ĐE, không phải tuyệt đối) ----------
        - Vô hiệu hoá copy/chọn văn bản/chuột phải trong khu vực đề bài.
@@ -6989,11 +7097,29 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
               (de.moTa ? '<div style="font-size:12.5px; color:#5d6d7e; margin-bottom:6px;">' + _ktEsc(de.moTa) + '</div>' : '') +
               '<div class="kt-de-meta">' + meta + '</div>' + trangThaiHtml;
             if (!de.daLam) {
-              var btn = document.createElement('button');
-              btn.style.cssText = 'width:100%; margin-top:8px; border:none; background:#0277bd; color:white; font-weight:bold; padding:9px; border-radius:8px; cursor:pointer; font-size:12.5px;';
-              btn.innerHTML = '<i class="fas fa-pen"></i> Làm bài';
-              btn.addEventListener('click', function () { ktBatDauLam(de.id); });
-              card.appendChild(btn);
+              var dsMa = de.danhSachMaDe || [];
+              if (dsMa.length) {
+                var nhanMa = document.createElement('div');
+                nhanMa.className = 'kt-goi-y';
+                nhanMa.style.marginTop = '8px';
+                nhanMa.innerText = 'Chọn đúng mã đề được phát:';
+                card.appendChild(nhanMa);
+                var dongChip = document.createElement('div');
+                dongChip.className = 'kt-chip-ma-nho';
+                dsMa.forEach(function (ma) {
+                  var chip = document.createElement('button');
+                  chip.innerHTML = '<i class="fas fa-file-circle-question"></i> Đề ' + _ktEsc(ma);
+                  chip.addEventListener('click', function () { ktBatDauLam(de.id, ma); });
+                  dongChip.appendChild(chip);
+                });
+                card.appendChild(dongChip);
+              } else {
+                var btn = document.createElement('button');
+                btn.style.cssText = 'width:100%; margin-top:8px; border:none; background:#0277bd; color:white; font-weight:bold; padding:9px; border-radius:8px; cursor:pointer; font-size:12.5px;';
+                btn.innerHTML = '<i class="fas fa-pen"></i> Làm bài';
+                btn.addEventListener('click', function () { ktBatDauLam(de.id, ''); });
+                card.appendChild(btn);
+              }
             }
             box.appendChild(card);
           });
@@ -7002,7 +7128,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         .kiemTraDanhSachChoHT(currentUserToken);
     }
 
-    function ktBatDauLam(idDe) {
+    function ktBatDauLam(idDe, maDe) {
+      KT_MA_DE_DANG_CHON = maDe || '';
       google.script.run
         .withSuccessHandler(function (res) {
           if (!res.success) { showToast(res.error, 'error'); return; }
@@ -7010,7 +7137,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           KT_DU_LIEU_LAM_BAI.traLoi = {};
           _ktKhoiPhucNutNopBai(document.getElementById('ktNopBaiBtn'));
           document.getElementById('ktLamBaiIdDe').value = res.data.id;
-          document.getElementById('ktLamBaiTieuDe').innerText = res.data.tieuDe;
+          document.getElementById('ktLamBaiTieuDe').innerText = res.data.tieuDe + (res.data.maDe ? '  •  Đề ' + res.data.maDe : '');
           _ktRenderFormLamBai(res.data);
           document.getElementById('ktLamBaiModalBg').style.display = 'flex';
           _ktGanChongGianLan(res.data.soLanChuyenTabToiDa);
@@ -7018,7 +7145,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           else document.getElementById('ktLamBaiDemNguoc').style.display = 'none';
         })
         .withFailureHandler(function (err) { showToast('Lỗi kết nối: ' + err, 'error'); })
-        .kiemTraLayDeDeLam(currentUserToken, idDe);
+        .kiemTraLayDeDeLam(currentUserToken, idDe, maDe || '');
     }
 
     function _ktRenderFormLamBai(de) {
@@ -7059,12 +7186,14 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
             inp.type = kieuInput;
             inp.name = 'kt-cau-' + c.id;
             inp.value = i;
+            // Mã đề xáo trộn đáp án: đổi vị trí hiển thị về vị trí đáp án GỐC trước khi lưu câu trả lời.
+            var chiSoGoc = (c.anhXaDapAn && c.anhXaDapAn.length === c.luaChon.length) ? Number(c.anhXaDapAn[i]) : i;
             inp.addEventListener('change', function () {
               var hienTai = (KT_DU_LIEU_LAM_BAI.traLoi[c.id] && KT_DU_LIEU_LAM_BAI.traLoi[c.id].luaChonDaChon) || [];
-              if (kieuInput === 'radio') { hienTai = [i]; }
+              if (kieuInput === 'radio') { hienTai = [chiSoGoc]; }
               else {
-                var pos = hienTai.indexOf(i);
-                if (inp.checked && pos === -1) hienTai.push(i);
+                var pos = hienTai.indexOf(chiSoGoc);
+                if (inp.checked && pos === -1) hienTai.push(chiSoGoc);
                 if (!inp.checked && pos !== -1) hienTai.splice(pos, 1);
               }
               KT_DU_LIEU_LAM_BAI.traLoi[c.id] = { id: c.id, luaChonDaChon: hienTai };
@@ -7159,7 +7288,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           ktTaiDanhSachChoHT();
         })
         .withFailureHandler(function (err) { showToast('Lỗi kết nối: ' + err, 'error'); _ktKhoiPhucNutNopBai(btn); })
-        .kiemTraNopBai(currentUserToken, idDe, cauTraLoi, KT_SO_LAN_VI_PHAM);
+        .kiemTraNopBai(currentUserToken, idDe, cauTraLoi, KT_SO_LAN_VI_PHAM, KT_MA_DE_DANG_CHON);
     }
 
     /* ---------- HUYNH TRƯỞNG: LỊCH SỬ ---------- */
@@ -7179,7 +7308,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
               ? '<div style="margin-top:6px;"><span class="kt-badge" style="background:#fdecea; color:#c62828;">Không thành công (chuyển tab ' + bl.soLanViPham + ' lần)</span></div>'
               : '';
             card.innerHTML =
-              '<h4>' + _ktEsc(bl.tieuDe) + '</h4>' +
+              '<h4>' + _ktEsc(bl.tieuDe) + (bl.maDe ? ' <span class="kt-preview-loai">Đề ' + _ktEsc(bl.maDe) + '</span>' : '') + '</h4>' +
               '<div class="kt-de-meta">Nộp lúc: ' + bl.thoiGianNop + '</div>' +
               (bl.daChamTuLuan
                 ? '<div style="font-size:16px; font-weight:bold; color:#0277bd;">Điểm: ' + bl.diemTong + '</div>'
@@ -7206,12 +7335,15 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
             var card = document.createElement('div');
             card.className = 'kt-de-card';
             var meta = de.soCauHoi + ' câu · ' + de.tongDiem + ' điểm · ' + de.soBaiDaNop + ' bài đã nộp' + (de.soBaiChuaCham ? ' (' + de.soBaiChuaCham + ' chưa chấm)' : '');
+            var maDeMeta = (de.danhSachMaDe && de.danhSachMaDe.length)
+              ? ' · Mã đề: ' + de.danhSachMaDe.map(function (m) { return _ktEsc(m); }).join(', ') + (de.xaoTronTheoMa ? ' (xoá trộn)' : '')
+              : '';
             card.innerHTML =
               '<div style="display:flex; justify-content:space-between; align-items:flex-start;">' +
                 '<h4>' + _ktEsc(de.tieuDe) + '</h4>' +
                 '<span class="kt-badge ' + (de.trangThai === 'mo' ? 'mo' : 'dong') + '">' + (de.trangThai === 'mo' ? 'Đang mở' : 'Đã đóng') + '</span>' +
               '</div>' +
-              '<div class="kt-de-meta">' + meta + '</div>';
+              '<div class="kt-de-meta">' + meta + maDeMeta + '</div>';
             var hang = document.createElement('div');
             hang.style.cssText = 'display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;';
 
@@ -7224,6 +7356,9 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
             var btnSua = document.createElement('button'); btnSua.className = 'kt-btn-nho'; btnSua.innerHTML = '<i class="fas fa-pen"></i> Sửa';
             btnSua.addEventListener('click', function () { ktAdmMoModalTaoDe(de.id); });
 
+            var btnNhanBan = document.createElement('button'); btnNhanBan.className = 'kt-btn-nho'; btnNhanBan.innerHTML = '<i class="fas fa-copy"></i> Nhân bản';
+            btnNhanBan.addEventListener('click', function () { ktAdmNhanBanDe(de.id); });
+
             var btnDongMo = document.createElement('button'); btnDongMo.className = 'kt-btn-nho';
             btnDongMo.innerHTML = de.trangThai === 'mo' ? '<i class="fas fa-lock"></i> Đóng' : '<i class="fas fa-lock-open"></i> Mở lại';
             btnDongMo.addEventListener('click', function () { ktAdmDongMoDe(de.id, de.trangThai !== 'mo'); });
@@ -7231,7 +7366,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
             var btnXoa = document.createElement('button'); btnXoa.className = 'kt-btn-xoa'; btnXoa.innerHTML = '<i class="fas fa-trash"></i>';
             btnXoa.addEventListener('click', function () { ktAdmXoaDe(de.id); });
 
-            hang.appendChild(btnXem); hang.appendChild(btnThongKe); hang.appendChild(btnSua); hang.appendChild(btnDongMo); hang.appendChild(btnXoa);
+            hang.appendChild(btnXem); hang.appendChild(btnThongKe); hang.appendChild(btnSua); hang.appendChild(btnNhanBan); hang.appendChild(btnDongMo); hang.appendChild(btnXoa);
             card.appendChild(hang);
             box.appendChild(card);
           });
@@ -7267,18 +7402,31 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 
     /* ---------- ADMIN: TẠO / SỬA ĐỀ (builder câu hỏi) ---------- */
 
-    function ktAdmMoModalTaoDe(idDeSua) {
+    function ktAdmMoModalTaoDe(idDeSua, duLieuCoSan) {
       document.getElementById('ktCauHoiBuilder').innerHTML = '';
       document.getElementById('ktTaoDeIdDangSua').value = idDeSua || '';
+      _ktDatMaDeChips((duLieuCoSan && duLieuCoSan.danhSachMaDe) || ['A', 'B', 'C']);
+      document.getElementById('ktTaoDeMaDeKhac').value = '';
+      document.getElementById('ktTaoDeXaoTron').checked = duLieuCoSan ? !!duLieuCoSan.xaoTronTheoMa : true;
+      document.getElementById('ktTaoDeTieuDeModal').innerText =
+        (duLieuCoSan && duLieuCoSan.tieuDeModal) || (idDeSua ? 'Sửa bài kiểm tra' : 'Tạo bài kiểm tra');
+
+      if (duLieuCoSan) {
+        _ktApDungDuLieuVaoModal(duLieuCoSan);
+        ktAdmChuyenBuoc(1, true);
+        document.getElementById('ktTaoDeModalBg').style.display = 'flex';
+        return;
+      }
+
       document.getElementById('ktTaoDeTieuDe').value = '';
       document.getElementById('ktTaoDeMoTa').value = '';
       document.getElementById('ktTaoDeThoiGianLam').value = '';
       document.getElementById('ktTaoDeHanNop').value = '';
       document.getElementById('ktTaoDeSoLanChuyenTab').value = '';
-      document.getElementById('ktTaoDeTieuDeModal').innerText = idDeSua ? 'Sửa bài kiểm tra' : 'Tạo bài kiểm tra';
 
       if (!idDeSua) {
         ktAdmThemCauHoi(null);
+        ktAdmChuyenBuoc(1, true);
         document.getElementById('ktTaoDeModalBg').style.display = 'flex';
         return;
       }
@@ -7287,16 +7435,146 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         .withSuccessHandler(function (res) {
           if (!res.success) { showToast(res.error, 'error'); return; }
           var d = res.data;
-          document.getElementById('ktTaoDeTieuDe').value = d.tieuDe;
-          document.getElementById('ktTaoDeMoTa').value = d.moTa || '';
-          document.getElementById('ktTaoDeThoiGianLam').value = d.thoiGianLamPhut || '';
-          document.getElementById('ktTaoDeHanNop').value = d.hanNop ? _ktIsoChoDatetimeLocal(d.hanNop) : '';
-          document.getElementById('ktTaoDeSoLanChuyenTab').value = d.soLanChuyenTabToiDa || '';
-          d.cauHoi.forEach(function (c) { ktAdmThemCauHoi(c); });
+          _ktDatMaDeChips(d.danhSachMaDe || []);
+          document.getElementById('ktTaoDeXaoTron').checked = !!d.xaoTronTheoMa;
+          _ktApDungDuLieuVaoModal(d);
+          ktAdmChuyenBuoc(1, true);
           document.getElementById('ktTaoDeModalBg').style.display = 'flex';
         })
         .withFailureHandler(function (err) { showToast('Lỗi kết nối: ' + err, 'error'); })
         .admKiemTraChiTietDe(currentUserToken, idDeSua);
+    }
+
+    function _ktApDungDuLieuVaoModal(d) {
+      document.getElementById('ktTaoDeTieuDe').value = d.tieuDe || '';
+      document.getElementById('ktTaoDeMoTa').value = d.moTa || '';
+      document.getElementById('ktTaoDeThoiGianLam').value = d.thoiGianLamPhut || '';
+      document.getElementById('ktTaoDeHanNop').value = d.hanNop ? _ktIsoChoDatetimeLocal(d.hanNop) : '';
+      document.getElementById('ktTaoDeSoLanChuyenTab').value = d.soLanChuyenTabToiDa || '';
+      var dsCau = d.cauHoi || [];
+      if (!dsCau.length) dsCau = [null];
+      dsCau.forEach(function (c) { ktAdmThemCauHoi(c); });
+    }
+
+    function ktAdmNhanBanDe(idDe) {
+      google.script.run
+        .withSuccessHandler(function (res) {
+          if (!res.success) { showToast(res.error, 'error'); return; }
+          var d = res.data;
+          d.tieuDe = (d.tieuDe || '') + ' (bản sao)';
+          d.tieuDeModal = 'Nhân bản bài kiểm tra';
+          ktAdmMoModalTaoDe('', d);
+          showToast('Đã nạp đề vào form, chỉ cần sửa và lưu thành đề mới.', 'info');
+        })
+        .withFailureHandler(function (err) { showToast('Lỗi kết nối: ' + err, 'error'); })
+        .admKiemTraChiTietDe(currentUserToken, idDe);
+    }
+
+    function _ktDatMaDeChips(dsMa) {
+      var chon = {};
+      (dsMa || []).forEach(function (m) { chon[String(m || '').trim().toUpperCase()] = true; });
+      document.querySelectorAll('#ktMaDeChips .kt-ma-de-chip').forEach(function (el) {
+        el.classList.toggle('kt-ma-de-chon', !!chon[el.getAttribute('data-ma')]);
+      });
+    }
+
+    function ktAdmChonMaDe(ma, el) {
+      el.classList.toggle('kt-ma-de-chon');
+    }
+
+    function ktAdmLayMaDeDangChon() {
+      var ds = [];
+      document.querySelectorAll('#ktMaDeChips .kt-ma-de-chon').forEach(function (el) {
+        ds.push(el.getAttribute('data-ma'));
+      });
+      var khac = document.getElementById('ktTaoDeMaDeKhac').value || '';
+      khac.split(/[\s,;]+/).forEach(function (ma) {
+        var m = ma.trim().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+        if (m && ds.indexOf(m) === -1) ds.push(m);
+      });
+      return ds.slice(0, 8);
+    }
+
+    function ktAdmChuyenBuoc(step, boQuaKiemTra) {
+      if (!boQuaKiemTra && step > KT_BUOC_HIEN_TAI) {
+        if (KT_BUOC_HIEN_TAI < 2 && step >= 2) {
+          if (!document.getElementById('ktTaoDeTieuDe').value.trim()) {
+            showToast('Vui lòng nhập tiêu đề bài kiểm tra!', 'error');
+            document.getElementById('ktTaoDeTieuDe').focus();
+            return;
+          }
+        }
+        if (KT_BUOC_HIEN_TAI < 3 && step >= 3) {
+          var kiemTra = _ktThuThapDuLieuDe();
+          if (kiemTra.loi) { showToast(kiemTra.loi, 'error'); return; }
+        }
+      }
+      KT_BUOC_HIEN_TAI = step;
+      for (var i = 1; i <= 3; i++) {
+        document.getElementById('kt-step-pane-' + i).classList.toggle('kt-step-hientai', i === step);
+        var tab = document.getElementById('kt-step-tab-' + i);
+        tab.classList.toggle('kt-step-active', i === step);
+        tab.classList.toggle('kt-step-xong', i < step);
+      }
+      if (step === 2) ktAdmCapNhatDemBuilder();
+      if (step === 3) ktAdmCapNhatTongHop();
+    }
+
+    function _ktDocCauHoiTuBlock(block, idx) {
+      var loai = block.querySelector('.kt-loai-select').value;
+      var diem = Number(block.querySelector('.kt-diem-input').value) || 1;
+      var noiDung = block.querySelector('.kt-noidung-textarea').value.trim();
+      if (!noiDung) throw new Error('Câu ' + (idx + 1) + ': chưa nhập nội dung.');
+      var c = { loai: loai, diem: diem, noiDung: noiDung, hinhAnh: block.dataset.hinhAnh || '' };
+      if (loai !== 'tu_luan') {
+        var luaChon = [], dapAnDung = [];
+        block.querySelectorAll('.kt-luachon-row').forEach(function (row) {
+          var val = row.querySelector('input[type="text"]').value.trim();
+          if (!val) return;
+          luaChon.push(val);
+          if (row.querySelector('.kt-dapan-check').checked) dapAnDung.push(luaChon.length - 1);
+        });
+        if (luaChon.length < 2) throw new Error('Câu ' + (idx + 1) + ': cần ít nhất 2 lựa chọn.');
+        if (!dapAnDung.length) throw new Error('Câu ' + (idx + 1) + ': chưa chọn đáp án đúng.');
+        c.luaChon = luaChon; c.dapAnDung = dapAnDung;
+      }
+      return c;
+    }
+
+    function ktAdmCapNhatDemBuilder() {
+      var so = 0, diem = 0;
+      document.querySelectorAll('#ktCauHoiBuilder .kt-cauhoi-block').forEach(function (block) {
+        so++;
+        diem += Number(block.querySelector('.kt-diem-input').value) || 0;
+      });
+      var el = document.getElementById('ktBuilderDem');
+      if (el) el.innerText = so + ' câu · ' + diem + ' điểm';
+    }
+
+    function ktAdmCapNhatTongHop() {
+      var so = 0, diem = 0;
+      var dsCau = [];
+      document.querySelectorAll('#ktCauHoiBuilder .kt-cauhoi-block').forEach(function (block, idx) {
+        try {
+          var c = _ktDocCauHoiTuBlock(block, idx);
+          dsCau.push(c); so++; diem += c.diem;
+        } catch (e) {}
+      });
+      document.getElementById('ktTongHopCau').innerText = so;
+      document.getElementById('ktTongHopDiem').innerText = diem;
+      document.getElementById('ktTongHopMaDe').innerText = ktAdmLayMaDeDangChon().length;
+
+      var tenLoai = { mot_dap_an: 'Một đáp án', nhieu_dap_an: 'Nhiều đáp án', tu_luan: 'Tự luận' };
+      var html = '';
+      if (!dsCau.length) html = '<div style="text-align:center; color:#95a5a6; padding:14px 0; font-size:12.5px;">Chưa có câu hỏi hợp lệ.</div>';
+      dsCau.forEach(function (c, i) {
+        html += '<div class="kt-preview-item"><b>Câu ' + (i + 1) + '.</b> ' + _ktEsc(c.noiDung) +
+          '<span class="kt-preview-loai">' + (tenLoai[c.loai] || c.loai) + '</span>' +
+          '<div style="margin-top:4px; color:#7f8c8d; font-size:11.5px;">' + c.diem + ' điểm' +
+          (c.luaChon ? ' · ' + c.luaChon.length + ' lựa chọn · đáp án đúng: ' + c.dapAnDung.map(function (x) { return String.fromCharCode(65 + x); }).join(', ') : '') +
+          (c.hinhAnh ? ' · có ảnh minh hoạ' : '') + '</div></div>';
+      });
+      document.getElementById('ktXemTruocDe').innerHTML = html;
     }
 
     function _ktIsoChoDatetimeLocal(s) {
@@ -7323,11 +7601,18 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       inpDiem.placeholder = 'Điểm';
       inpDiem.className = 'kt-diem-input';
       inpDiem.style.cssText = 'width:80px; padding:8px; border:1px solid #ddd; border-radius:8px;';
+      var btnLuuKho = document.createElement('button');
+      btnLuuKho.className = 'kt-btn-nho';
+      btnLuuKho.style.cssText = 'margin-left:auto; background:#f3e5f5; color:#6a1b9a; font-weight:bold;';
+      btnLuuKho.innerHTML = '<i class="fas fa-box-archive"></i> Lưu vào kho';
+      btnLuuKho.addEventListener('click', function () {
+        var idx = Array.prototype.indexOf.call(document.querySelectorAll('#ktCauHoiBuilder .kt-cauhoi-block'), block);
+        ktAdmLuuCauVaoKho(block, Math.max(0, idx));
+      });
       var btnXoaCau = document.createElement('button');
       btnXoaCau.className = 'kt-btn-xoa'; btnXoaCau.innerHTML = '<i class="fas fa-trash"></i>';
-      btnXoaCau.style.marginLeft = 'auto';
-      btnXoaCau.addEventListener('click', function () { block.remove(); });
-      hangTren.appendChild(selLoai); hangTren.appendChild(inpDiem); hangTren.appendChild(btnXoaCau);
+      btnXoaCau.addEventListener('click', function () { block.remove(); ktAdmCapNhatDemBuilder(); });
+      hangTren.appendChild(selLoai); hangTren.appendChild(inpDiem); hangTren.appendChild(btnLuuKho); hangTren.appendChild(btnXoaCau);
       block.appendChild(hangTren);
 
       var taNoiDung = document.createElement('textarea');
@@ -7471,41 +7756,38 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       luaChonBox.appendChild(row);
     }
 
-    function ktAdmLuuDe() {
+    function _ktThuThapDuLieuDe() {
       var tieuDe = document.getElementById('ktTaoDeTieuDe').value.trim();
-      if (!tieuDe) { showToast('Vui lòng nhập tiêu đề!', 'error'); return; }
-      var moTa = document.getElementById('ktTaoDeMoTa').value.trim();
-      var thoiGianLam = document.getElementById('ktTaoDeThoiGianLam').value;
+      if (!tieuDe) return { loi: 'Vui lòng nhập tiêu đề bài kiểm tra!' };
       var hanNopRaw = document.getElementById('ktTaoDeHanNop').value;
       var hanNop = hanNopRaw ? new Date(hanNopRaw).toISOString() : '';
-      var soLanChuyenTab = Number(document.getElementById('ktTaoDeSoLanChuyenTab').value) || 0;
-
       var cauHoi = [];
       var loi = null;
       document.querySelectorAll('#ktCauHoiBuilder .kt-cauhoi-block').forEach(function (block, idx) {
         if (loi) return;
-        var loai = block.querySelector('.kt-loai-select').value;
-        var diem = Number(block.querySelector('.kt-diem-input').value) || 1;
-        var noiDung = block.querySelector('.kt-noidung-textarea').value.trim();
-        if (!noiDung) { loi = 'Câu ' + (idx + 1) + ': chưa nhập nội dung.'; return; }
-        var c = { loai: loai, diem: diem, noiDung: noiDung, hinhAnh: block.dataset.hinhAnh || '' };
-        if (loai !== 'tu_luan') {
-          var luaChon = [], dapAnDung = [];
-          block.querySelectorAll('.kt-luachon-row').forEach(function (row, i) {
-            var val = row.querySelector('input[type="text"]').value.trim();
-            if (!val) return;
-            luaChon.push(val);
-            if (row.querySelector('.kt-dapan-check').checked) dapAnDung.push(luaChon.length - 1);
-          });
-          if (luaChon.length < 2) { loi = 'Câu ' + (idx + 1) + ': cần ít nhất 2 lựa chọn.'; return; }
-          if (dapAnDung.length === 0) { loi = 'Câu ' + (idx + 1) + ': chưa chọn đáp án đúng.'; return; }
-          c.luaChon = luaChon; c.dapAnDung = dapAnDung;
-        }
-        cauHoi.push(c);
+        try { cauHoi.push(_ktDocCauHoiTuBlock(block, idx)); }
+        catch (e) { loi = e.message || String(e); }
       });
-      if (loi) { showToast(loi, 'error'); return; }
-      if (!cauHoi.length) { showToast('Cần ít nhất 1 câu hỏi!', 'error'); return; }
+      if (loi) return { loi: loi };
+      if (!cauHoi.length) return { loi: 'Cần ít nhất 1 câu hỏi!' };
+      return {
+        duLieu: {
+          tieuDe: tieuDe,
+          moTa: document.getElementById('ktTaoDeMoTa').value.trim(),
+          cauHoi: cauHoi,
+          thoiGianLam: document.getElementById('ktTaoDeThoiGianLam').value,
+          hanNop: hanNop,
+          soLanChuyenTab: Number(document.getElementById('ktTaoDeSoLanChuyenTab').value) || 0,
+          danhSachMaDe: ktAdmLayMaDeDangChon(),
+          xaoTron: document.getElementById('ktTaoDeXaoTron').checked
+        }
+      };
+    }
 
+    function ktAdmLuuDe() {
+      var ketQua = _ktThuThapDuLieuDe();
+      if (ketQua.loi) { showToast(ketQua.loi, 'error'); return; }
+      var d = ketQua.duLieu;
       var idDangSua = document.getElementById('ktTaoDeIdDangSua').value;
       var xuLySauLuu = function (res) {
         if (!res.success) { showToast(res.error, 'error'); return; }
@@ -7517,11 +7799,113 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 
       if (idDangSua) {
         google.script.run.withSuccessHandler(xuLySauLuu).withFailureHandler(baoLoi)
-          .admKiemTraSuaDe(currentUserToken, idDangSua, tieuDe, moTa, cauHoi, thoiGianLam, hanNop, soLanChuyenTab);
+          .admKiemTraSuaDe(currentUserToken, idDangSua, d.tieuDe, d.moTa, d.cauHoi, d.thoiGianLam, d.hanNop, d.soLanChuyenTab, d.danhSachMaDe, d.xaoTron);
       } else {
         google.script.run.withSuccessHandler(xuLySauLuu).withFailureHandler(baoLoi)
-          .admKiemTraTaoDe(currentUserToken, tieuDe, moTa, cauHoi, thoiGianLam, hanNop, soLanChuyenTab);
+          .admKiemTraTaoDe(currentUserToken, d.tieuDe, d.moTa, d.cauHoi, d.thoiGianLam, d.hanNop, d.soLanChuyenTab, d.danhSachMaDe, d.xaoTron);
       }
+    }
+
+    /* ---------- KHO CÂU HỎI DÙNG LẠI ---------- */
+
+    function ktAdmMoKhoCauHoi() {
+      document.getElementById('ktKhoCauHoiModalBg').style.display = 'flex';
+      ktKhoTaiDanhSach();
+    }
+
+    function ktKhoTaiDanhSach() {
+      var box = document.getElementById('ktKhoDanhSach');
+      box.innerHTML = '<div class="loading-logo-wrapper"><div class="loading-logo-text">Đang tải kho câu hỏi...</div></div>';
+      google.script.run
+        .withSuccessHandler(function (res) {
+          if (!res.success) { box.innerHTML = '<p style="color:#e74c3c; font-size:12.5px;">' + _ktEsc(res.error) + '</p>'; return; }
+          var tuKhoa = (document.getElementById('ktKhoTimKiem').value || '').trim().toLowerCase();
+          var loaiLoc = document.getElementById('ktKhoLocLoai').value;
+          var ds = (res.data || []).filter(function (c) {
+            if (loaiLoc && c.loai !== loaiLoc) return false;
+            if (!tuKhoa) return true;
+            return String(c.noiDung || '').toLowerCase().indexOf(tuKhoa) !== -1 ||
+              String(c.chuDe || '').toLowerCase().indexOf(tuKhoa) !== -1;
+          });
+          if (!ds.length) {
+            box.innerHTML = '<p style="text-align:center; color:#95a5a6; font-size:12.5px; padding:12px 0;">Chưa có câu hỏi nào trong kho. Bấm "Lưu vào kho" trên câu hỏi trong form tạo đề để thêm mới.</p>';
+            return;
+          }
+          box.innerHTML = '';
+          var tenLoai = { mot_dap_an: 'Một đáp án', nhieu_dap_an: 'Nhiều đáp án', tu_luan: 'Tự luận' };
+          ds.forEach(function (c) {
+            var item = document.createElement('div');
+            item.className = 'kt-kho-item';
+            item.innerHTML =
+              '<div style="display:flex; justify-content:space-between; gap:8px; align-items:center;">' +
+                '<span class="kt-preview-loai">' + (tenLoai[c.loai] || c.loai) + ' · ' + c.diem + ' điểm</span>' +
+                '<span style="font-size:10.5px; color:#95a5a6;">' + _ktEsc(c.chuDe || '') + '</span>' +
+              '</div>' +
+              '<div class="kt-noidung">' + _ktEsc(c.noiDung || '') + '</div>' +
+              (c.luaChon && c.luaChon.length
+                ? '<div style="font-size:11px; color:#7f8c8d;">' + c.luaChon.map(function (x, i) {
+                    return (c.dapAnDung.indexOf(i) !== -1 ? '✓ ' : '') + _ktEsc(x);
+                  }).join(' · ') + '</div>'
+                : '');
+            var hang = document.createElement('div');
+            hang.style.cssText = 'display:flex; gap:6px; margin-top:8px;';
+            var btnThem = document.createElement('button');
+            btnThem.className = 'kt-btn-nho';
+            btnThem.style.cssText = 'background:#e1f5fe; color:#0277bd; font-weight:bold;';
+            var dangMoForm = document.getElementById('ktTaoDeModalBg').style.display === 'flex';
+            btnThem.innerHTML = dangMoForm ? '<i class="fas fa-plus"></i> Thêm vào đề' : '<i class="fas fa-plus"></i> Dùng trong đề mới';
+            btnThem.addEventListener('click', function () { ktKhoThemVaoDe(c, !dangMoForm); });
+            var btnXoa = document.createElement('button');
+            btnXoa.className = 'kt-btn-xoa';
+            btnXoa.innerHTML = '<i class="fas fa-trash"></i>';
+            btnXoa.addEventListener('click', function () { ktKhoXoaCau(c.id); });
+            hang.appendChild(btnThem); hang.appendChild(btnXoa);
+            item.appendChild(hang);
+            box.appendChild(item);
+          });
+        })
+        .withFailureHandler(function (err) { box.innerHTML = '<p style="color:#e74c3c; font-size:12.5px;">Lỗi kết nối: ' + _ktEsc(err) + '</p>'; })
+        .admKiemTraDanhSachKho(currentUserToken);
+    }
+
+    function ktKhoThemVaoDe(cauHoi, taoDeMoi) {
+      if (taoDeMoi) {
+        ktAdmMoModalTaoDe(null);
+        document.getElementById('ktKhoCauHoiModalBg').style.display = 'none';
+      }
+      var blocks = document.querySelectorAll('#ktCauHoiBuilder .kt-cauhoi-block');
+      if (blocks.length === 1 && !blocks[0].querySelector('.kt-noidung-textarea').value.trim()) blocks[0].remove();
+      ktAdmThemCauHoi(cauHoi);
+      ktAdmCapNhatDemBuilder();
+      showToast('Đã thêm câu hỏi vào đề!', 'success');
+    }
+
+    function ktKhoXoaCau(idCauHoi) {
+      appConfirm({ title: 'Xoá câu hỏi khỏi kho?', message: 'Câu hỏi sẽ bị xoá vĩnh viễn khỏi kho (không ảnh hưởng các đề đã lưu).', okText: 'Xoá', danger: true }, function (ok) {
+        if (!ok) return;
+        google.script.run
+          .withSuccessHandler(function (res) {
+            if (!res.success) { showToast(res.error, 'error'); return; }
+            showToast('Đã xoá khỏi kho!', 'success');
+            ktKhoTaiDanhSach();
+          })
+          .withFailureHandler(function (err) { showToast('Lỗi kết nối: ' + err, 'error'); })
+          .admKiemTraXoaKhoiKho(currentUserToken, idCauHoi);
+      });
+    }
+
+    function ktAdmLuuCauVaoKho(block, idx) {
+      var cauHoi;
+      try { cauHoi = _ktDocCauHoiTuBlock(block, idx); }
+      catch (e) { showToast(e.message || String(e), 'error'); return; }
+      var chuDe = document.getElementById('ktTaoDeTieuDe').value.trim();
+      google.script.run
+        .withSuccessHandler(function (res) {
+          if (!res.success) { showToast(res.error, 'error'); return; }
+          showToast('Đã lưu câu hỏi vào kho!', 'success');
+        })
+        .withFailureHandler(function (err) { showToast('Lỗi kết nối: ' + err, 'error'); })
+        .admKiemTraLuuVaoKho(currentUserToken, cauHoi, chuDe);
     }
 
     /* ---------- ADMIN: XEM & CHẤM BÀI LÀM ---------- */
@@ -7544,7 +7928,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
               : '';
             row.innerHTML =
               '<div style="display:flex; justify-content:space-between; align-items:center;">' +
-                '<div><b>' + _ktEsc(bl.tenHT) + '</b><div class="kt-de-meta">Nộp lúc: ' + bl.thoiGianNop + '</div></div>' +
+                '<div><b>' + _ktEsc(bl.tenHT) + (bl.maDe ? ' <span class="kt-preview-loai">Đề ' + _ktEsc(bl.maDe) + '</span>' : '') + '</b><div class="kt-de-meta">Nộp lúc: ' + bl.thoiGianNop + '</div></div>' +
                 '<div style="text-align:right;">' + (bl.daChamTuLuan ? '<div style="font-weight:bold; color:#0277bd;">' + bl.diemTong + ' đ</div>' : '<span class="kt-badge chuacham">Chưa chấm</span>') + '</div>' +
               '</div>' + viPhamHtml;
             var btn = document.createElement('button');
