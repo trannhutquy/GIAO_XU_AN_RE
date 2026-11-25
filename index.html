@@ -2579,7 +2579,8 @@ window.chuanHoaAnh = function (u) {
 
 (function () {
   var SEL = ".profile-img, .td-rank-avt, .sobo-avatar, .quy-avatar-modern, .avatar-wrap img, .avatar-frame img, " +
-            "#head-img, #detail-img, #glv-head-img, #glv-side-img, #glv-hero-img, .glv-hero-img, .desktop-org-avatar";
+            "#head-img, #detail-img, #glv-head-img, #glv-side-img, #glv-hero-img, .glv-hero-img, .desktop-org-avatar, " +
+            "#welcome-avatar";
 
     // Sửa các <img> đang mang link cũ, kể cả ảnh được sinh sau (bảng xếp hạng, hồ sơ...)
   function suaAnh(img) {
@@ -7115,7 +7116,10 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date());
       } catch (e) { document.getElementById("welcome-date").textContent = ""; }
       var av = document.getElementById("head-img"), wav = document.getElementById("welcome-avatar");
-      if (av && wav && av.src) wav.src = av.src;
+      if (av && wav) {
+        var src = av.getAttribute("src") || "";
+        wav.src = src ? (window.chuanHoaAnh ? window.chuanHoaAnh(src) : src) : ANH_LOGO_MAC_DINH;
+      }
     }
     function toggleDarkMode() {
       var p = xdDocTuyChinh();
@@ -11052,9 +11056,13 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           if(res.success) {
             document.getElementById("head-img").src = res.newUrl;
             document.getElementById("detail-img").src = res.newUrl;
+            var wavMoi = document.getElementById("welcome-avatar");
+            if (wavMoi) wavMoi.src = window.chuanHoaAnh ? window.chuanHoaAnh(res.newUrl) : res.newUrl;
             showToast("Đã cập nhật ảnh đại diện mới thành công!", "success");
           } else {
             headImg.src = oldSrc;
+            var wavCu = document.getElementById("welcome-avatar");
+            if (wavCu) wavCu.src = oldSrc ? (window.chuanHoaAnh ? window.chuanHoaAnh(oldSrc) : oldSrc) : ANH_LOGO_MAC_DINH;
             showToast("Lỗi: " + res.error, "error");
           }
         }).updateAvatar(currentUserToken, base64Data, file.name);
