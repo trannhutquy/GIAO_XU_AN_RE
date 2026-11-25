@@ -2057,6 +2057,8 @@
         padding: 2px 9px; font-size: 10.5px; font-weight: 700;
       }
       .welcome-dot { opacity: .5; }
+      #welcome-date { cursor: pointer; }
+      #welcome-date:hover { color: var(--xd-accent); text-decoration: underline; }
       #welcome-personal-btn {
         flex-shrink: 0; border: 1px solid var(--xd-accent); background: transparent;
         color: var(--xd-accent); border-radius: 11px; padding: 9px 13px;
@@ -2197,6 +2199,85 @@
     .cbot-fab-leg { top: 35px; height: 16px; }
     .cbot-fab-leg-l { left: 12px; animation: lfLegL 0.85s ease-in-out infinite; }
     .cbot-fab-leg-r { left: 26px; animation: lfLegR 0.85s ease-in-out infinite; }
+
+    /* ===== LỊCH PHỤNG VỤ CÔNG GIÁO (hiện ngay trong app) ===== */
+    #pv-fab {
+      position: fixed; right: 18px; bottom: 164px; z-index: 901;
+      width: 52px; height: 52px; border-radius: 50%; border: 2px solid #fff;
+      background: linear-gradient(135deg, #8e24aa, #d32f2f); color: #fff;
+      box-shadow: 0 6px 18px rgba(0,0,0,.28); display: flex; align-items: center;
+      justify-content: center; cursor: pointer; font-size: 19px; padding: 0;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    #pv-fab:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 10px 24px rgba(0,0,0,.32); }
+    #pv-fab:active { transform: scale(.96); }
+    @media (min-width: 992px) { #pv-fab { right: 32px; bottom: 100px; width: 54px; height: 54px; } }
+
+    #pv-modal {
+      position: fixed; inset: 0; z-index: 6001; display: none;
+      align-items: center; justify-content: center; padding: 16px;
+      background: rgba(8,18,32,.6); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+      font-family: 'Be Vietnam Pro','Segoe UI',Tahoma,sans-serif;
+    }
+    #pv-modal .pv-card {
+      width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto;
+      background: #fff; color: #2c3e50; border-radius: 20px; padding: 20px 22px;
+      box-shadow: 0 24px 70px rgba(0,0,0,.35); box-sizing: border-box;
+      animation: modalContentPop .25s ease-out;
+    }
+    body.dark-mode #pv-modal .pv-card { background: #1a1b1f; color: #e1e3e6; }
+    .pv-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .pv-head h3 { margin: 0; font-size: 16.5px; font-weight: 800; }
+    .pv-head button {
+      border: 0; background: #f1f3f5; color: #2c3e50; width: 32px; height: 32px;
+      border-radius: 50%; cursor: pointer; font-size: 14px;
+    }
+    body.dark-mode .pv-head button { background: #26272c; color: #e1e3e6; }
+    .pv-nav { display: flex; align-items: center; gap: 8px; margin: 14px 0 10px; }
+    .pv-nav button {
+      border: 1px solid #eceff1; background: #fff; color: #2c3e50; border-radius: 9px;
+      min-width: 32px; height: 32px; cursor: pointer; font-size: 12px; font-weight: 700; padding: 0 9px;
+    }
+    body.dark-mode .pv-nav button { background: #26272c; border-color: #3a3b42; color: #e1e3e6; }
+    .pv-nav b { flex: 1; text-align: center; font-size: 14px; }
+    .pv-dow { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+    .pv-dow span { text-align: center; font-size: 10.5px; font-weight: 800; color: #7f8c8d; padding-bottom: 4px; }
+    .pv-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+    .pv-cell {
+      position: relative; min-height: 58px; border: 1px solid #eceff1; border-radius: 9px;
+      padding: 5px 4px; background: #fff; text-align: left; cursor: pointer;
+      display: flex; flex-direction: column; gap: 3px; font-family: inherit;
+      transition: border-color .15s ease, transform .15s ease;
+    }
+    .pv-cell:hover { border-color: var(--xd-accent); transform: translateY(-2px); }
+    body.dark-mode .pv-cell { background: #26272c; border-color: #3a3b42; }
+    .pv-cell.pv-trong { opacity: .25; cursor: default; }
+    .pv-cell.pv-trong:hover { transform: none; border-color: #eceff1; }
+    .pv-cell.pv-hom-nay { border: 2px solid var(--xd-accent); }
+    .pv-cell.pv-chon { box-shadow: 0 0 0 2px rgba(211,47,47,.25); }
+    .pv-so { font-size: 13px; font-weight: 800; }
+    .pv-ten {
+      font-size: 9.5px; line-height: 1.25; color: #5d6775; overflow: hidden;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    }
+    body.dark-mode .pv-ten { color: #b9bdc7; }
+    .pv-chip-mau { width: 9px; height: 9px; border-radius: 50%; position: absolute; top: 6px; right: 6px; }
+    .pv-xanh { background: #2e7d32; }
+    .pv-tim { background: #6a1b9a; }
+    .pv-trang { background: #f5f5f5; border: 1px solid #b0b8c1; }
+    .pv-do { background: #c62828; }
+    .pv-hong { background: #f48fb1; }
+    .pv-den { background: #212121; }
+    .pv-detail {
+      margin-top: 14px; padding: 12px 14px; border-radius: 12px; background: #f4f6f9;
+      font-size: 12.5px; line-height: 1.65;
+    }
+    body.dark-mode .pv-detail { background: #121214; }
+    .pv-detail b { color: var(--xd-accent); }
+    .pv-legend { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-top: 12px; font-size: 10.5px; color: #7f8c8d; }
+    .pv-legend span { display: inline-flex; align-items: center; gap: 4px; }
+    .pv-legend i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+    .pv-luu-y { font-size: 10.5px; color: #95a5a6; margin-top: 12px; line-height: 1.5; }
 
     /* ---- BÀI KIỂM TRA ---- */
     .kt-tab-btn { background:#f1f3f5; color:#2c3e50; }
@@ -2887,6 +2968,35 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     </div>
   </div>
 
+  <!-- LỊCH PHỤNG VỤ CÔNG GIÁO (mở từ nút gần logo nhảy ở góc dưới) -->
+  <div id="pv-modal" role="dialog" aria-modal="true">
+    <div class="pv-card">
+      <div class="pv-head">
+        <h3><i class="fas fa-calendar-day" style="color:var(--xd-accent);"></i> Lịch Phụng Vụ Công Giáo</h3>
+        <button type="button" onclick="pvDong()" aria-label="Đóng"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="pv-nav">
+        <button type="button" onclick="pvChuyenThang(-1)" title="Tháng trước"><i class="fas fa-chevron-left"></i></button>
+        <b id="pv-tieu-de"></b>
+        <button type="button" onclick="pvChuyenThang(1)" title="Tháng sau"><i class="fas fa-chevron-right"></i></button>
+        <button type="button" onclick="pvHomNay()">Hôm nay</button>
+      </div>
+      <div class="pv-dow">
+        <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span>
+      </div>
+      <div class="pv-grid" id="pv-grid"></div>
+      <div class="pv-detail" id="pv-chi-tiet"></div>
+      <div class="pv-legend">
+        <span><i class="pv-xanh"></i> Thường niên</span>
+        <span><i class="pv-tim"></i> Vọng / Chay</span>
+        <span><i class="pv-trang"></i> Giáng sinh / Phục sinh</span>
+        <span><i class="pv-do"></i> Lễ Chúa Thánh Thần / Tử đạo</span>
+        <span><i class="pv-hong"></i> Gaudete / Laetare</span>
+      </div>
+      <div class="pv-luu-y">Thông tin lịch phụng vụ mang tính tham khảo để đọc hằng ngày; với lễ trọng/ lễ buộc cụ thể của giáo xứ, vui lòng đối chiếu lịch phụng vụ chính thức.</div>
+    </div>
+  </div>
+
   <!-- MODAL CÁ NHÂN HOÁ GIAO DIỆN (mở từ Cài đặt hoặc nút trên thanh chào laptop) -->
   <div id="xd-pref-modal" role="dialog" aria-modal="true">
     <div class="xd-pref-card">
@@ -3220,7 +3330,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           <span class="welcome-dot">•</span>
           <span id="welcome-role" class="welcome-chip"></span>
           <span class="welcome-dot">•</span>
-          <span id="welcome-date"></span>
+          <span id="welcome-date" title="Mở Lịch Phụng Vụ" onclick="pvMoLich()"></span>
         </div>
       </div>
       <button type="button" id="welcome-personal-btn" onclick="moCaNhanHoa()"><i class="fas fa-sliders"></i> Cá nhân hoá</button>
@@ -4380,6 +4490,9 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         <span class="cbot-fab-leg cbot-fab-leg-r"></span>
       </span>
     </div>
+
+    <!-- NÚT LỊCH PHỤNG VỤ: nằm ngay cạnh logo nhảy ở góc dưới, mở lịch trong app -->
+    <button type="button" id="pv-fab" title="Lịch Phụng Vụ Công Giáo" onclick="pvMoLich()"><i class="fas fa-calendar-day"></i></button>
 
     <!-- ==========================================
          THANH MENU DƯỚI RÚT GỌN CÒN 4 MỤC CHÍNH (giống app trường học mẫu):
@@ -7267,6 +7380,200 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     } else {
       xdApDungTuyChinh();
     }
+
+    // ==========================================================
+    // LỊCH PHỤNG VỤ CÔNG GIÁO — tự tính trên máy, không gọi server,
+    // vẫn dùng được khi mất mạng. Dữ liệu lễ là tập hợp các lễ trọng/phổ
+    // thông thường gặp; các lễ riêng của giáo xứ vẫn phải đối chiếu lịch chính thức.
+    // ==========================================================
+    var pvNam = new Date().getFullYear(), pvThang = new Date().getMonth(), pvNgayChon = new Date().getDate();
+    var PV_TEN_MAU = {
+      xanh: "Xanh lá (Thường niên)", tim: "Tím (Vọng / Chay)",
+      trang: "Trắng (Giáng Sinh / Phục Sinh)", do: "Đỏ (Chúa Thánh Thần / Tử đạo)",
+      hong: "Hồng (Gaudete / Laetare)", den: "Đen (Các Linh Hồn)"
+    };
+    var PV_LE_CO_DINH = {
+      "1-1": ["Đức Mẹ Làm Mẹ Chúa Trời", "trang"],
+      "1-6": ["Hiển Linh", "trang"],
+      "2-2": ["Dâng Chúa trong đền thờ", "trang"],
+      "2-11": ["Đức Mẹ Lourdes", "trang"],
+      "3-19": ["Thánh Giuse", "trang"],
+      "3-25": ["Truyền Tin", "trang"],
+      "5-1": ["Thánh Giuse Thợ", "trang"],
+      "5-13": ["Đức Mẹ Fatima", "trang"],
+      "6-29": ["Thánh Phêrô và Phaolô", "do"],
+      "7-16": ["Đức Mẹ Núi Carmel", "trang"],
+      "8-15": ["Đức Mẹ Lên Trời", "trang"],
+      "9-8": ["Sinh nhật Đức Mẹ", "trang"],
+      "9-14": ["Tôn vinh Thánh Giá", "do"],
+      "10-7": ["Đức Mẹ Mân Côi", "trang"],
+      "11-1": ["Các Thánh", "trang"],
+      "11-2": ["Các Linh Hồn", "den"],
+      "11-21": ["Dâng Đức Mẹ trong đền thờ", "trang"],
+      "12-8": ["Đức Mẹ Vô Nhiễm Nguyên Tội", "trang"],
+      "12-12": ["Đức Mẹ Guadalupe", "trang"],
+      "12-25": ["Giáng Sinh", "trang"],
+      "12-26": ["Thánh Stêphanô", "do"],
+      "12-27": ["Thánh Gioan Tông đồ", "trang"],
+      "12-28": ["Các Thánh Anh Hài", "do"]
+    };
+    function pvNgay(nam, thang, ngay) { return new Date(nam, thang, ngay, 12, 0, 0); }
+    function pvThemNgay(d, n) { var x = new Date(d.getTime()); x.setDate(x.getDate() + n); return x; }
+    function pvSoNgay(a, b) { return Math.round((a.getTime() - b.getTime()) / 86400000); }
+    function pvSanh(a, b) { return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
+    function pvKhoa(d) { return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); }
+    function pvPhucSinh(nam) {
+      var a = nam % 19, b = Math.floor(nam / 100), c = nam % 100;
+      var d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25);
+      var g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30;
+      var i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7;
+      var m = Math.floor((a + 11 * h + 22 * l) / 451);
+      var thang = Math.floor((h + l - 7 * m + 114) / 31);
+      var ngay = ((h + l - 7 * m + 114) % 31) + 1;
+      return pvNgay(nam, thang - 1, ngay);
+    }
+    function pvChuaNhatVong(nam) {
+      var d = pvNgay(nam, 10, 27);
+      return pvThemNgay(d, (7 - d.getDay()) % 7);
+    }
+    function pvBapGiuoc(nam) {
+      var d = pvNgay(nam, 0, 7);
+      return pvThemNgay(d, (7 - d.getDay()) % 7);
+    }
+    function pvThongTinNgay(d) {
+      // Chuẩn hoá về trưa cùng ngày để so sánh không bị lệch do giờ (00:00 / 12:00).
+      d = pvNgay(d.getFullYear(), d.getMonth(), d.getDate());
+      var nam = d.getFullYear(), ps = pvPhucSinh(nam);
+      var laCN = d.getDay() === 0;
+      var namPhungVu = (d.getMonth() === 0 && d < pvBapGiuoc(nam)) ? nam - 1 : nam;
+      var chuKy = namPhungVu % 3 === 1 ? "A" : (namPhungVu % 3 === 2 ? "B" : "C");
+      var ky = laCN ? " (năm " + chuKy + ")" : "";
+      var kq = { ten: "", ma: "xanh", loai: "Thường niên" };
+
+      var lua = pvThemNgay(ps, -7), thangSauTot = pvThemNgay(ps, -2);
+      var chuaThanThan = pvThemNgay(ps, 49), baNguy = pvThemNgay(ps, 56);
+      var dauVong = pvChuaNhatVong(nam), cuoiVong = pvChuaNhatVong(nam + 1);
+      var dauChay = pvThemNgay(ps, -46);
+      var giangSinh = pvNgay(nam, 11, 25), ketThucGS = pvBapGiuoc(nam + 1);
+
+      if (d >= lua && d <= thangSauTot) {
+        kq.loai = "Tuần Thánh"; kq.ma = "tim";
+        if (pvSanh(d, lua)) { kq.ten = "Chúa Nhật Lá" + ky; kq.ma = "do"; }
+        else if (pvSanh(d, thangSauTot)) { kq.ten = "Thứ Sáu Tuần Thánh"; kq.ma = "do"; }
+        else if (pvSanh(d, pvThemNgay(ps, -1))) { kq.ten = "Thứ Năm Tuần Thánh"; kq.ma = "trang"; }
+      } else if (d >= ps && d <= chuaThanThan) {
+        kq.loai = "Mùa Phục Sinh"; kq.ma = "trang";
+        if (laCN) {
+          if (pvSanh(d, ps)) kq.ten = "Chúa Nhật Phục Sinh" + ky;
+          else if (pvSanh(d, baNguy)) kq.ten = "Chúa Nhật Ba Ngôi" + ky;
+          else kq.ten = "Chúa Nhật Phục Sinh tuần " + (pvSoNgay(d, ps) / 7 + 1) + ky;
+        }
+      } else if (d >= giangSinh && d < ketThucGS) {
+        kq.loai = "Mùa Giáng Sinh"; kq.ma = "trang";
+        if (laCN) kq.ten = "Chúa Nhật Giáng Sinh" + ky;
+      } else if (d >= dauVong && d < cuoiVong) {
+        kq.loai = "Mùa Vọng"; kq.ma = "tim";
+        if (laCN) {
+          var tuanVong = pvSoNgay(d, dauVong) / 7 + 1;
+          kq.ten = "Chúa Nhật " + tuanVong + " Mùa Vọng" + ky;
+          if (tuanVong === 3) kq.ma = "hong";
+        }
+      } else if (d.getMonth() === 0 && d < pvBapGiuoc(nam)) {
+        kq.loai = "Mùa Giáng Sinh"; kq.ma = "trang";
+        if (laCN) kq.ten = "Chúa Nhật Giáng Sinh" + ky;
+      } else if (d >= dauChay && d < lua) {
+        kq.loai = "Mùa Chay"; kq.ma = "tim";
+        if (laCN) {
+          var tuanChay = Math.floor((pvSoNgay(d, dauChay) + 3) / 7);
+          kq.ten = "Chúa Nhật " + tuanChay + " Mùa Chay" + ky;
+          if (tuanChay === 4) kq.ma = "hong";
+        }
+      } else {
+        kq.loai = "Thường niên"; kq.ma = "xanh";
+        if (laCN) kq.ten = "Chúa Nhật Thường niên" + ky;
+      }
+
+      var leDong = {};
+      leDong[pvKhoa(ps)] = ["Chúa Nhật Phục Sinh", "trang"];
+      leDong[pvKhoa(pvThemNgay(ps, 39))] = ["Chúa lên trời", "trang"];
+      leDong[pvKhoa(chuaThanThan)] = ["Chúa Thánh Thần hiện xuống", "do"];
+      leDong[pvKhoa(baNguy)] = ["Chúa Ba Ngôi", "trang"];
+      leDong[pvKhoa(pvThemNgay(ps, 60))] = ["Mình và Máu Chúa Kitô", "trang"];
+      leDong[pvKhoa(pvThemNgay(ps, 68))] = ["Thánh Tâm Chúa", "trang"];
+      // Lễ cố định tra theo tháng-ngày; lễ động (Phục Sinh...) tra theo ngày đầy đủ.
+      var khoa = pvKhoa(d);
+      var le = PV_LE_CO_DINH[(d.getMonth() + 1) + "-" + d.getDate()] || leDong[khoa];
+      if (le) { kq.ten = le[0]; kq.ma = le[1]; }
+      if (!kq.ten) kq.ten = "Ngày thường";
+      return kq;
+    }
+    function pvChonNgay(nam, thang, ngay) {
+      pvNam = nam; pvThang = thang; pvNgayChon = ngay;
+      var d = pvNgay(nam, thang, ngay), tt = pvThongTinNgay(d);
+      var tenNgay = "Chủ nhật";
+      try { tenNgay = new Intl.DateTimeFormat("vi-VN", { weekday: "long" }).format(d); } catch (e) {}
+      var el = document.getElementById("pv-chi-tiet");
+      if (!el) return;
+      el.innerHTML = '<b>' + ngay + '/' + (thang + 1) + '/' + nam + ' — ' + escapeHtml(tenNgay) + '</b><br>' +
+        'Mùa phụng vụ: ' + escapeHtml(tt.loai) + '<br>' +
+        'Lễ / ngày: ' + escapeHtml(tt.ten) + '<br>' +
+        'Màu phụng vụ: ' + escapeHtml(PV_TEN_MAU[tt.ma] || tt.ma);
+    }
+    function pvVe() {
+      var grid = document.getElementById("pv-grid");
+      if (!grid) return;
+      var tieu = document.getElementById("pv-tieu-de");
+      if (tieu) tieu.textContent = "Tháng " + (pvThang + 1) + " / " + pvNam;
+      var dau = pvNgay(pvNam, pvThang, 1);
+      var soNgay = new Date(pvNam, pvThang + 1, 0).getDate();
+      var batDau = (dau.getDay() + 6) % 7;
+      var homNay = new Date();
+      var html = "";
+      for (var i = 0; i < batDau; i++) html += '<div class="pv-cell pv-trong"></div>';
+      for (var ngay = 1; ngay <= soNgay; ngay++) {
+        var d = pvNgay(pvNam, pvThang, ngay), tt = pvThongTinNgay(d);
+        var lk = pvSanh(d, homNay) ? " pv-hom-nay" : "";
+        html += '<button type="button" class="pv-cell' + lk + '" onclick="pvChonNgay(' + pvNam + ',' + pvThang + ',' + ngay + ')">' +
+          '<span class="pv-so">' + ngay + '</span>' +
+          '<span class="pv-ten">' + escapeHtml(tt.ten) + '</span>' +
+          '<i class="pv-chip-mau pv-' + tt.ma + '"></i></button>';
+      }
+      var du = (7 - ((batDau + soNgay) % 7)) % 7;
+      for (var j = 0; j < du; j++) html += '<div class="pv-cell pv-trong"></div>';
+      grid.innerHTML = html;
+      pvChonNgay(pvNam, pvThang, Math.min(pvNgayChon, soNgay));
+    }
+    function pvChuyenThang(step) {
+      var d = pvNgay(pvNam, pvThang + step, 1);
+      pvNam = d.getFullYear(); pvThang = d.getMonth(); pvNgayChon = 1;
+      pvVe();
+    }
+    function pvHomNay() {
+      var d = new Date();
+      pvNam = d.getFullYear(); pvThang = d.getMonth(); pvNgayChon = d.getDate();
+      pvVe();
+    }
+    function pvMoLich() {
+      var m = document.getElementById("pv-modal");
+      if (!m) return;
+      m.style.display = "flex";
+      pvHomNay();
+      var settings = document.getElementById("settingsDropdown");
+      if (settings) settings.style.display = "none";
+    }
+    function pvDong() {
+      var m = document.getElementById("pv-modal");
+      if (m) m.style.display = "none";
+    }
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Escape") return;
+      var m = document.getElementById("pv-modal");
+      if (m && m.style.display === "flex") pvDong();
+    });
+    (function () {
+      var m = document.getElementById("pv-modal");
+      if (m) m.addEventListener("click", function (e) { if (e.target === m) pvDong(); });
+    })();
     function openPasswordModal() { document.getElementById("pwd-modal").style.display = "flex"; }
     function closePasswordModal() { document.getElementById("pwd-modal").style.display = "none"; }
 
