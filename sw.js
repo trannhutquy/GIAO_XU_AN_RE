@@ -1,6 +1,6 @@
 // Service worker: má»Ÿ app Tá»¨C THÃŒ tá»« bá»™ nhá»› mÃ¡y, táº£i báº£n má»›i á»Ÿ ná»n, bÃ¡o khi cÃ³ báº£n má»›i,
 // vÃ  nháº­n THÃ”NG BÃO Äáº¨Y (Firebase Cloud Messaging) ká»ƒ cáº£ khi app Ä‘ang Ä‘Ã³ng.
-var VERSION = "v67";
+var VERSION = "v68";
 var SHELL = "shell-" + VERSION;
 var STATIC = "static-" + VERSION;
 var SHELL_FILES = ["./", "index.html", "config.js", "gas-shim.js", "push.js", "manifest.webmanifest",

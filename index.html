@@ -2200,9 +2200,11 @@
     .cbot-fab-leg-l { left: 12px; animation: lfLegL 0.85s ease-in-out infinite; }
     .cbot-fab-leg-r { left: 26px; animation: lfLegR 0.85s ease-in-out infinite; }
 
-    /* ===== LỊCH PHỤNG VỤ CÔNG GIÁO (hiện ngay trong app) ===== */
+    /* ===== LỊCH PHỤNG VỤ CÔNG GIÁO (hiện ngay trong app) =====
+       Đứng ngay TRÊN logo nhảy, cách ~24px để lúc logo nhảy lên vẫn không chạm
+       vào nút; tâm căn giữa với logo (logo 60px, nút 52px nên lệch right 4px). */
     #pv-fab {
-      position: fixed; right: 18px; bottom: 164px; z-index: 901;
+      position: fixed; right: 22px; bottom: 184px; z-index: 4002;
       width: 52px; height: 52px; border-radius: 50%; border: 2px solid #fff;
       background: linear-gradient(135deg, #8e24aa, #d32f2f); color: #fff;
       box-shadow: 0 6px 18px rgba(0,0,0,.28); display: flex; align-items: center;
@@ -2211,7 +2213,10 @@
     }
     #pv-fab:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 10px 24px rgba(0,0,0,.32); }
     #pv-fab:active { transform: scale(.96); }
-    @media (min-width: 992px) { #pv-fab { right: 32px; bottom: 100px; width: 54px; height: 54px; } }
+    /* Logo nhảy thực tế dùng bottom:96px ở MỌI màn hình (quy tắc chung ở dưới
+       cùng ghi đè quy tắc cũ trong media query), nên nút lịch phải giữ cùng mốc
+       184px như trên; nếu đẩy xuống 124px là nó đè lên đầu logo. */
+    @media (min-width: 992px) { #pv-fab { right: 21px; bottom: 184px; width: 54px; height: 54px; } }
 
     #pv-modal {
       position: fixed; inset: 0; z-index: 6001; display: none;
