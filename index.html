@@ -32,7 +32,8 @@
   
   <link rel="shortcut icon" href="icons/icon-192.png" type="image/png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <!-- Biểu đồ chỉ cần khi mở tab có chart: defer để không chặn parse HTML lúc mở app. -->
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <script src="config.js"></script>
   <script src="gas-shim.js"></script>
   <script src="push-config.js"></script>
@@ -377,7 +378,8 @@
       z-index: 9999;
     }
     #splash-screen.intro-run {
-      animation: introSplashFade 0.45s ease-in 3.95s forwards;
+      /* Rút từ ~4.4s xuống ~2.35s để mở app nhanh hơn; vẫn giữ cả 2 logo. */
+      animation: introSplashFade 0.35s ease-in 2s forwards;
     }
     #splash-screen.intro-done { display: none; }
     .intro-stage {
@@ -505,12 +507,12 @@
     /* Lưu ý: animation tắt chỉ dùng "forwards" (không "both"), nếu không
        trạng thái opacity:1 của nó sẽ đè lên animation hiện từ lúc trang vừa mở. */
     #splash-screen.intro-run .intro-logo-1 {
-      animation: introLogoIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0s both,
-                 introLogoOut 0.35s ease-in 1.3s forwards;
+      animation: introLogoIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0s both,
+                 introLogoOut 0.25s ease-in 0.75s forwards;
     }
     #splash-screen.intro-run .intro-logo-2 {
-      animation: introLogoIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) 1.8s both,
-                 introLogoOut 0.35s ease-in 3.1s forwards;
+      animation: introLogoIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) 1s both,
+                 introLogoOut 0.25s ease-in 1.65s forwards;
     }
 
     /* MÀN HÌNH "ĐANG ĐĂNG NHẬP LẠI" (khôi phục phiên): dùng lại đúng chuỗi intro
@@ -4493,7 +4495,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         splash.addEventListener("animationend", function (e) {
           if (e.animationName === "introSplashFade") anSplash();
         });
-        setTimeout(anSplash, 6500); // dự phòng: luôn vào app sau tối đa 6,5 giây
+        setTimeout(anSplash, 4000); // dự phòng: luôn vào app sau tối đa 4 giây
       }
       var logoDau = splash.querySelector(".intro-logo-1");
       if (logoDau && !logoDau.complete) {
@@ -4662,30 +4664,31 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     // chạy + hành trình) lấy sau, vì phần này nằm sẵn ở lớp đệm /api/gas nên
     // hầu như không tốn lượt chạy Apps Script nào.
     function taiGoiGop() {
+      // Gói CHUNG nằm ở lớp đệm /api/gas (gần như tức thì) nên gọi song song
+      // với gói RIÊNG, không chờ gói nặng xong mới bắt đầu gói nhẹ nữa.
+      var goiCuaToi = null, goiChung = null, daVe = false;
+      function veKhiDu() {
+        if (daVe || !goiCuaToi || !goiChung) return;
+        daVe = true;
+        goiCuaToi.cfg = goiChung.cfg;
+        goiCuaToi.hanhtrinh = goiChung.hanhtrinh;
+        apDungBootstrap(goiCuaToi);
+        luuBootCache(goiCuaToi);
+      }
       google.script.run
         .withSuccessHandler(function (res) {
           if (!res || !res.success) { taiGoiBootstrap(); return; }
-          taiPhanChung(res);
+          goiCuaToi = res;
+          veKhiDu();
         })
         .withFailureHandler(function () { taiGoiBootstrap(); })
         .xdCuaToi(currentUserToken);
-    }
-
-    function taiPhanChung(goiCuaToi) {
       google.script.run
         .withSuccessHandler(function (res) {
-          if (res && res.success) {
-            goiCuaToi.cfg = res.cfg;
-            goiCuaToi.hanhtrinh = res.hanhtrinh;
-            apDungBootstrap(goiCuaToi);
-            luuBootCache(goiCuaToi);
-          } else {
-            // Thiếu phần chung: loadAppConfigAndCountdown/loadHanhTrinhData
-            // sẽ tự gọi lại (cũng đi qua lớp đệm).
-            apDungBootstrap(goiCuaToi);
-          }
+          goiChung = (res && res.success) ? res : {};
+          veKhiDu();
         })
-        .withFailureHandler(function () { apDungBootstrap(goiCuaToi); })
+        .withFailureHandler(function () { goiChung = {}; veKhiDu(); })
         .xdChung();
     }
 
@@ -4704,8 +4707,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     // ---------- Bộ nhớ đệm gói bootstrap (theo từng tài khoản) ----------
     // Chỉ để hiển thị nhanh lúc mở app; server luôn là nguồn đúng sau cùng.
     var BOOT_CACHE_PREFIX = "xd_boot_";
-    var BOOT_CACHE_TOI_DA = 300 * 1024;            // gói > 300KB thì không lưu (tránh đầy localStorage)
-    var BOOT_CACHE_TUOI_MS = 12 * 60 * 60 * 1000;  // quá 12 giờ thì bỏ
+    var BOOT_CACHE_TOI_DA = 1200 * 1024;           // gói > 1,2MB thì không lưu (tránh đầy localStorage)
+    var BOOT_CACHE_TUOI_MS = 3 * 24 * 60 * 60 * 1000; // 3 ngày; vẫn luôn làm mới từ server ở nền
 
     function docBootCache() {
       if (!currentUserToken) return null;
