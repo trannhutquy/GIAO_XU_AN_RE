@@ -2017,6 +2017,154 @@
       .cbot-fab { right: 32px; bottom: 32px; z-index: 4001; }
     }
 
+    /* ==========================================================
+       CÁ NHÂN HOÁ GIAO DIỆN LAPTOP
+       - Màu nhấn / giao diện tối / mật độ được lưu riêng cho từng tài khoản.
+       - Chỉ áp dụng ở màn hình >=992px; điện thoại giữ nguyên giao diện cũ
+         (trừ Giao diện Tối vốn đã có sẵn và giờ được nhớ lại).
+       ========================================================== */
+    :root { --xd-accent: #d32f2f; }
+
+    @media (min-width: 992px) {
+      #desktop-welcome {
+        display: flex; align-items: center; gap: 14px;
+        position: fixed; top: 0; left: var(--sb-w); right: 0; height: 88px;
+        padding: 0 30px; box-sizing: border-box; z-index: 2500;
+        background: rgba(255,255,255,.92); border-bottom: 1px solid rgba(0,0,0,.05);
+        backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      }
+      body.dark-mode #desktop-welcome {
+        background: rgba(18,18,20,.92); border-bottom-color: rgba(255,255,255,.06);
+      }
+      #welcome-avatar {
+        width: 48px; height: 48px; border-radius: 50%; object-fit: cover;
+        border: 2px solid var(--xd-accent); flex-shrink: 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,.08);
+      }
+      #welcome-text { flex: 1; min-width: 0; }
+      #welcome-text h2 {
+        margin: 0 0 4px; font-size: 18px; font-weight: 800; color: #2c3e50;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      body.dark-mode #welcome-text h2 { color: #eef1f6; }
+      #welcome-name { color: var(--xd-accent); }
+      #welcome-meta {
+        display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+        font-size: 12px; color: #7f8c8d;
+      }
+      .welcome-chip {
+        background: var(--xd-accent); color: #fff; border-radius: 20px;
+        padding: 2px 9px; font-size: 10.5px; font-weight: 700;
+      }
+      .welcome-dot { opacity: .5; }
+      #welcome-personal-btn {
+        flex-shrink: 0; border: 1px solid var(--xd-accent); background: transparent;
+        color: var(--xd-accent); border-radius: 11px; padding: 9px 13px;
+        font: 700 12px 'Be Vietnam Pro','Segoe UI',sans-serif; cursor: pointer;
+        transition: background .18s ease, color .18s ease, transform .18s ease;
+      }
+      #welcome-personal-btn:hover { background: var(--xd-accent); color: #fff; transform: translateY(-2px); }
+      .content { padding-top: 116px !important; }
+
+      /* Ẩn thẻ theo lựa chọn của người dùng (thắng display:block !important cũ) */
+      .xd-hidden-card { display: none !important; }
+
+      /* Màu nhấn: chỉ đổi các điểm nhấn của riêng giao diện laptop để không
+         làm thay đổi màu của các trang phụ vốn đã được thiết kế sẵn. */
+      .desktop-title-bar { background: var(--xd-accent) !important; }
+      .desktop-org-avatar { border-color: var(--xd-accent) !important; }
+      .desktop-settings-btn:hover { color: var(--xd-accent) !important; }
+      .desktop-footerbar-btn:hover {
+        background: var(--xd-accent) !important; border-color: var(--xd-accent) !important;
+      }
+      .desktop-tool-btn i { color: var(--xd-accent) !important; }
+      .desktop-tool-btn:hover {
+        background: var(--xd-accent) !important; border-color: var(--xd-accent) !important;
+      }
+      .desktop-tool-btn:hover i { color: #fff !important; }
+      #settingsDropdown div:hover { color: var(--xd-accent) !important; }
+
+      /* Chế độ gọn: nhiều nội dung hơn trên cùng một màn hình */
+      body.xd-compact .content { grid-template-rows: 370px 370px; gap: 14px; padding-top: 102px !important; }
+      body.xd-compact #profile-page, body.xd-compact #absence,
+      body.xd-compact #work-page, body.xd-compact #cttt { padding: 14px !important; }
+      body.xd-compact .desktop-footerbar-btn { padding: 9px 12px; }
+      body.xd-compact .desktop-tool-btn { min-height: 46px; padding: 6px 3px; }
+      body.xd-compact .desktop-quicktools-grid { gap: 5px; }
+      body.xd-compact #desktop-welcome { height: 74px; }
+      body.xd-compact #welcome-avatar { width: 40px; height: 40px; }
+    }
+
+    /* Modal cá nhân hoá (dùng được cả trên điện thoại để bật/tối + màu nhấn) */
+    #xd-pref-modal {
+      position: fixed; inset: 0; z-index: 6000; display: none;
+      align-items: center; justify-content: center; padding: 18px;
+      background: rgba(8,18,32,.58); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+      font-family: 'Be Vietnam Pro','Segoe UI',Tahoma,sans-serif;
+    }
+    #xd-pref-modal .xd-pref-card {
+      width: 100%; max-width: 520px; max-height: 88vh; overflow-y: auto;
+      background: #fff; color: #2c3e50; border-radius: 20px; padding: 22px 24px;
+      box-shadow: 0 24px 70px rgba(0,0,0,.35); box-sizing: border-box;
+      animation: modalContentPop .25s ease-out;
+    }
+    body.dark-mode #xd-pref-modal .xd-pref-card { background: #1a1b1f; color: #e1e3e6; }
+    .xd-pref-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .xd-pref-head h3 { margin: 0; font-size: 17px; font-weight: 800; }
+    .xd-pref-head button {
+      border: 0; background: #f1f3f5; color: #2c3e50; width: 32px; height: 32px;
+      border-radius: 50%; cursor: pointer; font-size: 14px;
+    }
+    body.dark-mode .xd-pref-head button { background: #26272c; color: #e1e3e6; }
+    .xd-pref-note { font-size: 12px; color: #7f8c8d; margin: 8px 0 16px; }
+    .xd-pref-sec { margin-bottom: 16px; }
+    .xd-pref-sec-title {
+      font-size: 11px; font-weight: 800; letter-spacing: .5px; color: var(--xd-accent);
+      text-transform: uppercase; margin-bottom: 8px;
+    }
+    .xd-pref-card-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: 9px 10px; border: 1px solid #eceff1; border-radius: 11px; margin-bottom: 6px;
+      font-size: 13px; font-weight: 600;
+    }
+    body.dark-mode .xd-pref-card-row { border-color: #3a3b42; }
+    .xd-pref-card-row label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .xd-pref-card-row small { color: #95a5a6; font-weight: 400; font-size: 10.5px; }
+    .xd-pref-move { display: flex; gap: 4px; }
+    .xd-pref-move button {
+      border: 1px solid #eceff1; background: #fff; color: #2c3e50; width: 26px; height: 26px;
+      border-radius: 7px; cursor: pointer; font-size: 10px;
+    }
+    body.dark-mode .xd-pref-move button { background: #26272c; border-color: #3a3b42; color: #e1e3e6; }
+    .xd-pref-move button:disabled { opacity: .35; cursor: default; }
+    .xd-pref-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: 9px 10px; border: 1px solid #eceff1; border-radius: 11px; margin-bottom: 6px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    body.dark-mode .xd-pref-row { border-color: #3a3b42; }
+    #xd-pref-colors { display: flex; gap: 9px; flex-wrap: wrap; }
+    .xd-pref-color {
+      width: 30px; height: 30px; border-radius: 50%; border: 3px solid #fff; cursor: pointer;
+      box-shadow: 0 0 0 1px rgba(0,0,0,.12);
+    }
+    .xd-pref-color.xd-dang-chon { box-shadow: 0 0 0 2px var(--xd-accent), 0 0 0 4px #fff; }
+    .xd-pref-keys { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; font-size: 12px; color: #5d6775; }
+    body.dark-mode .xd-pref-keys { color: #b9bdc7; }
+    .xd-pref-keys kbd {
+      display: inline-block; background: #f1f3f5; border: 1px solid #dcdfe3;
+      border-radius: 5px; padding: 1px 5px; font: 700 10.5px monospace; color: #2c3e50; margin-right: 5px;
+    }
+    body.dark-mode .xd-pref-keys kbd { background: #26272c; border-color: #3a3b42; color: #e1e3e6; }
+    .xd-pref-actions { display: flex; gap: 8px; margin-top: 18px; }
+    .xd-pref-actions button {
+      flex: 1; border: 0; border-radius: 11px; padding: 11px; cursor: pointer;
+      font: 700 13px 'Be Vietnam Pro','Segoe UI',sans-serif;
+    }
+    #xd-pref-reset { background: #f1f3f5; color: #2c3e50; }
+    #xd-pref-save { background: var(--xd-accent); color: #fff; }
+    body.dark-mode #xd-pref-reset { background: #26272c; color: #e1e3e6; }
+
     /* ==========================================
        NÚT NỔI HÌNH NHÂN VẬT (chỉ trang trí — đã bỏ khung chat AI)
        ========================================== */
@@ -2738,6 +2886,57 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     </div>
   </div>
 
+  <!-- MODAL CÁ NHÂN HOÁ GIAO DIỆN (mở từ Cài đặt hoặc nút trên thanh chào laptop) -->
+  <div id="xd-pref-modal" role="dialog" aria-modal="true">
+    <div class="xd-pref-card">
+      <div class="xd-pref-head">
+        <h3><i class="fas fa-sliders" style="color:var(--xd-accent);"></i> Cá nhân hoá giao diện</h3>
+        <button type="button" onclick="dongCaNhanHoa()" aria-label="Đóng"><i class="fas fa-times"></i></button>
+      </div>
+      <p class="xd-pref-note">Thiết lập được lưu riêng cho tài khoản <b id="xd-pref-user">này</b> trên máy này.</p>
+
+      <div class="xd-pref-sec">
+        <div class="xd-pref-sec-title">1. Thẻ trên bảng điều khiển (laptop)</div>
+        <div id="xd-pref-cards"></div>
+      </div>
+
+      <div class="xd-pref-sec">
+        <div class="xd-pref-sec-title">2. Giao diện</div>
+        <label class="xd-pref-row"><span><i class="fas fa-moon"></i> Giao diện Tối</span><input type="checkbox" id="xd-pref-dark"></label>
+        <label class="xd-pref-row"><span><i class="fas fa-compress"></i> Gọn hơn (hiện nhiều nội dung)</span><input type="checkbox" id="xd-pref-compact"></label>
+        <div class="xd-pref-sec-title" style="margin-top:12px;">Màu nhấn</div>
+        <div id="xd-pref-colors">
+          <button type="button" class="xd-pref-color" data-xd-color="#d32f2f" style="background:#d32f2f" title="Đỏ"></button>
+          <button type="button" class="xd-pref-color" data-xd-color="#1565c0" style="background:#1565c0" title="Xanh dương"></button>
+          <button type="button" class="xd-pref-color" data-xd-color="#2e7d32" style="background:#2e7d32" title="Xanh lá"></button>
+          <button type="button" class="xd-pref-color" data-xd-color="#6a1b9a" style="background:#6a1b9a" title="Tím"></button>
+          <button type="button" class="xd-pref-color" data-xd-color="#ef6c00" style="background:#ef6c00" title="Cam"></button>
+        </div>
+      </div>
+
+      <div class="xd-pref-sec">
+        <div class="xd-pref-sec-title">3. Phím tắt nhanh (chỉ trên laptop)</div>
+        <div class="xd-pref-keys">
+          <div><kbd>Ctrl+Shift+1</kbd> Thiếu nhi</div>
+          <div><kbd>Ctrl+Shift+2</kbd> Báo cáo</div>
+          <div><kbd>Ctrl+Shift+3</kbd> Thu quỹ</div>
+          <div><kbd>Ctrl+Shift+4</kbd> Duyệt</div>
+          <div><kbd>Ctrl+Shift+5</kbd> Điểm danh buổi</div>
+          <div><kbd>Ctrl+Shift+6</kbd> Khẩn cấp</div>
+          <div><kbd>Ctrl+Shift+7</kbd> Thi đua</div>
+          <div><kbd>Ctrl+Shift+8</kbd> Bài kiểm tra</div>
+          <div><kbd>Ctrl+Shift+9</kbd> Sổ bộ HT</div>
+          <div><kbd>Esc</kbd> Đóng cửa sổ</div>
+        </div>
+      </div>
+
+      <div class="xd-pref-actions">
+        <button type="button" id="xd-pref-reset" onclick="xdDatLaiTuyChinh()">Đặt lại</button>
+        <button type="button" id="xd-pref-save" onclick="luuCaNhanHoa()">Lưu thay đổi</button>
+      </div>
+    </div>
+  </div>
+
   <!-- BANNER NHẮC VIỆC (lịch sự kiện sắp tới / chưa đóng quỹ tuần) - tự tắt sau 7 giây -->
   <div id="nhacviec-container"></div>
   <canvas id="confetti-canvas"></canvas>
@@ -3009,6 +3208,23 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   </div>
 
   <div id="main-app">
+    <!-- THANH CHÀO CÁ NHÂN (chỉ hiện trên laptop): tên, chức vụ, ngày tháng +
+         nút mở tuỳ biến. Dữ liệu được điền bằng JS ngay sau khi đăng nhập. -->
+    <div id="desktop-welcome" class="desktop-only">
+      <img id="welcome-avatar" src="icons/icon-512.png" alt="" decoding="async">
+      <div id="welcome-text">
+        <h2><span id="welcome-greeting"></span><span id="welcome-name"></span> <span>👋</span></h2>
+        <div id="welcome-meta">
+          <span id="welcome-unit"></span>
+          <span class="welcome-dot">•</span>
+          <span id="welcome-role" class="welcome-chip"></span>
+          <span class="welcome-dot">•</span>
+          <span id="welcome-date"></span>
+        </div>
+      </div>
+      <button type="button" id="welcome-personal-btn" onclick="moCaNhanHoa()"><i class="fas fa-sliders"></i> Cá nhân hoá</button>
+    </div>
+
     <!-- ==========================================
          SIDEBAR TRÁI (LAPTOP/DESKTOP): gộp thanh CÀI ĐẶT + tên xứ đoàn (trước đây là
          thanh ngang trên đỉnh) và 4 nút điều hướng nhanh (trước đây là thanh ngang
@@ -3023,21 +3239,21 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         <button class="desktop-settings-btn" onclick="toggleMenu(event)"><i class="fas fa-cog"></i> CÀI ĐẶT</button>
       </div>
       <div id="desktop-footerbar" class="desktop-only">
-        <button class="desktop-footerbar-btn" onclick="showPage('thieunhi-page', null)"><i class="fas fa-users"></i> THIẾU NHI</button>
-        <button class="desktop-footerbar-btn" onclick="showPage('report', null)"><i class="fas fa-chart-bar"></i> BÁO CÁO</button>
-        <button class="desktop-footerbar-btn" onclick="showPage('quy-page', null); quyKhoiTao();"><i class="fas fa-coins"></i> THU QUỸ</button>
-        <button id="desktop-btn-duyet" class="desktop-footerbar-btn" style="display:none; position:relative;" onclick="showPage('approval-page', null)"><i class="fas fa-clipboard-check"></i> DUYỆT<span id="approval-badge-desktop" class="approval-unread-dot" style="display:none;"></span></button>
+        <button class="desktop-footerbar-btn" title="Ctrl+Shift+1" onclick="showPage('thieunhi-page', null)"><i class="fas fa-users"></i> THIẾU NHI</button>
+        <button class="desktop-footerbar-btn" title="Ctrl+Shift+2" onclick="showPage('report', null)"><i class="fas fa-chart-bar"></i> BÁO CÁO</button>
+        <button class="desktop-footerbar-btn" title="Ctrl+Shift+3" onclick="showPage('quy-page', null); quyKhoiTao();"><i class="fas fa-coins"></i> THU QUỸ</button>
+        <button id="desktop-btn-duyet" class="desktop-footerbar-btn" title="Ctrl+Shift+4" style="display:none; position:relative;" onclick="showPage('approval-page', null)"><i class="fas fa-clipboard-check"></i> DUYỆT<span id="approval-badge-desktop" class="approval-unread-dot" style="display:none;"></span></button>
       </div>
       <!-- Các chức năng lấy từ menu Cài đặt ra, bấm nhanh không cần mở menu.
            onclick giữ y hệt menu để dùng chung logic (không nhân bản code). -->
       <div id="desktop-quicktools" class="desktop-only">
         <div class="desktop-quicktools-title">TIỆN ÍCH</div>
         <div class="desktop-quicktools-grid">
-          <button class="desktop-tool-btn" onclick="openDiemDanhBuoi()"><i class="fas fa-qrcode"></i><span>Điểm danh buổi</span></button>
-          <button class="desktop-tool-btn" onclick="openKhanCap()"><i class="fas fa-triangle-exclamation"></i><span>Khẩn cấp</span></button>
-          <button class="desktop-tool-btn" onclick="openThiDua()"><i class="fas fa-trophy"></i><span>Thi đua</span></button>
-          <button class="desktop-tool-btn" onclick="openKiemTra()"><i class="fas fa-file-signature"></i><span>Bài kiểm tra</span></button>
-          <button class="desktop-tool-btn" onclick="openSoBoHT()"><i class="fas fa-address-card"></i><span>Sổ bộ HT</span></button>
+          <button class="desktop-tool-btn" title="Ctrl+Shift+5" onclick="openDiemDanhBuoi()"><i class="fas fa-qrcode"></i><span>Điểm danh buổi</span></button>
+          <button class="desktop-tool-btn" title="Ctrl+Shift+6" onclick="openKhanCap()"><i class="fas fa-triangle-exclamation"></i><span>Khẩn cấp</span></button>
+          <button class="desktop-tool-btn" title="Ctrl+Shift+7" onclick="openThiDua()"><i class="fas fa-trophy"></i><span>Thi đua</span></button>
+          <button class="desktop-tool-btn" title="Ctrl+Shift+8" onclick="openKiemTra()"><i class="fas fa-file-signature"></i><span>Bài kiểm tra</span></button>
+          <button class="desktop-tool-btn" title="Ctrl+Shift+9" onclick="openSoBoHT()"><i class="fas fa-address-card"></i><span>Sổ bộ HT</span></button>
           <button class="desktop-tool-btn" onclick="openVanBanBieuMau()"><i class="fas fa-file-alt"></i><span>Văn bản</span></button>
           <button class="desktop-tool-btn" onclick="openBaoCaoVangLe()"><i class="fas fa-file-pdf"></i><span>Báo cáo vắng</span></button>
           <button class="desktop-tool-btn" onclick="window.XDThongBao && XDThongBao.moLichSu()"><i class="fas fa-bullhorn"></i><span>Thông báo</span></button>
@@ -3069,7 +3285,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         <div id="settingsDropdown" class="settings-menu">
           <div onclick="reloadApp()"><i class="fas fa-sync-alt"></i> Làm mới App</div>
           <div onclick="openPasswordModal()"><i class="fas fa-key"></i> Đổi mật khẩu</div>
-          <div onclick="toggleDarkMode()"><i class="fas fa-moon"></i> Giao diện Tối</div>
+          <div onclick="toggleDarkMode()"><i id="menu-dark-icon" class="fas fa-moon"></i> <span id="menu-dark-label">Giao diện Tối</span></div>
+          <div onclick="moCaNhanHoa()"><i class="fas fa-sliders"></i> Cá nhân hoá giao diện</div>
           <div onclick="window.hienGioiThieuPhienBan && window.hienGioiThieuPhienBan(true)"><i class="fas fa-rocket"></i> Bản cập nhật</div>
           <div onclick="window.XDPush && XDPush.bamNut()"><i id="menu-push-icon" class="fas fa-bell"></i> <span id="menu-push-label">Bật thông báo</span></div>
           <div onclick="openGiaoLy()"><i class="fas fa-cross"></i> Giáo Lý</div>
@@ -4573,6 +4790,9 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           document.getElementById("detail-unit").innerText = res.unit;
           document.getElementById("detail-img").src = userAvatar;
           document.getElementById("detail-ma").innerText = u;
+          // Áp sở thích giao diện riêng của mã HT này + điền thanh chào cá nhân.
+          try { localStorage.setItem("xd_last_user", u); } catch (e) {}
+          xdApDungTuyChinh();
           
           document.getElementById("cttt-unit-title").innerText = res.unit;
           document.getElementById("detail-qr-img").src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(u);
@@ -6811,7 +7031,238 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       var mGLV = document.getElementById("glvSettingsDropdown");
       if (mGLV) mGLV.style.display = "none";
     }
-    function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
+    // ==========================================================
+    // CÁ NHÂN HOÁ GIAO DIỆN — lưu riêng theo từng mã Huynh Trưởng trên máy này.
+    // Không gọi server, không đổi dữ liệu Sheets; chỉ là sở thích giao diện.
+    // ==========================================================
+    var XD_PREF_MAC_DINH = {
+      dark: false, compact: false, accent: "#d32f2f",
+      hidden: [], order: ["profile-page", "absence", "work-page", "cttt"]
+    };
+    var XD_TEN_THE = {
+      "profile-page": "Thông tin & QR cá nhân", "absence": "Lịch vắng mặt",
+      "work-page": "Lịch trực", "cttt": "Chuyên môn (CTTT)"
+    };
+    var xdPrefsTam = null;
+
+    function xdKhoaTuyChinh() {
+      var ma = currentUserMa || "";
+      try {
+        // Giáo Lý Viên dùng một khoá riêng, không ghi đè sở thích của HT đã đăng nhập trước đó.
+        if (!ma && typeof currentGLVToken !== "undefined" && currentGLVToken) ma = "glv";
+        if (!ma) ma = localStorage.getItem("xd_last_user") || "";
+      } catch (e) {}
+      return "xd_tuy_chinh_v1_" + (ma || "khach");
+    }
+    function xdDocTuyChinh() {
+      var p = JSON.parse(JSON.stringify(XD_PREF_MAC_DINH));
+      try {
+        var o = JSON.parse(localStorage.getItem(xdKhoaTuyChinh()) || "null");
+        if (!o || typeof o !== "object") return p;
+        if (typeof o.dark === "boolean") p.dark = o.dark;
+        if (typeof o.compact === "boolean") p.compact = o.compact;
+        if (typeof o.accent === "string" && /^#[0-9a-f]{6}$/i.test(o.accent)) p.accent = o.accent;
+        if (Array.isArray(o.order)) {
+          var hop = o.order.filter(function (id) { return !!XD_TEN_THE[id]; });
+          if (hop.length === 4) p.order = hop;
+        }
+        if (Array.isArray(o.hidden)) {
+          p.hidden = o.hidden.filter(function (id) { return id !== "profile-page" && !!XD_TEN_THE[id]; });
+        }
+      } catch (e) {}
+      return p;
+    }
+    function xdLuuTuyChinh(p) {
+      try {
+        localStorage.setItem(xdKhoaTuyChinh(), JSON.stringify(p));
+        if (currentUserMa) localStorage.setItem("xd_last_user", currentUserMa);
+      } catch (e) {}
+    }
+    function xdApDungTuyChinh() {
+      var p = xdDocTuyChinh();
+      document.body.classList.toggle("dark-mode", !!p.dark);
+      document.body.classList.toggle("xd-compact", !!p.compact);
+      try { document.documentElement.style.setProperty("--xd-accent", p.accent || XD_PREF_MAC_DINH.accent); } catch (e) {}
+      (p.order || []).forEach(function (id, i) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var an = id !== "profile-page" && (p.hidden || []).indexOf(id) >= 0;
+        el.classList.toggle("xd-hidden-card", an);
+        if (!an) {
+          el.style.gridArea = (i < 2 ? "1 / " + (i + 1) : "2 / " + (i - 1));
+          el.style.animationDelay = (i * 0.08) + "s";
+        }
+      });
+      var icon = document.getElementById("menu-dark-icon");
+      var label = document.getElementById("menu-dark-label");
+      if (label) label.textContent = p.dark ? "Giao diện Sáng" : "Giao diện Tối";
+      if (icon) icon.className = p.dark ? "fas fa-sun" : "fas fa-moon";
+      xdCapNhatChao();
+    }
+    function xdCapNhatChao() {
+      var g = document.getElementById("welcome-greeting");
+      if (!g) return;
+      var gio = new Date().getHours();
+      g.textContent = gio < 11 ? "Chào buổi sáng, " : (gio < 17 ? "Chào buổi chiều, " : "Chào buổi tối, ");
+      var tenEl = document.getElementById("head-name-text");
+      var ten = currentUserFullname || (tenEl && tenEl.textContent) || "Huynh Trưởng";
+      document.getElementById("welcome-name").textContent = ten;
+      document.getElementById("welcome-unit").textContent = currentUserUnit || "Thành viên";
+      document.getElementById("welcome-role").textContent = currentUserIsSuperAdmin
+        ? "Quyền Tối Cao" : (currentUserIsAdmin ? "Quản trị viên" : "Huynh Trưởng");
+      try {
+        document.getElementById("welcome-date").textContent = new Intl.DateTimeFormat("vi-VN",
+          { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date());
+      } catch (e) { document.getElementById("welcome-date").textContent = ""; }
+      var av = document.getElementById("head-img"), wav = document.getElementById("welcome-avatar");
+      if (av && wav && av.src) wav.src = av.src;
+    }
+    function toggleDarkMode() {
+      var p = xdDocTuyChinh();
+      p.dark = !document.body.classList.contains("dark-mode");
+      xdLuuTuyChinh(p); xdApDungTuyChinh();
+      try { showToast(p.dark ? "Đã bật Giao diện Tối" : "Đã tắt Giao diện Tối", "info"); } catch (e) {}
+    }
+
+    // ---- Modal tuỳ biến ----
+    function xdVeDanhSachThe(p) {
+      var box = document.getElementById("xd-pref-cards");
+      if (!box) return;
+      box.innerHTML = "";
+      (p.order || []).forEach(function (id, i) {
+        var an = id !== "profile-page" && (p.hidden || []).indexOf(id) >= 0;
+        var row = document.createElement("div");
+        row.className = "xd-pref-card-row";
+        var label = '<label><input type="checkbox" data-xd-card="' + id + '"' + (an ? "" : " checked") +
+          (id === "profile-page" ? " disabled" : "") + '> <span>' + (XD_TEN_THE[id] || id) + '</span>' +
+          (id === "profile-page" ? '<small>(luôn hiện)</small>' : '') + '</label>';
+        var nut = '<span class="xd-pref-move">' +
+          '<button type="button" data-xd-move="-1" data-xd-id="' + id + '"' + (i === 0 ? " disabled" : "") +
+            ' title="Lên"><i class="fas fa-chevron-up"></i></button>' +
+          '<button type="button" data-xd-move="1" data-xd-id="' + id + '"' + (i === p.order.length - 1 ? " disabled" : "") +
+            ' title="Xuống"><i class="fas fa-chevron-down"></i></button></span>';
+        row.innerHTML = label + nut;
+        box.appendChild(row);
+      });
+    }
+    function xdToMauTrongModal(mau) {
+      var ds = document.querySelectorAll(".xd-pref-color");
+      for (var i = 0; i < ds.length; i++) {
+        ds[i].classList.toggle("xd-dang-chon", ds[i].getAttribute("data-xd-color") === mau);
+      }
+    }
+    function moCaNhanHoa() {
+      xdPrefsTam = xdDocTuyChinh();
+      var u = document.getElementById("xd-pref-user");
+      if (u) u.textContent = currentUserMa || "này";
+      var dk = document.getElementById("xd-pref-dark"), ck = document.getElementById("xd-pref-compact");
+      if (dk) dk.checked = !!xdPrefsTam.dark;
+      if (ck) ck.checked = !!xdPrefsTam.compact;
+      xdVeDanhSachThe(xdPrefsTam);
+      xdToMauTrongModal(xdPrefsTam.accent);
+      var m = document.getElementById("xd-pref-modal");
+      if (m) m.style.display = "flex";
+      var settings = document.getElementById("settingsDropdown");
+      if (settings) settings.style.display = "none";
+    }
+    function dongCaNhanHoa() {
+      var m = document.getElementById("xd-pref-modal");
+      if (m) m.style.display = "none";
+    }
+    function luuCaNhanHoa() {
+      if (!xdPrefsTam) xdPrefsTam = xdDocTuyChinh();
+      var dk = document.getElementById("xd-pref-dark"), ck = document.getElementById("xd-pref-compact");
+      xdPrefsTam.dark = !!(dk && dk.checked);
+      xdPrefsTam.compact = !!(ck && ck.checked);
+      var chon = document.querySelector(".xd-pref-color.xd-dang-chon");
+      if (chon) xdPrefsTam.accent = chon.getAttribute("data-xd-color");
+      var hidden = [], cbs = document.querySelectorAll("[data-xd-card]");
+      for (var i = 0; i < cbs.length; i++) {
+        var id = cbs[i].getAttribute("data-xd-card");
+        if (!cbs[i].checked && id !== "profile-page") hidden.push(id);
+      }
+      xdPrefsTam.hidden = hidden;
+      xdLuuTuyChinh(xdPrefsTam);
+      xdApDungTuyChinh();
+      dongCaNhanHoa();
+      try { showToast("Đã lưu tuỳ biến giao diện.", "success"); } catch (e) {}
+    }
+    function xdDatLaiTuyChinh() {
+      xdPrefsTam = JSON.parse(JSON.stringify(XD_PREF_MAC_DINH));
+      xdLuuTuyChinh(xdPrefsTam);
+      xdApDungTuyChinh();
+      moCaNhanHoa();
+      try { showToast("Đã đặt lại giao diện mặc định.", "info"); } catch (e) {}
+    }
+
+    (function () {
+      var box = document.getElementById("xd-pref-cards");
+      if (box) {
+        box.addEventListener("change", function (e) {
+          var id = e.target && e.target.getAttribute && e.target.getAttribute("data-xd-card");
+          if (!id || id === "profile-page" || !xdPrefsTam) return;
+          var h = xdPrefsTam.hidden || [];
+          if (e.target.checked) {
+            xdPrefsTam.hidden = h.filter(function (x) { return x !== id; });
+          } else if (h.indexOf(id) < 0) {
+            h.push(id);
+          }
+        });
+        box.addEventListener("click", function (e) {
+          var b = e.target && e.target.closest ? e.target.closest("[data-xd-move]") : null;
+          if (!b || b.disabled || !xdPrefsTam) return;
+          var id = b.getAttribute("data-xd-id");
+          var step = parseInt(b.getAttribute("data-xd-move"), 10);
+          var arr = xdPrefsTam.order, i = arr.indexOf(id), j = i + step;
+          if (i < 0 || j < 0 || j >= arr.length) return;
+          var tam = arr[i]; arr[i] = arr[j]; arr[j] = tam;
+          xdVeDanhSachThe(xdPrefsTam);
+        });
+      }
+      var colors = document.getElementById("xd-pref-colors");
+      if (colors) colors.addEventListener("click", function (e) {
+        var b = e.target && e.target.closest ? e.target.closest(".xd-pref-color") : null;
+        if (b) xdToMauTrongModal(b.getAttribute("data-xd-color"));
+      });
+      var m = document.getElementById("xd-pref-modal");
+      if (m) m.addEventListener("click", function (e) { if (e.target === m) dongCaNhanHoa(); });
+    })();
+
+    // ---- Phím tắt laptop: Ctrl+Shift+1..9 (tránh phím chuyển tab của trình duyệt) ----
+    var XD_PHIM_TAT = [
+      function () { showPage('thieunhi-page', null); },
+      function () { showPage('report', null); },
+      function () { showPage('quy-page', null); quyKhoiTao(); },
+      function () { if (currentUserIsAdmin) showPage('approval-page', null); },
+      function () { openDiemDanhBuoi(); },
+      function () { openKhanCap(); },
+      function () { openThiDua(); },
+      function () { openKiemTra(); },
+      function () { openSoBoHT(); }
+    ];
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        var pm = document.getElementById("xd-pref-modal");
+        if (pm && pm.style.display === "flex") { dongCaNhanHoa(); return; }
+        if (isDesktopLayout()) closeDesktopOverlayByBackdrop();
+        return;
+      }
+      if (!isDesktopLayout() || !e.ctrlKey || !e.shiftKey || e.altKey || e.metaKey) return;
+      var tag = (e.target && e.target.tagName || "").toUpperCase();
+      if (tag === "INPUT" || tag === "TEXTAREA" || (e.target && e.target.isContentEditable)) return;
+      var n = parseInt(e.key, 10);
+      if (n >= 1 && n <= 9 && XD_PHIM_TAT[n - 1]) {
+        e.preventDefault();
+        try { XD_PHIM_TAT[n - 1](); } catch (err) {}
+      }
+    });
+
+    // Áp sở thích ngay khi mở app (kể cả trước khi đăng nhập, theo tài khoản dùng gần nhất).
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", xdApDungTuyChinh);
+    } else {
+      xdApDungTuyChinh();
+    }
     function openPasswordModal() { document.getElementById("pwd-modal").style.display = "flex"; }
     function closePasswordModal() { document.getElementById("pwd-modal").style.display = "none"; }
 
@@ -6920,6 +7371,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       currentUserMa = ""; 
       currentUserToken = "";
       currentUserUnit = "";
+      currentUserFullname = "";
       currentUserIsAdmin = false;
       currentUserIsSuperAdmin = false;
       ctttState = { laNguoiDuyet: false, laNguoiGui: false, soChoDuyet: 0, danhSach: [], danhSachChiDoan: [] };
