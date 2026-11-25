@@ -2205,14 +2205,17 @@
        vào nút; tâm căn giữa với logo (logo 60px, nút 52px nên lệch right 4px). */
     #pv-fab {
       position: fixed; right: 22px; bottom: 184px; z-index: 4002;
-      width: 52px; height: 52px; border-radius: 50%; border: 2px solid #fff;
-      background: linear-gradient(135deg, #8e24aa, #d32f2f); color: #fff;
+      width: 52px; height: 52px; border-radius: 50%;
+      border: 2px solid var(--xd-accent, #d32f2f);
+      background: #fff; color: var(--xd-accent, #d32f2f);
       box-shadow: 0 6px 18px rgba(0,0,0,.28); display: flex; align-items: center;
       justify-content: center; cursor: pointer; font-size: 19px; padding: 0;
-      transition: transform .18s ease, box-shadow .18s ease;
+      /* Nhảy tại chỗ cùng nhịp với logo bên dưới (dùng chung keyframes lfHop). */
+      animation: lfHop 0.85s ease-in-out infinite;
+      transition: box-shadow .18s ease, filter .18s ease;
     }
-    #pv-fab:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 10px 24px rgba(0,0,0,.32); }
-    #pv-fab:active { transform: scale(.96); }
+    #pv-fab:hover { box-shadow: 0 10px 24px rgba(0,0,0,.32); filter: brightness(1.04); }
+    #pv-fab:active { filter: brightness(.94); }
     /* Logo nhảy thực tế dùng bottom:96px ở MỌI màn hình (quy tắc chung ở dưới
        cùng ghi đè quy tắc cũ trong media query), nên nút lịch phải giữ cùng mốc
        184px như trên; nếu đẩy xuống 124px là nó đè lên đầu logo. */
