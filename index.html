@@ -36,6 +36,8 @@
   <script src="config.js"></script>
   <script src="gas-shim.js"></script>
   <script src="push-config.js"></script>
+  <!-- Nhớ yêu cầu mở bài trước khi push.js xoá tham số ?mo= khỏi địa chỉ -->
+  <script>try { var moTuThongBao = new URL(location.href).searchParams.get("mo"); if (moTuThongBao) window.XDPushMoDuocYeuCau = moTuThongBao; } catch (e) {}</script>
   <script src="push.js"></script>
 
   <style>
@@ -7187,6 +7189,34 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 
     /* ---------- HUYNH TRƯỞNG: DANH SÁCH & LÀM BÀI ---------- */
 
+    // Mở đúng bài kiểm tra khi HT bấm vào thông báo đẩy (mo = "kiemtra:<idDe>").
+    function ktMoBaiTuThongBao(idDe) {
+      try {
+        // Tránh mở trùng khi cả push.js và index.html cùng nhận một thông báo.
+        var khoa = '__ktMoThongBao_' + idDe;
+        if (window[khoa] && Date.now() - window[khoa] < 3000) return;
+        window[khoa] = Date.now();
+        openKiemTra();
+        if (!idDe) return;
+        var batDau = Date.now();
+        (function timCard() {
+          var timThay = null;
+          var cards = document.querySelectorAll('#kt-ds-dangmo .kt-de-card');
+          for (var i = 0; i < cards.length; i++) {
+            if (cards[i].dataset.idDe === idDe) { timThay = cards[i]; break; }
+          }
+          if (timThay) {
+            try { timThay.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {}
+            timThay.style.outline = '2px solid #0277bd';
+            timThay.style.background = '#e3f2fd';
+            setTimeout(function () { timThay.style.outline = ''; timThay.style.background = ''; }, 6000);
+            return;
+          }
+          if (Date.now() - batDau < 12000) setTimeout(timCard, 300);
+        })();
+      } catch (e) {}
+    }
+
     function ktTaiDanhSachChoHT() {
       var box = document.getElementById('kt-ds-dangmo');
       box.innerHTML = '<div class="loading-logo-wrapper"><div class="loading-logo-text">Đang tải danh sách bài kiểm tra...</div></div>';
@@ -7198,6 +7228,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           res.data.forEach(function (de) {
             var card = document.createElement('div');
             card.className = 'kt-de-card';
+            card.dataset.idDe = de.id;
             var meta = de.soCauHoi + ' câu hỏi · ' + de.tongDiem + ' điểm' + (de.thoiGianLamPhut ? ' · ' + de.thoiGianLamPhut + ' phút' : '') + (de.hanNop ? ' · Hạn nộp: ' + de.hanNop : '');
             var laViPham = de.daLam && de.ketQua && de.ketQua.trangThaiLamBai === 'khong_thanh_cong';
             var trangThaiHtml = de.daLam
@@ -7783,6 +7814,14 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
               hang.appendChild(btnGanMa);
             }
 
+            if (de.trangThai === 'mo') {
+              var btnGui = document.createElement('button'); btnGui.className = 'kt-btn-nho';
+              btnGui.style.cssText = 'background:#e3f2fd; color:#0277bd; font-weight:bold;';
+              btnGui.innerHTML = '<i class="fas fa-bell"></i> Gửi thông báo';
+              btnGui.addEventListener('click', function () { ktAdmGuiThongBao(de.id, de.tieuDe); });
+              hang.appendChild(btnGui);
+            }
+
             var btnDongMo = document.createElement('button'); btnDongMo.className = 'kt-btn-nho';
             btnDongMo.innerHTML = de.trangThai === 'mo' ? '<i class="fas fa-lock"></i> Đóng' : '<i class="fas fa-lock-open"></i> Mở lại';
             btnDongMo.addEventListener('click', function () { ktAdmDongMoDe(de.id, de.trangThai !== 'mo'); });
@@ -7797,6 +7836,31 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         })
         .withFailureHandler(function (err) { box.innerHTML = '<p style="text-align:center; color:#e74c3c;">Lỗi kết nối: ' + err + '</p>'; })
         .admKiemTraDanhSachDe(currentUserToken);
+    }
+
+    function ktAdmGuiThongBao(idDe, tieuDe) {
+      appConfirm({
+        title: 'Gửi thông báo bài kiểm tra?',
+        message: 'Tất cả Huynh Trưởng đã bật thông báo trong app sẽ nhận một thông báo mở đúng bài "' + _ktEsc(tieuDe) + '". ' +
+          'HT chưa bật thông báo sẽ không nhận được.',
+        okText: 'Gửi thông báo', danger: false
+      }, function (ok) {
+        if (!ok) return;
+        _ktHienXuLy('Đang gửi thông báo...');
+        google.script.run
+          .withSuccessHandler(function (res) {
+            _ktAnXuLy();
+            if (!res.success) { showToast(res.error, 'error'); return; }
+            if (res.guiDuoc > 0) {
+              showToast('Đã gửi thông báo tới ' + res.guiDuoc + ' thiết bị. Bấm vào thông báo sẽ vào đúng bài kiểm tra.', 'success');
+            } else {
+              showToast('Không có thiết bị nào nhận được. Hãy nhắc HT bật thông báo trong app (menu → Bật thông báo).' +
+                (res.loi ? ' Chi tiết: ' + res.loi : ''), 'error');
+            }
+          })
+          .withFailureHandler(function (err) { _ktAnXuLy(); showToast('Lỗi kết nối: ' + err, 'error'); })
+          .admKiemTraGuiThongBao(currentUserToken, idDe);
+      });
     }
 
     /* ---------- ADMIN: GÁN MÃ ĐỀ CHO TỪNG NGƯỜI / HÀNG LOẠT ---------- */
@@ -16249,6 +16313,27 @@ document.addEventListener('visibilitychange', function () {
   function xetDangCho() {
     if (reg && reg.waiting) { coBanMoi = true; thuHien(); }
   }
+
+  // Mở đúng bài kiểm tra khi HT bấm vào thông báo đẩy.
+  // Xử lý ở đây (sau khi các hàm của trang đã defined) để không phụ thuộc vào
+  // vòng lặp chờ đăng nhập trong push.js.
+  function _ktMoTuThongBao(mo) {
+    if (typeof mo === 'string' && mo.indexOf('kiemtra:') === 0 && typeof ktMoBaiTuThongBao === 'function') {
+      try { ktMoBaiTuThongBao(mo.substring('kiemtra:'.length)); } catch (e) {}
+    }
+  }
+  navigator.serviceWorker.addEventListener('message', function (e) {
+    if (e.data && e.data.type === 'mo-man-hinh') _ktMoTuThongBao(e.data.mo);
+  });
+  var _ktBatDauChoMo = Date.now();
+  (function chờMoThongBao() {
+    var mo = window.XDPushMoDuocYeuCau || '';
+    if (!mo) {
+      if (Date.now() - _ktBatDauChoMo < 30000) setTimeout(chờMoThongBao, 200);
+      return;
+    }
+    if (!window.XDPushMoDaXuLy) { window.XDPushMoDaXuLy = true; _ktMoTuThongBao(mo); }
+  })();
 
   // SW báo có nội dung mới (khi sw.js không đổi nhưng index.html đổi).
   // Bỏ qua lúc cài đặt lần đầu: khi đó chưa có SW nào đang chạy, không phải "cập nhật".
