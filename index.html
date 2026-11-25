@@ -8006,14 +8006,14 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     }
 
     function ktAdmXoaDe(idDe) {
-      appConfirm({ title: 'Xoá bài kiểm tra?', message: 'Toàn bộ bài làm của Huynh Trưởng cho đề này cũng sẽ bị xoá và KHÔNG THỂ khôi phục.', okText: 'Xoá', danger: true }, function (ok) {
+      appConfirm({ title: 'Xoá bài kiểm tra?', message: 'Toàn bộ bài làm VÀ video minh chứng trên Drive của đề này sẽ bị xoá. KHÔNG THỂ khôi phục!', okText: 'Xoá vĩnh viễn', danger: true }, function (ok) {
         if (!ok) return;
         _ktHienXuLy('Đang xoá bài kiểm tra...');
         google.script.run
           .withSuccessHandler(function (res) {
             _ktAnXuLy();
             if (!res.success) { showToast(res.error, 'error'); return; }
-            showToast('Đã xoá!', 'success');
+            showToast('Đã xoá!' + (res.soVideoDaXoa ? ' Đã xoá ' + res.soVideoDaXoa + ' video minh chứng trên Drive.' : ''), 'success');
             ktAdmTaiDanhSachDe();
           })
           .withFailureHandler(function (err) { _ktAnXuLy(); showToast('Lỗi kết nối: ' + err, 'error'); })
