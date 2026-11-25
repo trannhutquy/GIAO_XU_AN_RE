@@ -40,6 +40,36 @@
   <script>try { var moTuThongBao = new URL(location.href).searchParams.get("mo"); if (moTuThongBao) window.XDPushMoDuocYeuCau = moTuThongBao; } catch (e) {}</script>
   <script src="push.js"></script>
 
+  <!-- BẮT BUỘC CÀI APP TRÊN ĐIỆN THOẠI: chạy ngay trong <head> để khoá giao diện
+       trước khi splash/login kịp hiện ra. Desktop không bị ảnh hưởng. -->
+  <script>
+  (function () {
+    var ua = navigator.userAgent || "";
+    var laIOS = /iP(hone|od|ad)/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    var laMobile = laIOS || /Android|Mobile|Silk|Windows Phone/i.test(ua);
+    var daCai = false;
+    try {
+      daCai = navigator.standalone === true ||
+        (window.matchMedia && (
+          matchMedia("(display-mode: standalone)").matches ||
+          matchMedia("(display-mode: fullscreen)").matches ||
+          matchMedia("(display-mode: minimal-ui)").matches));
+    } catch (e) {}
+    window.XD_daCaiApp = daCai;
+    window.XD_laIOS = laIOS;
+    window.XD_canLockApp = laMobile && !daCai;
+    if (window.XD_canLockApp) document.documentElement.classList.add("xd-can-cai-app");
+
+    // Android: giữ lại sự kiện cài đặt để nút "Cài đặt ngay" hoạt động ngay trong app.
+    window.XD_installPrompt = null;
+    window.addEventListener("beforeinstallprompt", function (e) {
+      e.preventDefault();
+      window.XD_installPrompt = e;
+      try { window.dispatchEvent(new Event("xd-install-prompt-ready")); } catch (e2) {}
+    });
+  })();
+  </script>
+
   <style>
     /* ==========================================
        CSS ANIMATION NÂNG CẤP CHUYỂN ĐỘNG CHUYÊN SÂU
@@ -384,6 +414,67 @@
       aspect-ratio: 1437 / 351;
       object-fit: contain;
     }
+    /* ===== BẮT BUỘC CÀI APP TRÊN ĐIỆN THOẠI (chỉ bật khi chưa ở chế độ đã cài) ===== */
+    html.xd-can-cai-app, html.xd-can-cai-app body { height:100%; overflow:hidden !important; }
+    html.xd-can-cai-app body > *:not(#xd-install-gate) { visibility:hidden !important; }
+    @keyframes xdigShake {
+      0%, 100% { transform:translateX(0); }
+      25% { transform:translateX(-7px); }
+      75% { transform:translateX(7px); }
+    }
+    #xd-install-gate { display:none; }
+    html.xd-can-cai-app #xd-install-gate {
+      display:flex; position:fixed; inset:0; z-index:100001; flex-direction:column;
+      align-items:center; justify-content:flex-start; overflow-y:auto; padding:26px 16px 34px;
+      background:linear-gradient(160deg,#ffffff 0%,#eef3fa 100%);
+      font-family:'Be Vietnam Pro','Segoe UI',Tahoma,sans-serif; color:#2c3e50; text-align:center;
+    }
+    #xd-install-gate.xd-shake .xdig-card { animation:xdigShake .32s ease-in-out; }
+    #xd-install-gate .xdig-card {
+      width:100%; max-width:400px; box-sizing:border-box; background:#fff; border-radius:22px;
+      padding:26px 20px 22px; box-shadow:0 18px 44px rgba(18,42,80,.13);
+    }
+    #xd-install-gate .xdig-icon {
+      width:66px; height:66px; margin:0 auto 12px; border-radius:20px; display:flex;
+      align-items:center; justify-content:center; font-size:29px; color:#fff;
+      background:linear-gradient(135deg,#e53935,#9b1c1c); box-shadow:0 10px 22px rgba(183,28,28,.28);
+    }
+    #xd-install-gate .xdig-badge {
+      display:inline-block; padding:4px 12px; border-radius:99px; background:#fff0f0;
+      color:#c62828; font-size:12px; font-weight:800; letter-spacing:.4px; margin-bottom:10px;
+    }
+    #xd-install-gate h2 { margin:0 0 8px; font-size:19px; line-height:1.35; font-weight:800; }
+    #xd-install-gate .xdig-lead { margin:0 0 16px; font-size:13.5px; line-height:1.6; color:#5d6775; }
+    #xd-install-gate .xdig-steps {
+      text-align:left; background:#f5f8fc; border:1px solid #e6ecf4; border-radius:14px;
+      padding:10px 14px; margin-bottom:16px;
+    }
+    #xd-install-gate .xdig-step {
+      display:flex; gap:9px; align-items:flex-start; font-size:13px;
+      line-height:1.5; color:#3d4756; padding:7px 0;
+    }
+    #xd-install-gate .xdig-step + .xdig-step { border-top:1px dashed #dfe6f0; }
+    #xd-install-gate .xdig-num {
+      flex:0 0 auto; width:20px; height:20px; border-radius:50%; background:#d32f2f; color:#fff;
+      font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; margin-top:1px;
+    }
+    #xd-install-gate button {
+      width:100%; border:0; border-radius:14px; padding:13px 12px; cursor:pointer;
+      font:700 14.5px 'Be Vietnam Pro','Segoe UI',sans-serif;
+    }
+    #xd-install-gate button[disabled] { opacity:.7; cursor:default; }
+    #xd-install-gate .xdig-primary {
+      color:#fff; background:linear-gradient(135deg,#e53935,#b71c1c);
+      box-shadow:0 8px 18px rgba(183,28,28,.28); margin-bottom:9px;
+    }
+    #xd-install-gate .xdig-primary:active { transform:scale(.98); }
+    #xd-install-gate .xdig-secondary { color:#1565c0; background:#eaf2ff; margin-bottom:9px; }
+    #xd-install-gate .xdig-link { background:transparent; color:#7b8493; padding:9px; font-weight:600; }
+    #xd-install-gate .xdig-feedback {
+      min-height:18px; margin-top:6px; font-size:12.5px; line-height:1.5;
+      color:#c62828; font-weight:600;
+    }
+
     /* Lưu ý: animation tắt chỉ dùng "forwards" (không "both"), nếu không
        trạng thái opacity:1 của nó sẽ đè lên animation hiện từ lúc trang vừa mở. */
     #splash-screen.intro-run .intro-logo-1 {
@@ -16448,6 +16539,124 @@ document.addEventListener('visibilitychange', function () {
     });
   }
   quetText();
+})();
+</script>
+
+<!-- ======================================================
+     MÀN HÌNH CHẶN: ĐIỆN THOẠI PHẢI CÀI PWA MỚI ĐƯỢC DÙNG APP
+     (đặt cuối body để không làm chậm các script chính)
+====================================================== -->
+<script id="xd-install-gate-script">
+(function () {
+  if (!document.documentElement.classList.contains("xd-can-cai-app")) return;
+
+  var gate = document.createElement("div");
+  gate.id = "xd-install-gate";
+  gate.setAttribute("role", "dialog");
+  gate.setAttribute("aria-modal", "true");
+  gate.innerHTML =
+    '<div class="xdig-card">' +
+      '<div class="xdig-icon"><i class="fas fa-download"></i></div>' +
+      '<div class="xdig-badge">BẮT BUỘC</div>' +
+      '<h2 id="xd-install-title">Cài ứng dụng để sử dụng</h2>' +
+      '<p class="xdig-lead">Ứng dụng Xứ Đoàn Thánh Anrê chỉ dùng được khi đã cài vào điện thoại. ' +
+        'Đóng tab này rồi mở từ biểu tượng ứng dụng trên màn hình chính (không dùng Safari/Chrome).</p>' +
+      '<div class="xdig-steps" id="xdig-steps"></div>' +
+      '<button type="button" class="xdig-primary" id="xdig-install">Cài đặt ngay</button>' +
+      '<button type="button" class="xdig-secondary" id="xdig-open">Đã cài rồi — vào ứng dụng</button>' +
+      '<div class="xdig-feedback" id="xdig-feedback"></div>' +
+    '</div>';
+  document.body.appendChild(gate);
+
+  var steps = window.XD_laIOS
+    ? [
+        'Mở trang này bằng <b>Safari</b>, chạm nút <b>Chia sẻ</b> (hình vuông có mũi tên) ở dưới cùng.',
+        'Chọn <b>Thêm vào Màn hình chính</b> (Add to Home Screen) → <b>Thêm</b>.',
+        'Đóng tab Safari này, chạm biểu tượng <b>Xứ Đoàn Thánh Anrê</b> trên màn hình chính để vào app.'
+      ]
+    : [
+        'Mở trang này bằng <b>Chrome</b>, chạm biểu tượng <b>⋮</b> góc trên bên phải.',
+        'Chọn <b>Cài đặt ứng dụng</b> (hoặc <b>Thêm vào màn hình chính</b>) → <b>Cài đặt</b>.',
+        'Đóng tab Chrome này, chạm biểu tượng <b>Xứ Đoàn Thánh Anrê</b> trên màn hình chính để vào app.'
+      ];
+  document.getElementById("xdig-steps").innerHTML = steps.map(function (s, i) {
+    return '<div class="xdig-step"><span class="xdig-num">' + (i + 1) + '</span><span>' + s + '</span></div>';
+  }).join("");
+
+  var feedback = document.getElementById("xdig-feedback");
+  var btnInstall = document.getElementById("xdig-install");
+  var btnOpen = document.getElementById("xdig-open");
+  var timer = null;
+
+  function datLoi(t) { feedback.textContent = t || ""; }
+
+  function daCaiNow() {
+    var ok = false;
+    try {
+      ok = navigator.standalone === true || (window.matchMedia && (
+        matchMedia("(display-mode: standalone)").matches ||
+        matchMedia("(display-mode: fullscreen)").matches ||
+        matchMedia("(display-mode: minimal-ui)").matches));
+    } catch (e) {}
+    return ok;
+  }
+
+  function moKhoa() {
+    if (timer) { clearInterval(timer); timer = null; }
+    document.documentElement.classList.remove("xd-can-cai-app");
+    if (gate.parentNode) gate.parentNode.removeChild(gate);
+  }
+
+  function kiemTra() {
+    if (!daCaiNow()) {
+      datLoi("Chưa nhận diện được ứng dụng đã cài. Đóng tab này rồi mở từ biểu tượng trên màn hình chính.");
+      gate.classList.remove("xd-shake");
+      void gate.offsetWidth;
+      gate.classList.add("xd-shake");
+      return;
+    }
+    moKhoa();
+  }
+
+  btnOpen.addEventListener("click", kiemTra);
+
+  // Chrome/Android: dùng đúng trình duyệt để cài thay vì chỉ dẫn hướng dẫn.
+  if (window.XD_installPrompt && !window.XD_laIOS) {
+    btnInstall.addEventListener("click", function () {
+      var p = window.XD_installPrompt;
+      if (!p) return datLoi("Không còn được cài từ đây. Hãy làm theo 3 bước ở trên.");
+      btnInstall.disabled = true;
+      btnInstall.textContent = "Đang cài đặt...";
+      try {
+        var r = p.prompt();
+        if (r && r.then) r.then(function (res) {
+          window.XD_installPrompt = null;
+          btnInstall.style.display = "none";
+          datLoi(res && res.outcome === "accepted"
+            ? "Cài đặt thành công. Đóng tab này rồi mở ứng dụng từ màn hình chính."
+            : "Đã huỷ cài đặt. Bạn có thể thử lại hoặc làm theo 3 bước ở trên.");
+        }).catch(function () {
+          btnInstall.disabled = false;
+          btnInstall.textContent = "Cài đặt ngay";
+          datLoi("Không cài được từ đây. Hãy làm theo 3 bước ở trên.");
+        });
+      } catch (e) {
+        btnInstall.disabled = false;
+        btnInstall.textContent = "Cài đặt ngay";
+        datLoi("Hãy làm theo 3 bước ở trên để cài đặt.");
+      }
+    });
+  } else {
+    btnInstall.style.display = "none";
+  }
+
+  // Tự mở khoá nếu người dùng cài xong rồi mở từ màn hình chính trong cùng tab.
+  timer = setInterval(function () { if (daCaiNow()) moKhoa(); }, 1200);
+  try {
+    var mq = matchMedia("(display-mode: standalone)");
+    if (mq.addEventListener) mq.addEventListener("change", function (e) { if (e.matches) moKhoa(); });
+    else if (mq.addListener) mq.addListener(function (e) { if (e.matches) moKhoa(); });
+  } catch (e) {}
 })();
 </script>
 </body>
