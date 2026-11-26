@@ -2097,12 +2097,20 @@
       body.xd-compact #welcome-avatar { width: 40px; height: 40px; }
     }
 
-    /* Modal cá nhân hoá (dùng được cả trên điện thoại để bật/tối + màu nhấn) */
+    /* Modal cá nhân hoá — CHỈ dùng trên laptop (>=992px).
+       Trên điện thoại: ẩn cả mục menu lẫn khung, nhưng Giao diện Tối trong
+       Cài đặt vẫn hoạt động bình thường và vẫn được nhớ theo tài khoản. */
     #xd-pref-modal {
       position: fixed; inset: 0; z-index: 6000; display: none;
       align-items: center; justify-content: center; padding: 18px;
       background: rgba(8,18,32,.58); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
       font-family: 'Be Vietnam Pro','Segoe UI',Tahoma,sans-serif;
+    }
+    @media (max-width: 991px) {
+      #menu-ca-nhan-hoa, #xd-pref-modal { display: none !important; }
+    }
+    @media (min-width: 992px) {
+      #menu-ca-nhan-hoa { display: flex !important; }
     }
     #xd-pref-modal .xd-pref-card {
       width: 100%; max-width: 520px; max-height: 88vh; overflow-y: auto;
@@ -3405,7 +3413,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           <div onclick="reloadApp()"><i class="fas fa-sync-alt"></i> Làm mới App</div>
           <div onclick="openPasswordModal()"><i class="fas fa-key"></i> Đổi mật khẩu</div>
           <div onclick="toggleDarkMode()"><i id="menu-dark-icon" class="fas fa-moon"></i> <span id="menu-dark-label">Giao diện Tối</span></div>
-          <div onclick="moCaNhanHoa()"><i class="fas fa-sliders"></i> Cá nhân hoá giao diện</div>
+          <div id="menu-ca-nhan-hoa" onclick="moCaNhanHoa()"><i class="fas fa-sliders"></i> Cá nhân hoá giao diện</div>
           <div onclick="window.hienGioiThieuPhienBan && window.hienGioiThieuPhienBan(true)"><i class="fas fa-rocket"></i> Bản cập nhật</div>
           <div onclick="window.XDPush && XDPush.bamNut()"><i id="menu-push-icon" class="fas fa-bell"></i> <span id="menu-push-label">Bật thông báo</span></div>
           <div onclick="openGiaoLy()"><i class="fas fa-cross"></i> Giáo Lý</div>
@@ -7277,6 +7285,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       }
     }
     function moCaNhanHoa() {
+      // Tính năng này chỉ dành cho laptop; điện thoại bỏ qua dù có lệnh gọi cũ.
+      if (!isDesktopLayout()) return;
       xdPrefsTam = xdDocTuyChinh();
       var u = document.getElementById("xd-pref-user");
       if (u) u.textContent = currentUserMa || "này";
