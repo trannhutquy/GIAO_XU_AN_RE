@@ -656,6 +656,29 @@
       box-sizing:border-box;
       border-bottom: 1px solid rgba(255,255,255,0.1);
     }
+
+    /* ===== CHỈ BÁO MẠNG NHỎ KẾ BÊN NÚT CÀI ĐẶT =====
+       1 cục = yếu, 2 cục = trung bình, 3 cục = mạnh.
+       Icon đổi theo loại mạng (Wi-Fi / di động), tự cập nhật realtime. */
+    .xd-net {
+      display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0;
+      padding: 4px 6px; border-radius: 9px; cursor: help; color: inherit;
+      opacity: .9; transition: opacity .2s ease;
+    }
+    .xd-net:hover { opacity: 1; }
+    .xd-net-icon { font-size: 13px; line-height: 1; }
+    .xd-net-bars { display: flex; align-items: flex-end; gap: 2px; height: 12px; }
+    .xd-net-bars i { width: 3px; border-radius: 1px; background: currentColor; opacity: .22; }
+    .xd-net-bars i:nth-child(1) { height: 5px; }
+    .xd-net-bars i:nth-child(2) { height: 8px; }
+    .xd-net-bars i:nth-child(3) { height: 12px; }
+    .xd-net[data-level="1"] .xd-net-bars i:nth-child(1),
+    .xd-net[data-level="2"] .xd-net-bars i:nth-child(-n+2),
+    .xd-net[data-level="3"] .xd-net-bars i { opacity: 1; }
+    .xd-net[data-level="0"] { opacity: .45; }
+    .xd-net[data-level="1"] { opacity: .72; }
+    #xd-net-mobile { color: #fff; margin-right: 8px; }
+
     .profile-img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid white; object-fit: cover; margin-right: 15px; }
     .profile-img:active { transform: scale(0.88); }
 
@@ -1793,6 +1816,12 @@
       .desktop-settings-btn:active { transform: translateY(0) scale(0.97); }
       .desktop-settings-btn i { transition: transform 0.35s ease; }
       .desktop-settings-btn:hover i { transform: rotate(75deg); }
+
+      /* ===== CHỈ BÁO MẠNG NHỎ KẾ BÊN NÚT CÀI ĐẶT (laptop) ===== */
+      #desktop-settings-row { display: flex; align-items: center; gap: 8px; }
+      #desktop-settings-row .desktop-settings-btn { flex: 1; min-width: 0; width: auto; }
+      #xd-net-desktop { color: #5d6775; }
+      body.dark-mode #xd-net-desktop { color: #b9bdc7; }
       .desktop-title-bar {
         background: #d32f2f; color: white; font-weight: bold; font-size: 14.5px;
         letter-spacing: 0.3px; line-height: 1.3; padding: 16px; border-radius: 14px;
@@ -3363,7 +3392,12 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           <img src="icons/icon-512.png" class="desktop-org-avatar" onclick="toggleMenu(event)">
           <span>XỨ ĐOÀN THÁNH ANRÊ</span>
         </div>
-        <button class="desktop-settings-btn" onclick="toggleMenu(event)"><i class="fas fa-cog"></i> CÀI ĐẶT</button>
+        <div id="desktop-settings-row">
+          <div class="xd-net" id="xd-net-desktop" data-level="0" title="Đang kiểm tra mạng…">
+            <i class="fas fa-wifi xd-net-icon"></i><span class="xd-net-bars"><i></i><i></i><i></i></span>
+          </div>
+          <button class="desktop-settings-btn" onclick="toggleMenu(event)"><i class="fas fa-cog"></i> CÀI ĐẶT</button>
+        </div>
       </div>
       <div id="desktop-footerbar" class="desktop-only">
         <button class="desktop-footerbar-btn" title="Ctrl+Shift+1" onclick="showPage('thieunhi-page', null)"><i class="fas fa-users"></i> THIẾU NHI</button>
@@ -3407,6 +3441,10 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         </div>
       </div>
 
+      <!-- Chỉ báo mạng nhỏ, nằm ngay bên trái nút Cài đặt -->
+      <div class="xd-net" id="xd-net-mobile" data-level="0" title="Đang kiểm tra mạng…">
+        <i class="fas fa-wifi xd-net-icon"></i><span class="xd-net-bars"><i></i><i></i><i></i></span>
+      </div>
       <div style="font-size: 22px; cursor: pointer; position:relative; padding: 5px;" onclick="toggleMenu(event)">
         <i class="fas fa-cog"></i>
         <div id="settingsDropdown" class="settings-menu">
@@ -17552,6 +17590,155 @@ document.addEventListener('visibilitychange', function () {
     if (mq.addEventListener) mq.addEventListener("change", function (e) { if (e.matches) moKhoa(); });
     else if (mq.addListener) mq.addListener(function (e) { if (e.matches) moKhoa(); });
   } catch (e) {}
+})();
+</script>
+
+<script id="xd-mang">
+/* ==========================================================
+   CHỈ BÁO MẠNG REALTIME (nhỏ, kế bên nút Cài đặt)
+   - Lấy tín hiệu từ Network Information API (effectiveType/downlink/rtt)
+     và cập nhật ngay khi mạng đổi hoặc online/offline.
+   - Đo thực định kỳ bằng cách tải thử một ảnh tĩnh có cache-busting,
+     tính Mbps rồi xoá entry đo khỏi Cache để không làm đầy bộ nhớ.
+   - 1 cục = yếu, 2 cục = trung bình, 3 cục = mạnh; icon Wi-Fi hoặc
+     cột tín hiệu tuỳ loại mạng máy đang dùng. Không gọi Apps Script.
+   ========================================================== */
+(function () {
+  var NGONG_MANH = 0.4;   // Mbps: dưới này là yếu
+  var NGONG_TRUNG = 1.5;  // Mbps: dưới này là trung bình
+  var CHU_KY_DO = 45000;  // đo lại mỗi 45 giây
+  var dangDo = false;
+  var thongSo = { cap: 0, mbps: null, rtt: null };
+
+  function conn() {
+    return navigator.connection || navigator.mozConnection || navigator.webkitConnection || null;
+  }
+  function tenLoai(c) {
+    var t = (c && c.type) || "";
+    if (/wifi/i.test(t)) return "Wi-Fi";
+    if (/cellular|lte|gsm/i.test(t)) return "Di động";
+    if (/ethernet/i.test(t)) return "Có dây";
+    if (/2g|3g|4g|5g/i.test((c && c.effectiveType) || "")) return "Di động";
+    return "Mạng";
+  }
+  function iconCho(c) {
+    var t = (c && c.type) || "";
+    if (/wifi/i.test(t)) return "fas fa-wifi";           // Wi-Fi được ưu tiên hơn effectiveType
+    if (/cellular|lte|gsm|ethernet/i.test(t)) return "fas fa-signal";
+    if (!t && /2g|3g|4g|5g/i.test((c && c.effectiveType) || "")) return "fas fa-signal";
+    return "fas fa-wifi";
+  }
+  function capTuThongSo() {
+    if (!navigator.onLine) return 0;
+    var c = conn();
+    if (!c) return 2; // không có API thì tạm trung bình, chờ đo thực
+    var cap = 3, e = c.effectiveType || "";
+    if (e === "slow-2g" || e === "2g") cap = 1;
+    else if (e === "3g") cap = 2;
+    if (typeof c.downlink === "number") {
+      if (c.downlink < NGONG_MANH) cap = Math.min(cap, 1);
+      else if (c.downlink < NGONG_TRUNG) cap = Math.min(cap, 2);
+    }
+    if (typeof c.rtt === "number") {
+      if (c.rtt > 450) cap = Math.min(cap, 1);
+      else if (c.rtt > 200) cap = Math.min(cap, 2);
+    }
+    return cap;
+  }
+  function capTuDo(mbps, rtt) {
+    var cap = mbps < NGONG_MANH ? 1 : (mbps < NGONG_TRUNG ? 2 : 3);
+    if (typeof rtt === "number") {
+      if (rtt > 450) cap = Math.min(cap, 1);
+      else if (rtt > 200) cap = Math.min(cap, 2);
+    }
+    return cap;
+  }
+  function ve() {
+    var c = conn();
+    var cap = thongSo.cap || capTuThongSo();
+    var gio = "";
+    try { gio = new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" }); } catch (e) {}
+    var toc = thongSo.mbps === null ? "" : " • " + thongSo.mbps.toFixed(1) + " Mbps";
+    var rtt = thongSo.rtt;
+    if (rtt === null && c && typeof c.rtt === "number") rtt = c.rtt;
+    var tre = rtt === null ? "" : " • " + Math.round(rtt) + " ms";
+    var ten = ["Mất mạng", "Yếu", "Trung bình", "Mạnh"][cap] || "Đang đo";
+    var title = "Mạng " + cap + "/3 — " + ten + toc + tre + " • " + tenLoai(c) + " • " + gio;
+    var ds = document.querySelectorAll(".xd-net");
+    for (var i = 0; i < ds.length; i++) {
+      ds[i].setAttribute("data-level", String(cap));
+      ds[i].setAttribute("title", title);
+      var ic = ds[i].querySelector(".xd-net-icon");
+      var icon = iconCho(c);
+      if (ic && ic.className !== icon + " xd-net-icon") ic.className = icon + " xd-net-icon";
+    }
+  }
+  function xoaCacheDo() {
+    if (!window.caches) return;
+    caches.keys().then(function (ks) {
+      return Promise.all(ks.map(function (name) {
+        return caches.open(name).then(function (c) {
+          return c.keys().then(function (reqs) {
+            return Promise.all(reqs.filter(function (r) { return r.url.indexOf("xdnetdo=") >= 0; })
+              .map(function (r) { return c.delete(r); }));
+          });
+        });
+      }));
+    }).catch(function () {});
+  }
+  function doThuc() {
+    if (dangDo || !navigator.onLine || document.hidden || !window.fetch) return;
+    dangDo = true;
+    var batDau = performance.now();
+    var abort = window.AbortController ? new AbortController() : null;
+    var timer = setTimeout(function () { if (abort) abort.abort(); }, 4000);
+    var url = "icons/icon-192.png?xdnetdo=" + Date.now(); // ảnh nhỏ (~10KB) để đo nhẹ
+    fetch(url, { cache: "no-store", signal: abort ? abort.signal : undefined })
+      .then(function (res) {
+        if (!res || !res.ok) throw new Error("loi");
+        return res.blob().then(function (b) { return (b && b.size) || 0; });
+      })
+      .then(function (bytes) {
+        clearTimeout(timer);
+        var ms = performance.now() - batDau;
+        var mbps = ms > 1 ? (bytes * 8) / (ms / 1000) / 1000000 : 99;
+        thongSo.mbps = Math.min(99, mbps);
+        var c = conn();
+        thongSo.rtt = c && typeof c.rtt === "number" ? c.rtt : null;
+        thongSo.cap = capTuDo(thongSo.mbps, thongSo.rtt);
+        ve();
+        xoaCacheDo();
+        dangDo = false;
+      })
+      .catch(function () {
+        clearTimeout(timer);
+        thongSo.cap = navigator.onLine ? capTuThongSo() : 0;
+        thongSo.mbps = null;
+        ve();
+        dangDo = false;
+      });
+  }
+  function capNhatNgay() {
+    var c = conn();
+    thongSo.cap = capTuThongSo();
+    thongSo.rtt = c && typeof c.rtt === "number" ? c.rtt : null;
+    ve();
+    doThuc();
+  }
+
+  window.addEventListener("online", capNhatNgay);
+  window.addEventListener("offline", function () { thongSo.cap = 0; thongSo.mbps = null; ve(); });
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) doThuc(); });
+  var c0 = conn();
+  if (c0) {
+    if (c0.addEventListener) c0.addEventListener("change", capNhatNgay);
+    else if (c0.onchange !== undefined) c0.onchange = capNhatNgay;
+  }
+  ve();
+  if (document.readyState === "complete") capNhatNgay();
+  else window.addEventListener("load", capNhatNgay);
+  setInterval(doThuc, CHU_KY_DO);
+  window.XDMang = { capNhat: capNhatNgay, lay: function () { return thongSo; } };
 })();
 </script>
 </body>
