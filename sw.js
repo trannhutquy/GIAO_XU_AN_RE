@@ -1,11 +1,13 @@
 // Service worker: má»Ÿ app Tá»¨C THÃŒ tá»« bá»™ nhá»› mÃ¡y, táº£i báº£n má»›i á»Ÿ ná»n, bÃ¡o khi cÃ³ báº£n má»›i,
 // vÃ  nháº­n THÃ”NG BÃO Äáº¨Y (Firebase Cloud Messaging) ká»ƒ cáº£ khi app Ä‘ang Ä‘Ã³ng.
-var VERSION = "v76";
+var VERSION = "v78";
 var SHELL = "shell-" + VERSION;
 var STATIC = "static-" + VERSION;
+// P5.3: bỏ 3 ảnh banner (~300 KB) khỏi danh sách cài sẵn — chúng nằm dưới màn
+// hình đầu và vẫn được tự lưu vào cache khi xem (nhánh fetch cùng origin bên dưới).
+// Nhờ vậy mỗi lần ra bản mới, bước cài SW nhẹ và nhanh hơn.
 var SHELL_FILES = ["./", "index.html", "config.js", "pv-domain.js", "gas-shim.js", "push.js", "manifest.webmanifest",
   "icons/icon-192.png", "icons/icon-512.png", "icons/hill-v2.png", "icons/hill-community.png",
-  "icons/banner-quang-cao-1.webp", "icons/banner-quang-cao-2.webp", "icons/banner-quang-cao-3.webp",
   "vendor/jsqr.js", "vendor/qrcode-generator.js"];
 var CDN_HOSTS = ["cdnjs.cloudflare.com", "cdn.jsdelivr.net", "fonts.googleapis.com", "fonts.gstatic.com"];
 var daBao = false;

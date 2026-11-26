@@ -538,6 +538,25 @@
     #session-restore.intro-run .intro-logo-1 { animation: srIntroLogo1 4s ease-in-out infinite; }
     #session-restore.intro-run .intro-logo-2 { animation: srIntroLogo2 4s ease-in-out infinite; }
 
+    /* P5.3: huy hiệu nhỏ "Đang xác thực…" khi app đã hiện từ bộ đệm.
+       Cố ý nhỏ, không phủ màn hình, để nội dung lớn (LCP) vẽ được ngay. */
+    #session-check-pill {
+      position: fixed; right: 14px; bottom: 14px; z-index: 2147483000;
+      display: flex; align-items: center; gap: 8px;
+      background: #fff; border: 1px solid #e2e2e2; border-radius: 999px;
+      padding: 8px 14px; font: 600 12px/1 "Be Vietnam Pro", sans-serif; color: #666;
+      box-shadow: 0 6px 18px rgba(0,0,0,.14); max-width: calc(100vw - 28px);
+    }
+    #session-check-pill .xd-pill-spin {
+      width: 10px; height: 10px; flex: 0 0 auto; border-radius: 50%;
+      border: 2px solid currentColor; border-right-color: transparent;
+      animation: xdPillSpin .7s linear infinite;
+    }
+    #session-check-pill.loi {
+      background: #fff3f3; border-color: #f3c2c2; color: #b3261e; cursor: pointer;
+    }
+    @keyframes xdPillSpin { to { transform: rotate(360deg); } }
+
     /* MÀN HÌNH ĐĂNG NHẬP */
     #login-screen { display: flex; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(135deg, #c62828 0%, #2979ff 100%); }
     .login-box { 
@@ -4948,79 +4967,140 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         return (o && o.token && (o.loai === 'ht' || o.loai === 'glv')) ? o : null;
       } catch (e) { return null; }
     }
-    function xoaPhienLuu() { try { localStorage.removeItem(PHIEN_KEY); } catch (e) {} try { window.gasCacheClear && window.gasCacheClear(); } catch (e2) {} try { xoaBootCache(); } catch (e3) {} }
+    function xoaPhienLuu() { try { localStorage.removeItem(PHIEN_KEY); } catch (e) {} try { window.gasCacheClear && window.gasCacheClear(); } catch (e2) {} try { xoaBootCache(); } catch (e3) {} try { xoaHoSo(); } catch (e4) {} }
+
+    // P5.3: hồ sơ rút gọn của lần đăng nhập trước (tên/đơn vị/ảnh/quyền) để mở
+    // app vẽ được ngay, không phải chờ máy chủ xác thực phiên (~vài giây).
+    // Chỉ lưu cho Huynh Trưởng; xoá cùng lúc đăng xuất / phiên hết hạn.
+    var HO_SO_KEY = 'xd_hoso_v1';
+    function luuHoSo(res, u) {
+      try {
+        localStorage.setItem(HO_SO_KEY, JSON.stringify({
+          ma: u, token: res.token, name: res.name, unit: res.unit, image: res.image,
+          isAdmin: !!res.isAdmin, isSuperAdmin: !!res.isSuperAdmin
+        }));
+      } catch (e) {}
+    }
+    function docHoSo() {
+      try {
+        var o = JSON.parse(localStorage.getItem(HO_SO_KEY) || 'null');
+        return (o && o.ma && o.token) ? o : null;
+      } catch (e) { return null; }
+    }
+    function xoaHoSo() { try { localStorage.removeItem(HO_SO_KEY); } catch (e) {} }
+
+    // P5.3: tách phần "vẽ thông tin cá nhân" và "ẩn/hiện menu theo quyền" ra
+    // hàm riêng, để lúc mở app có thể vẽ NGAY từ hồ sơ đã lưu rồi mới xác thực
+    // phiên ở nền. Nội dung/điều kiện y hệt bản cũ.
+    function _apDungThongTinCaNhan(p, u) {
+      currentUserMa = u; currentUserToken = p.token; currentUserUnit = p.unit;
+      currentUserIsAdmin = p.isAdmin; currentUserIsSuperAdmin = !!p.isSuperAdmin;
+      currentUserFullname = p.name;
+      var ten = p.name || "Huynh Trưởng";
+      var dat = function (id, v) { var e = document.getElementById(id); if (e) e.innerText = v; };
+      dat("head-name-text", ten);
+      dat("head-unit", p.unit || "");
+      // P5.1: chuẩn hoá NGAY (ảnh Drive -> thumbnail) để không tải link chậm trước.
+      var userAvatar = window.chuanHoaAnh ? window.chuanHoaAnh(p.image) : (p.image || ANH_LOGO_MAC_DINH);
+      var hi = document.getElementById("head-img"); if (hi) hi.src = userAvatar;
+      dat("detail-name", ten);
+      dat("detail-unit", p.unit || "");
+      var di = document.getElementById("detail-img"); if (di) di.src = userAvatar;
+      dat("detail-ma", u);
+      // Áp sở thích giao diện riêng của mã HT này + điền thanh chào cá nhân.
+      try { localStorage.setItem("xd_last_user", u); } catch (e) {}
+      xdApDungTuyChinh();
+      dat("cttt-unit-title", p.unit || "");
+      var qr = document.getElementById("detail-qr-img");
+      if (qr && u) qr.src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(u);
+      qrKhoiTaoNeuLaptop(); // laptop: ô QR đã hiện sẵn trên dashboard nên phải tự khởi tạo ở đây
+    }
+
+    function _apDungQuyenMenu(p) {
+      var isAdmin = !!(p && p.isAdmin), isSuper = !!(p && p.isSuperAdmin);
+      if (isAdmin) {
+        document.getElementById("nav-approval").style.display = "flex";
+        document.getElementById("menu-lichsu-tn").style.display = "flex";
+        document.getElementById("menu-admin-panel").style.display = "flex";
+        document.getElementById("menu-diem-danh").style.display = "flex";
+        document.getElementById("desktop-btn-duyet").style.display = "flex";
+        batDauApprovalBadgePolling(); // Bắt đầu kiểm tra đơn nghỉ phép mới định kỳ ở nền, báo chấm đỏ khi có đơn chờ duyệt
+      } else {
+        document.getElementById("nav-approval").style.display = "none";
+        document.getElementById("menu-lichsu-tn").style.display = "none";
+        document.getElementById("menu-admin-panel").style.display = "none";
+        document.getElementById("menu-diem-danh").style.display = "flex"; // Điểm danh QR: mọi Huynh Trưởng đều dùng được
+        document.getElementById("desktop-btn-duyet").style.display = "none";
+      }
+      // Sidebar laptop: 3 nút tiện ích nhạy cảm phải ăn quyền y hệt menu Cài đặt.
+      var qtLichSu = document.getElementById("desktop-tool-lichsu");
+      if (qtLichSu) qtLichSu.style.display = isAdmin ? "" : "none";
+      var qtAdmin = document.getElementById("desktop-tool-admin");
+      if (qtAdmin) qtAdmin.style.display = isAdmin ? "" : "none";
+      var qtBaoTri = document.getElementById("desktop-tool-bao-tri");
+      if (qtBaoTri) qtBaoTri.style.display = isSuper ? "" : "none";
+      // Mục "Duyệt Dữ Liệu" trong khu Quản Trị: CHỈ tài khoản có Quyền Tối Cao
+      // (cột H) mới được thấy/vào - server cũng tự kiểm tra lại nên đây chỉ là
+      // ẩn UI cho gọn, không phải lớp bảo mật duy nhất.
+      var elExplorerTab = document.getElementById("admTabBtnExplorer");
+      if (elExplorerTab) elExplorerTab.style.display = isSuper ? "" : "none";
+      var elChucVuTab = document.getElementById("admTabBtnChucVu");
+      if (elChucVuTab) elChucVuTab.style.display = isSuper ? "" : "none";
+
+      // Mục "Bảo trì ứng dụng" trong menu Cài đặt: CHỈ tài khoản có Quyền Tối
+      // Cao mới thấy - dùng để bật/tắt màn hình chặn và soạn nội dung thông báo.
+      var elMenuBaoTri = document.getElementById("menu-bao-tri");
+      if (elMenuBaoTri) elMenuBaoTri.style.display = isSuper ? "flex" : "none";
+    }
+
+    // P5.3: mở app ngay bằng hồ sơ + gói đệm của lần trước (không phủ màn trắng).
+    // Trả về true nếu đã vẽ được; việc xác thực phiên vẫn chạy ở nền.
+    var daVaoAppTuCache = false;
+    function _vaoAppTuCache(p, u) {
+      if (!p || !u || !p.token) return false;
+      // Lần trước hệ thống đang bảo trì -> không vào ngay, để màn chặn hiện đúng
+      // thay vì thoáng lộ khung app trong lúc chờ máy chủ trả trạng thái mới.
+      try { if (localStorage.getItem("xd_baotri_v1") === "1") return false; } catch (eBaoTri) { return false; }
+      var splash = document.getElementById("splash-screen");
+      if (splash) splash.classList.add("intro-done"); // vào thẳng, bỏ hiệu ứng chờ
+      _apDungThongTinCaNhan(p, u);
+      _apDungQuyenMenu(p);
+      var ls = document.getElementById("login-screen");
+      if (ls) ls.style.display = "none";
+      hienAppShell();
+      initPromoSlider();
+      ctttCapNhatThanhCongCu();
+      // Vẽ gói đệm + gọi 1 lần batch NGAY, song song với bước xác thực phiên.
+      taiDuLieuSauDangNhap();
+      daVaoAppTuCache = true; // chỉ bật khi mọi bước trên đã chạy xong
+      return true;
+    }
 
     function _hoanTatDangNhapHT(res, u) {
-          currentUserMa = u; currentUserToken = res.token; currentUserUnit = res.unit; currentUserIsAdmin = res.isAdmin; currentUserIsSuperAdmin = !!res.isSuperAdmin;
-          currentUserFullname = res.name;
-          document.getElementById("head-name-text").innerText = res.name;
-          document.getElementById("head-unit").innerText = res.unit;
-          
-          // P5.1: chuẩn hoá NGAY (ảnh Drive -> thumbnail) để không tải link chậm trước.
-          var userAvatar = window.chuanHoaAnh ? window.chuanHoaAnh(res.image) : (res.image || ANH_LOGO_MAC_DINH);
-          document.getElementById("head-img").src = userAvatar;
-          document.getElementById("detail-name").innerText = res.name;
-          document.getElementById("detail-unit").innerText = res.unit;
-          document.getElementById("detail-img").src = userAvatar;
-          document.getElementById("detail-ma").innerText = u;
-          // Áp sở thích giao diện riêng của mã HT này + điền thanh chào cá nhân.
-          try { localStorage.setItem("xd_last_user", u); } catch (e) {}
-          xdApDungTuyChinh();
-          
-          document.getElementById("cttt-unit-title").innerText = res.unit;
-          document.getElementById("detail-qr-img").src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(u);
-          qrKhoiTaoNeuLaptop(); // laptop: ô QR đã hiện sẵn trên dashboard nên phải tự khởi tạo ở đây
-          if(res.isAdmin) {
-            document.getElementById("nav-approval").style.display = "flex";
-            document.getElementById("menu-lichsu-tn").style.display = "flex";
-            document.getElementById("menu-admin-panel").style.display = "flex";
-            document.getElementById("menu-diem-danh").style.display = "flex";
-            document.getElementById("desktop-btn-duyet").style.display = "flex";
-            batDauApprovalBadgePolling(); // Bắt đầu kiểm tra đơn nghỉ phép mới định kỳ ở nền, báo chấm đỏ khi có đơn chờ duyệt
-          } else {
-            document.getElementById("nav-approval").style.display = "none";
-            document.getElementById("menu-lichsu-tn").style.display = "none";
-            document.getElementById("menu-admin-panel").style.display = "none";
-            document.getElementById("menu-diem-danh").style.display = "flex"; // Điểm danh QR: mọi Huynh Trưởng đều dùng được
-            document.getElementById("desktop-btn-duyet").style.display = "none";
-          }
-          // Sidebar laptop: 3 nút tiện ích nhạy cảm phải ăn quyền y hệt menu Cài đặt.
-          var qtLichSu = document.getElementById("desktop-tool-lichsu");
-          if (qtLichSu) qtLichSu.style.display = res.isAdmin ? "" : "none";
-          var qtAdmin = document.getElementById("desktop-tool-admin");
-          if (qtAdmin) qtAdmin.style.display = res.isAdmin ? "" : "none";
-          var qtBaoTri = document.getElementById("desktop-tool-bao-tri");
-          if (qtBaoTri) qtBaoTri.style.display = currentUserIsSuperAdmin ? "" : "none";
-          // Mục "Duyệt Dữ Liệu" trong khu Quản Trị: CHỈ tài khoản có Quyền Tối Cao
-          // (cột H) mới được thấy/vào - server cũng tự kiểm tra lại nên đây chỉ là
-          // ẩn UI cho gọn, không phải lớp bảo mật duy nhất.
-          var elExplorerTab = document.getElementById("admTabBtnExplorer");
-          if (elExplorerTab) elExplorerTab.style.display = currentUserIsSuperAdmin ? "" : "none";
-          var elChucVuTab = document.getElementById("admTabBtnChucVu");
-          if (elChucVuTab) elChucVuTab.style.display = currentUserIsSuperAdmin ? "" : "none";
+          _apDungThongTinCaNhan(res, u);
+          _apDungQuyenMenu(res);
+          luuHoSo(res, u); // P5.3: để lần mở sau vào app ngay, không chờ máy chủ
 
-          // Mục "Bảo trì ứng dụng" trong menu Cài đặt: CHỈ tài khoản có Quyền Tối
-          // Cao mới thấy - dùng để bật/tắt màn hình chặn và soạn nội dung thông báo.
-          var elMenuBaoTri = document.getElementById("menu-bao-tri");
-          if (elMenuBaoTri) elMenuBaoTri.style.display = currentUserIsSuperAdmin ? "flex" : "none";
-          
           // Ẩn màn hình đăng nhập trước
           document.getElementById("login-screen").style.display = "none";
           // P5.2: hiện khung app NGAY (không chờ boot batch) để LCP không bị
           // dồn tới lúc máy chủ trả gói. Dữ liệu vẫn đổ vào sau như cũ.
           hienAppShell();
-          
+
           // Tải ngầm dữ liệu dưới nền để tối ưu hóa hiệu năng.
           // TẤT CẢ dữ liệu trang chủ đi trong 1 lần gọi xdBootstrap() duy nhất
           // (thay cho 9 lần gọi song song như trước) -> giảm tải Apps Script
           // khi đông người dùng cùng đăng nhập.
           initPromoSlider(); // KÍCH HOẠT SLIDER BANNER QUẢNG CÁO TỰ ĐỘNG & VUỐT CHẠM
           ctttCapNhatThanhCongCu(); // hiện nút "Gửi bài lên CTTT" ngay cả khi mạng chậm
-          taiDuLieuSauDangNhap();
-          
+          // P5.3: nếu lúc mở app đã tải dữ liệu sớm (vào ngay từ bộ đệm) thì
+          // không gọi lại lần 2 — tránh thêm 1 execution vô ích.
+          if (daVaoAppTuCache) daVaoAppTuCache = false;
+          else taiDuLieuSauDangNhap();
+
           // P4: kiểm tra bảo trì đã được GỘP vào cùng 1 execution batchQuery
           // với gói boot (xem taiGoiGop). Không gọi riêng như bản cũ nữa.
-          
+
     }
 
     // ==========================================
@@ -5050,6 +5130,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     // có batchQuery thì tự rơi về đường 2-3 gọi như trước, app vẫn chạy bình thường.
     function apDungTrangThaiBaoTri(cfg) {
       var dangBaoTri = !!(cfg && cfg.baoTri);
+      // Nhớ trạng thái để lần mở sau biết có nên "vào ngay" hay phải chờ màn chặn.
+      try { localStorage.setItem("xd_baotri_v1", dangBaoTri ? "1" : "0"); } catch (e) {}
       if (!dangBaoTri) { confirmEntry(); return; }
       document.getElementById("system-notice-text").innerText =
         (cfg && cfg.thongBaoBaoTri) || "Hệ thống ngưng hoạt động.";
@@ -17141,13 +17223,35 @@ document.addEventListener('visibilitychange', function () {
   var saved = docPhienLuu();
   if (!saved) return;
 
-  var ov = document.createElement('div');
-  ov.id = 'session-restore';
-  ov.style.cssText = 'position:fixed;inset:0;z-index:2147483000;background:#fff;display:flex;flex-direction:column;' +
-    'align-items:center;justify-content:center;gap:14px;font:600 15px/1.4 "Be Vietnam Pro",sans-serif;color:#555;text-align:center;padding:24px';
-  document.body.appendChild(ov);
+  // P5.3: nếu là Huynh Trưởng và đã có hồ sơ + gói đệm của lần trước thì VÀO APP
+  // NGAY (không phủ màn trắng), rồi xác thực phiên ở nền. Nhờ vậy nội dung lớn
+  // được vẽ sớm thay vì chờ máy chủ ~vài giây (LCP cũ 7,33s).
+  // Giáo Lý Viên giữ nguyên luồng cũ.
+  var vaoNgay = false;
+  if (saved.loai === 'ht' && typeof _vaoAppTuCache === 'function') {
+    // Lưu ý: phiên chỉ lưu {loai, token} — mã HT nằm trong hồ sơ, nên so token.
+    var hoSoCu = docHoSo();
+    if (hoSoCu && hoSoCu.ma && hoSoCu.token === saved.token) {
+      try { vaoNgay = _vaoAppTuCache(hoSoCu, hoSoCu.ma) === true; } catch (e) { vaoNgay = false; daVaoAppTuCache = false; }
+    }
+  }
+
+  var ov = null, pill = null, daLoiMang = false;
+  if (!vaoNgay) {
+    ov = document.createElement('div');
+    ov.id = 'session-restore';
+    ov.style.cssText = 'position:fixed;inset:0;z-index:2147483000;background:#fff;display:flex;flex-direction:column;' +
+      'align-items:center;justify-content:center;gap:14px;font:600 15px/1.4 "Be Vietnam Pro",sans-serif;color:#555;text-align:center;padding:24px';
+    document.body.appendChild(ov);
+  } else {
+    pill = document.createElement('div');
+    pill.id = 'session-check-pill';
+    pill.innerHTML = '<span class="xd-pill-spin"></span><span>Đang xác thực…</span>';
+    document.body.appendChild(pill);
+  }
 
   function setBusy() {
+    if (!ov) return;
     // Thay vòng tròn xoay + chữ "Đang đăng nhập lại..." bằng chính intro
     // logo Xứ Đoàn -> logo Hill (tự lặp) để đồng nhất với lúc mở app.
     ov.innerHTML = '<div class="intro-stage">' +
@@ -17157,6 +17261,23 @@ document.addEventListener('visibilitychange', function () {
     ov.classList.add('intro-run');
   }
   function setOffline() {
+    if (vaoNgay) {
+      // Đang xem dữ liệu lưu sẵn: chỉ báo nhỏ ở góc, KHÔNG che app.
+      daLoiMang = true;
+      daVaoAppTuCache = false; // lần thử lại sau sẽ tải dữ liệu mới đầy đủ
+      if (pill) {
+        pill.classList.add('loi');
+        pill.title = 'Bấm để thử lại';
+        pill.innerHTML = '<i class="fas fa-wifi"></i><span>Mất kết nối — đang xem dữ liệu lưu sẵn</span>';
+        pill.onclick = function () {
+          pill.classList.remove('loi');
+          pill.onclick = null;
+          pill.innerHTML = '<span class="xd-pill-spin"></span><span>Đang thử lại…</span>';
+          thu();
+        };
+      }
+      return;
+    }
     ov.classList.remove('intro-run');
     ov.innerHTML = '<i class="fas fa-wifi" style="font-size:34px;color:#d32f2f"></i>' +
       '<div>Không kết nối được máy chủ.<br><span style="font-weight:400;font-size:13px">Tài khoản của bạn vẫn được giữ lại.</span></div>' +
@@ -17165,9 +17286,19 @@ document.addEventListener('visibilitychange', function () {
     document.getElementById('sr-retry').onclick = thu;
     document.getElementById('sr-manual').onclick = function () { ov.remove(); };
   }
-  function xong() { if (ov.parentNode) ov.remove(); }
+  function xong() {
+    if (ov && ov.parentNode) ov.remove();
+    if (pill && pill.parentNode) pill.remove();
+    daLoiMang = false;
+  }
   function hetHan(msg) {
+    daVaoAppTuCache = false;
     xoaPhienLuu(); xong();
+    // Đang vào ngay từ bộ đệm: trả màn hình về đăng nhập.
+    if (vaoNgay) {
+      var mainEl = document.getElementById('main-app'); if (mainEl) mainEl.style.display = 'none';
+      var lsEl = document.getElementById('login-screen'); if (lsEl) lsEl.style.display = 'flex';
+    }
     // Phiên của Giáo Lý Viên hết hạn: chuyển sẵn ô đăng nhập sang tab GLV để
     // người dùng không phải tự bấm lại (trước đây luôn hiện tab Huynh Trưởng).
     if (saved.loai === 'glv' && typeof setLoginMode === 'function') {
@@ -17187,6 +17318,11 @@ document.addEventListener('visibilitychange', function () {
 
   function thu() {
     setBusy();
+    if (pill) {
+      pill.classList.remove('loi');
+      pill.onclick = null;
+      pill.innerHTML = '<span class="xd-pill-spin"></span><span>Đang xác thực…</span>';
+    }
     var fn = saved.loai === 'glv' ? 'khoiPhucPhienGLV' : 'khoiPhucPhien';
     google.script.run
       .withSuccessHandler(function (res) {
@@ -17197,6 +17333,11 @@ document.addEventListener('visibilitychange', function () {
       .withFailureHandler(function () { setOffline(); })
       [fn](saved.token);
   }
+
+  // Mạng trở lại thì tự xác thực tiếp (chỉ ở đường "vào ngay từ bộ đệm").
+  window.addEventListener('online', function () {
+    if (vaoNgay && daLoiMang) { daLoiMang = false; thu(); }
+  });
 
   function chay() { thu(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', chay); else chay();
