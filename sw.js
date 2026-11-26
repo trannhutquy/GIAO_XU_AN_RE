@@ -1,9 +1,9 @@
 // Service worker: má»Ÿ app Tá»¨C THÃŒ tá»« bá»™ nhá»› mÃ¡y, táº£i báº£n má»›i á»Ÿ ná»n, bÃ¡o khi cÃ³ báº£n má»›i,
 // vÃ  nháº­n THÃ”NG BÃO Äáº¨Y (Firebase Cloud Messaging) ká»ƒ cáº£ khi app Ä‘ang Ä‘Ã³ng.
-var VERSION = "v72";
+var VERSION = "v73";
 var SHELL = "shell-" + VERSION;
 var STATIC = "static-" + VERSION;
-var SHELL_FILES = ["./", "index.html", "config.js", "gas-shim.js", "push.js", "manifest.webmanifest",
+var SHELL_FILES = ["./", "index.html", "config.js", "pv-domain.js", "gas-shim.js", "push.js", "manifest.webmanifest",
   "icons/icon-192.png", "icons/icon-512.png", "icons/hill-v2.png", "icons/hill-community.png",
   "icons/banner-quang-cao-1.webp", "icons/banner-quang-cao-2.webp", "icons/banner-quang-cao-3.webp",
   "vendor/jsqr.js", "vendor/qrcode-generator.js"];
