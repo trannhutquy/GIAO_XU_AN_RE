@@ -5012,25 +5012,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           ctttCapNhatThanhCongCu(); // hiện nút "Gửi bài lên CTTT" ngay cả khi mạng chậm
           taiDuLieuSauDangNhap();
           
-          // Kiểm tra chế độ bảo trì (màn hình chặn) từ server. Nếu KHÔNG bảo trì,
-          // vào thẳng app như bình thường. Nếu ĐANG bảo trì, hiện màn hình chặn;
-          // riêng tài khoản có Quyền Tối Cao sẽ thấy thêm nút để bỏ qua và vào app.
-          google.script.run
-            .withSuccessHandler(function (cfg) {
-              var dangBaoTri = !!(cfg && cfg.baoTri);
-              if (!dangBaoTri) { confirmEntry(); return; }
-
-              document.getElementById("system-notice-text").innerText =
-                (cfg && cfg.thongBaoBaoTri) || "Hệ thống ngưng hoạt động.";
-              document.getElementById("system-notice-bypass-btn").style.display =
-                currentUserIsSuperAdmin ? "block" : "none";
-              document.getElementById("system-notice-modal").style.display = "flex";
-            })
-            .withFailureHandler(function () {
-              // Lỗi khi kiểm tra cấu hình bảo trì: không chặn app vì lỗi kết nối
-              confirmEntry();
-            })
-            .layTrangThaiBaoTri();
+          // P4: kiểm tra bảo trì đã được GỘP vào cùng 1 execution batchQuery
+          // với gói boot (xem taiGoiGop). Không gọi riêng như bản cũ nữa.
           
     }
 
@@ -5056,13 +5039,26 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       taiGoiGop();
     }
 
-    // Gói 1 = phần RIÊNG của tôi (cần token). Gói 2 = phần CHUNG (thông báo
-    // chạy + hành trình) lấy sau, vì phần này nằm sẵn ở lớp đệm /api/gas nên
-    // hầu như không tốn lượt chạy Apps Script nào.
+    // P4 — GỘP 3 VIỆC VÀO 1 EXECUTION: dữ liệu riêng + dữ liệu chung + trạng
+    // thái bảo trì đi cùng 1 lời gọi batchQuery(op:"query"). Backend cũ chưa
+    // có batchQuery thì tự rơi về đường 2-3 gọi như trước, app vẫn chạy bình thường.
+    function apDungTrangThaiBaoTri(cfg) {
+      var dangBaoTri = !!(cfg && cfg.baoTri);
+      if (!dangBaoTri) { confirmEntry(); return; }
+      document.getElementById("system-notice-text").innerText =
+        (cfg && cfg.thongBaoBaoTri) || "Hệ thống ngưng hoạt động.";
+      document.getElementById("system-notice-bypass-btn").style.display =
+        currentUserIsSuperAdmin ? "block" : "none";
+      document.getElementById("system-notice-modal").style.display = "flex";
+    }
+    function taiTrangThaiBaoTriRieng() {
+      google.script.run
+        .withSuccessHandler(apDungTrangThaiBaoTri)
+        .withFailureHandler(function () { confirmEntry(); })
+        .layTrangThaiBaoTri();
+    }
     function taiGoiGop() {
-      // Gói CHUNG nằm ở lớp đệm /api/gas (gần như tức thì) nên gọi song song
-      // với gói RIÊNG, không chờ gói nặng xong mới bắt đầu gói nhẹ nữa.
-      var goiCuaToi = null, goiChung = null, daVe = false;
+      var goiCuaToi = null, goiChung = null, daVe = false, daXuLyBaoTri = false;
       function veKhiDu() {
         if (daVe || !goiCuaToi || !goiChung) return;
         daVe = true;
@@ -5073,21 +5069,50 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         luuBootCache(goiCuaToi);
         bootDaVeTuCache = chuKyMoi;
       }
-      google.script.run
-        .withSuccessHandler(function (res) {
-          if (!res || !res.success) { taiGoiBootstrap(); return; }
-          goiCuaToi = res;
-          veKhiDu();
-        })
-        .withFailureHandler(function () { taiGoiBootstrap(); })
-        .xdCuaToi(currentUserToken);
-      google.script.run
-        .withSuccessHandler(function (res) {
-          goiChung = (res && res.success) ? res : {};
-          veKhiDu();
-        })
-        .withFailureHandler(function () { goiChung = {}; veKhiDu(); })
-        .xdChung();
+      function xuLyBatch(res) {
+        if (!res || !Array.isArray(res.results)) return false;
+        var theo = {};
+        for (var i = 0; i < res.results.length; i++) {
+          var r = res.results[i];
+          if (r && r.name) theo[r.name] = r;
+        }
+        var c = theo.xdCuaToi, z = theo.xdChung, bt = theo.layTrangThaiBaoTri;
+        if (!c || !c.ok || !c.result || !c.result.success) return false;
+        if (!daXuLyBaoTri) {
+          daXuLyBaoTri = true;
+          if (bt && bt.ok) apDungTrangThaiBaoTri(bt.result);
+          else confirmEntry();
+        }
+        goiCuaToi = c.result;
+        goiChung = (z && z.ok && z.result && z.result.success) ? z.result : {};
+        veKhiDu();
+        return true;
+      }
+      function taiGoiGopCu() {
+        google.script.run
+          .withSuccessHandler(function (res) {
+            if (!res || !res.success) { taiGoiBootstrap(); return; }
+            goiCuaToi = res;
+            veKhiDu();
+          })
+          .withFailureHandler(function () { taiGoiBootstrap(); })
+          .xdCuaToi(currentUserToken);
+        google.script.run
+          .withSuccessHandler(function (res) {
+            goiChung = (res && res.success) ? res : {};
+            veKhiDu();
+          })
+          .withFailureHandler(function () { goiChung = {}; veKhiDu(); })
+          .xdChung();
+        if (!daXuLyBaoTri) { daXuLyBaoTri = true; taiTrangThaiBaoTriRieng(); }
+      }
+      if (window.gasBatch) {
+        window.gasBatch(currentUserToken, [
+          { name: "xdCuaToi", args: [currentUserToken] },
+          { name: "xdChung", args: [] },
+          { name: "layTrangThaiBaoTri", args: [] }
+        ], function (res) { if (!xuLyBatch(res)) taiGoiGopCu(); }, function () { taiGoiGopCu(); });
+      } else taiGoiGopCu();
     }
 
     // Dự phòng cho bản Apps Script cũ (chưa có xdCuaToi): dùng gói gộp cũ.
@@ -5145,6 +5170,14 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         }
       } catch (e) {}
     }
+
+    // P4: khi gas-shim phát hiện server đổi version (deploy backend mới), xoá
+    // gói boot cũ NGAY. Gói boot mới sẽ được apDungBootstrap() vẽ lại cùng lúc
+    // trong lời gọi batchQuery đang chạy, nên người dùng không thấy dữ liệu cũ.
+    window.addEventListener("xd-version-change", function () {
+      xoaBootCache();
+      try { console.info("[xd] Đổi phiên bản server, đã xoá boot cache."); } catch (e) {}
+    });
 
     // Hiện khung "đang tải" ngay lập tức (giống bản cũ) trong lúc chờ bootstrap,
     // để người dùng thấy app có phản hồi chứ không phải màn hình trống.

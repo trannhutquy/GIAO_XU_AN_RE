@@ -96,6 +96,69 @@
   }
   window.gasCacheClear = function () { mem = {}; clearStored(); };
 
+  // ---------- P4: invalidate theo version ----------
+  // Khác với key cache xdc:*, key này KHÔNG bị gasCacheClear() xoá, nên có thể
+  // so sánh bản cũ/bản mới. Khi server đổi version: xoá cache RAM + localStorage
+  // rồi báo cho index.html xoá luôn gói boot cache (sự kiện xd-version-change).
+  var VERSION_KEY = "xd_version_runtime";
+  function docVersion() { try { return localStorage.getItem(VERSION_KEY) || ""; } catch (x) { return ""; } }
+  function noteVersion(v) {
+    if (!v) return;
+    var moi = String(v), cu = docVersion();
+    if (cu && cu !== moi) {
+      window.gasCacheClear();
+      try {
+        var ev = new CustomEvent("xd-version-change", { detail: { tu: cu, den: moi } });
+        window.dispatchEvent(ev);
+      } catch (x) {
+        try { window.dispatchEvent(new Event("xd-version-change")); } catch (x2) {}
+      }
+    }
+    try { localStorage.setItem(VERSION_KEY, moi); } catch (x) {}
+  }
+  window.xdVersion = docVersion;
+
+  // ---------- P4: invalidate theo namespace (thay gasCacheClear toàn cục) ----------
+  // Sau một lệnh GHI chỉ bỏ cache của ĐỌC có liên quan, không dọn sạch mọi key
+  // như gasCacheClear() cũ. Hàm nào chưa có trong bảng thì rơi về dọn toàn bộ
+  // cache đọc cho an toàn (vẫn không đụng localStorage ngoài prefix xdc:).
+  var WRITE_INVALIDATES = {
+    quyGhiNhanThu: ["quyLayDanhSachTuan", "quyLayDanhSachChiThang", "quyLayMucDong", "quyLayTonQuyHienTai", "quyTrangThaiCaNhanHT", "pollTongHop", "xdCuaToi", "xdBootstrap"],
+    quyHuyThu: ["quyLayDanhSachTuan", "quyLayDanhSachChiThang", "quyLayMucDong", "quyLayTonQuyHienTai", "quyTrangThaiCaNhanHT", "pollTongHop", "xdCuaToi", "xdBootstrap"],
+    quyCapNhatMucDong: ["quyLayMucDong", "quyLayTonQuyHienTai", "xdCuaToi", "xdBootstrap"],
+    admSetBaoTri: ["getAppConfigData", "layTrangThaiBaoTri", "xdChung", "xdCuaToi", "xdBootstrap"],
+    capNhatCauHinh: ["getAppConfigData", "layTrangThaiBaoTri", "xdChung", "xdCuaToi", "xdBootstrap"],
+    admGuiThongBaoChung: ["layThongBaoChung", "thongBaoLayNhacViec", "pollTongHop", "xdChung"],
+    admThuHoiThongBaoChung: ["layThongBaoChung", "thongBaoLayNhacViec", "pollTongHop", "xdChung"],
+    guiDonXinPhep: ["getMyLeaveRequests", "countPendingLeaveRequests", "pollTongHop", "xdCuaToi"],
+    duyetDonXinPhep: ["getLeaveRequests", "getMyLeaveRequests", "countPendingLeaveRequests", "pollTongHop", "xdCuaToi"],
+    admGuiBaiKiemTra: ["kiemTraDanhSachChoHT", "pollTongHop", "xdCuaToi"],
+    admGanMaDe: ["kiemTraDanhSachChoHT", "kiemTraLichSuCuaToi", "xdCuaToi"]
+  };
+  function xoaCacheTheoFn(fn) {
+    var prefix = fn + "|";
+    for (var k in mem) {
+      if (Object.prototype.hasOwnProperty.call(mem, k) && mem[k] && mem[k].key && mem[k].key.indexOf(prefix) === 0) delete mem[k];
+    }
+    try {
+      var del = [];
+      for (var i = 0; i < localStorage.length; i++) {
+        var n = localStorage.key(i);
+        if (!n || n.indexOf(CACHE_PREFIX) !== 0) continue;
+        try {
+          var e = JSON.parse(localStorage.getItem(n));
+          if (e && e.key && e.key.indexOf(prefix) === 0) del.push(n);
+        } catch (x) {}
+      }
+      del.forEach(function (n) { localStorage.removeItem(n); });
+    } catch (x) {}
+  }
+  function invalidateAfterWrite(fn) {
+    var danh = WRITE_INVALIDATES[fn];
+    if (!danh) { window.gasCacheClear(); return; }
+    for (var i = 0; i < danh.length; i++) xoaCacheTheoFn(danh[i]);
+  }
+
   // ---------- thông báo nhỏ ----------
   function toast(msg) {
     var el = document.getElementById("gas-toast");
@@ -163,6 +226,7 @@
       catch (e) { var er = new Error("Máy chủ trả về dữ liệu không hợp lệ (kiểm tra quyền truy cập 'Anyone' của Web app)"); er._t = true; throw er; }
       if (timer) clearTimeout(timer);
       if (!data.ok) { var e2 = new Error(data.error || "Lỗi máy chủ"); e2._t = TRANSIENT_RE.test(e2.message); throw e2; }
+      noteVersion(data.version || (data.result && data.result.version));
       onOk(data.result);
     }).catch(function (err) {
       if (err && err.name === "AbortError") { err = new Error("Máy chủ phản hồi quá lâu"); err._t = true; }
@@ -195,6 +259,7 @@
       try { data = JSON.parse(txt); }
       catch (e) { return quayVeGas(new Error("SQL trả dữ liệu không hợp lệ")); }
       if (!data || !data.ok) return quayVeGas(new Error((data && data.error) || "Lỗi SQL"));
+      noteVersion(data.version || (data.result && data.result.version));
       onOk(data.result);
     }).catch(quayVeGas);
   }
@@ -228,9 +293,50 @@
       var data;
       try { data = JSON.parse(txt); } catch (e) { quayVeGas(); return; }
       if (!data || !data.ok) { quayVeGas(); return; }
+      noteVersion(data.version || (data.result && data.result.version));
       onOk(data.result);
     }).catch(function () { quayVeGas(); });
   }
+
+  // ---------- P4: gửi 1 gói NHIỀU hàm đọc (op:"query") ----------
+  // Không đi cache SWR/TTL: gói boot luôn lấy bản mới để kịp so version.
+  function sendBatch(token, queries, onOk, onErr, attempt) {
+    var url = window.GAS_URL;
+    var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, TIMEOUT_MS) : null;
+    function fail(err, transient) {
+      if (timer) clearTimeout(timer);
+      var e = err instanceof Error ? err : new Error(String(err));
+      if (typeof navigator !== "undefined" && navigator.onLine === false) e = new Error("Không có kết nối mạng");
+      if (transient && !attempt) {
+        return setTimeout(function () { sendBatch(token, queries, onOk, onErr, 1); }, 900);
+      }
+      onErr(e);
+    }
+    if (!url || /PASTE_DEPLOYMENT_ID_HERE/.test(url)) return fail(new Error("Chưa cấu hình GAS_URL trong config.js"), false);
+    fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ op: "query", token: token, queries: queries }),
+      redirect: "follow",
+      signal: ctrl ? ctrl.signal : undefined
+    }).then(function (r) { return r.text(); }).then(function (txt) {
+      var data;
+      try { data = JSON.parse(txt); }
+      catch (e) { var er = new Error("Máy chủ trả về dữ liệu không hợp lệ"); er._t = true; throw er; }
+      if (timer) clearTimeout(timer);
+      if (!data.ok) { var e2 = new Error(data.error || "Lỗi máy chủ"); e2._t = TRANSIENT_RE.test(e2.message); throw e2; }
+      noteVersion(data.version || (data.result && data.result.version));
+      onOk(data.result);
+    }).catch(function (err) {
+      if (err && err.name === "AbortError") { err = new Error("Máy chủ phản hồi quá lâu"); err._t = true; }
+      var transient = err && err._t !== undefined ? err._t : true;
+      fail(err, transient);
+    });
+  }
+  window.gasBatch = function (token, queries, ok, err) {
+    sendBatch(token, queries, ok || function () {}, err || defaultErr("batchQuery"), 0);
+  };
 
   // ---------- điều phối: cache / gộp / thử lại ----------
   var inflight = {};
@@ -265,7 +371,7 @@
 
     function done(v) {
       if (SWR[fn] || TTL[fn]) cacheSet(key, v);
-      if (!read) window.gasCacheClear();                  // vừa GHI dữ liệu -> bỏ cache cũ cho chắc
+      if (!read) invalidateAfterWrite(fn);                // P4: chỉ bỏ cache đọc liên quan, không clear toàn cục
       return v;
     }
 
