@@ -5006,6 +5006,9 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           
           // Ẩn màn hình đăng nhập trước
           document.getElementById("login-screen").style.display = "none";
+          // P5.2: hiện khung app NGAY (không chờ boot batch) để LCP không bị
+          // dồn tới lúc máy chủ trả gói. Dữ liệu vẫn đổ vào sau như cũ.
+          hienAppShell();
           
           // Tải ngầm dữ liệu dưới nền để tối ưu hóa hiệu năng.
           // TẤT CẢ dữ liệu trang chủ đi trong 1 lần gọi xdBootstrap() duy nhất
@@ -6165,13 +6168,26 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       glvDiemDanhTheoChuoi("TNGL:" + ma, "tay");
     }
 
-    function confirmEntry() {
-      document.getElementById("system-notice-modal").style.display = "none";
-      document.getElementById("main-app").style.display = "block";
+    // P5.2: tách "hiện khung app" khỏi "side-effect sau đăng nhập".
+    // - hienAppShell(): chỉ bật #main-app + canh lại viên nav, gọi được sớm.
+    // - confirmEntry(): gọi hienAppShell() rồi mới hẹn các việc nền (1 lần).
+    var daHienAppShell = false;
+    function hienAppShell() {
+      var el = document.getElementById("main-app");
+      if (el) el.style.display = "block";
+      if (daHienAppShell) return;
+      daHienAppShell = true;
       setTimeout(function() {
         var activeNav = document.querySelector('.nav-item.active');
         if (activeNav) updateNavPill(activeNav);
       }, 50);
+    }
+    var daChayConfirmEntry = false;
+    function confirmEntry() {
+      document.getElementById("system-notice-modal").style.display = "none";
+      hienAppShell();
+      if (daChayConfirmEntry) return;
+      daChayConfirmEntry = true;
       setTimeout(function() { thongBaoHienThiNhacViec(); }, 900);
       setTimeout(function() { window.hienGioiThieuPhienBan && window.hienGioiThieuPhienBan(); }, 500);
       setTimeout(function() { window.XDPush && XDPush.dongBo(); }, 4000); // gắn lại thiết bị nhận thông báo (nếu đã bật)
