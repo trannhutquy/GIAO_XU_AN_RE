@@ -2701,7 +2701,9 @@ window.chuanHoaAnh = function (u) {
   var m = u.match(/drive\.google\.com\/file\/d\/([^\/?#]+)/i) ||
           u.match(/drive\.google\.com\/open\?id=([^&]+)/i) ||
           u.match(/drive\.google\.com\/uc\?[^#]*[?&]id=([^&]+)/i);
-  if (m && m[1]) return "https://drive.google.com/uc?export=view&id=" + m[1];
+  // P5.1: endpoint thumbnail (CDN nhẹ) thay cho uc?export=view để avatar không
+  // kéo LCP lên vài chục giây. Ảnh lỗi vẫn tự rơi về logo mặc định bên dưới.
+  if (m && m[1]) return "https://drive.google.com/thumbnail?id=" + m[1] + "&sz=w240";
   return u;
 };
 
@@ -3429,7 +3431,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     <div class="header">
       <div style="display: flex; align-items: center; flex-grow: 1; cursor: pointer;" onclick="showPage('profile-page', document.getElementById('navCaNhan'))">
         <span id="head-avatar-frame" class="avatar-frame">
-          <img id="head-img" src="" class="profile-img" onclick="triggerAvatarUpload(event)" style="position: relative;" title="Bấm để đổi ảnh" decoding="async">
+          <img id="head-img" src="icons/icon-512.png" class="profile-img" onclick="triggerAvatarUpload(event)" style="position: relative;" title="Bấm để đổi ảnh" decoding="async">
           <span class="avatar-sparkle avatar-sparkle-1"></span>
           <span class="avatar-sparkle avatar-sparkle-2"></span>
           <span class="avatar-sparkle avatar-sparkle-3"></span>
@@ -3483,7 +3485,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       <div id="profile-page" class="page">
         <div style="text-align:center; padding: 20px;">
           <span id="detail-avatar-frame" class="avatar-frame" style="margin-bottom:15px;">
-            <img id="detail-img" src="" decoding="async" style="width:120px; height:120px; border-radius:50%; border:4px solid #d32f2f; object-fit:cover;">
+            <img id="detail-img" src="icons/icon-512.png" decoding="async" fetchpriority="high" style="width:120px; height:120px; border-radius:50%; border:4px solid #d32f2f; object-fit:cover;">
             <span class="avatar-sparkle avatar-sparkle-1"></span>
             <span class="avatar-sparkle avatar-sparkle-2"></span>
             <span class="avatar-sparkle avatar-sparkle-3"></span>
@@ -4954,7 +4956,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           document.getElementById("head-name-text").innerText = res.name;
           document.getElementById("head-unit").innerText = res.unit;
           
-          var userAvatar = res.image || ANH_LOGO_MAC_DINH;
+          // P5.1: chuẩn hoá NGAY (ảnh Drive -> thumbnail) để không tải link chậm trước.
+          var userAvatar = window.chuanHoaAnh ? window.chuanHoaAnh(res.image) : (res.image || ANH_LOGO_MAC_DINH);
           document.getElementById("head-img").src = userAvatar;
           document.getElementById("detail-name").innerText = res.name;
           document.getElementById("detail-unit").innerText = res.unit;
@@ -11363,10 +11366,11 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         google.script.run.withSuccessHandler(function(res) {
           headImg.style.opacity = "1";
           if(res.success) {
-            document.getElementById("head-img").src = res.newUrl;
-            document.getElementById("detail-img").src = res.newUrl;
+            var anhMoi = window.chuanHoaAnh ? window.chuanHoaAnh(res.newUrl) : res.newUrl;
+            document.getElementById("head-img").src = anhMoi;
+            document.getElementById("detail-img").src = anhMoi;
             var wavMoi = document.getElementById("welcome-avatar");
-            if (wavMoi) wavMoi.src = window.chuanHoaAnh ? window.chuanHoaAnh(res.newUrl) : res.newUrl;
+            if (wavMoi) wavMoi.src = anhMoi;
             showToast("Đã cập nhật ảnh đại diện mới thành công!", "success");
           } else {
             headImg.src = oldSrc;
