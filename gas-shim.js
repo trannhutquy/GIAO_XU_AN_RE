@@ -12,18 +12,59 @@
   var TIMEOUT_MS = 90000;
 
   // ---------- phân loại hàm ----------
-  // Hàm ĐỌC: an toàn để thử lại / gộp. Mọi hàm khác coi là hàm GHI.
-  var READ_RE = /^(get|poll|count|xd|admLay|quyLay|thiDuaLay|vanBanLay|soBoHTLay|htLay|layDanh|layThongTin|layTrangThai|layDiem|kiemTraDanhSach|kiemTraLich|admKiemTraDanhSach|admKiemTraChiTiet|admKiemTraThongKe|admThiDuaLichSu|admThiDuaDanhSach|admChucVuDanhSach|adminLay)/;
+  // Whitelist tường minh thay cho regex prefix. Regex cũ làm 13 hàm ĐỌC bị coi
+  // là GHI (điển hình khanCapAdminLayMaHienTai bị poll mỗi 2 giây) -> cứ sau
+  // mỗi lần poll lại gọi gasCacheClear() và xoá sạch cache. Chỉ liệt kê hàm
+  // chắc chắn không đổi dữ liệu; hàm nào chưa chắc cứ coi là GHI cho an toàn.
+  var READ_FN = {
+    getAppConfigData: 1, getBaoCaoVangLeThieuNhi: 1, getCTTTData: 1, getChiTietThieuNhi: 1,
+    getDanhSachThieuNhi: 1, getHTAttendanceCalendar: 1, getHanhTrinhData: 1, getLeaveRequests: 1,
+    getLichSuChinhSuaTN: 1, getMyLeaveRequests: 1, getThongTinLopCuaGLV: 1, getToanBoDanhSach: 1,
+    getWorkAssignments: 1,
+    pollTongHop: 1, countPendingLeaveRequests: 1,
+    xdBootstrap: 1, xdChung: 1, xdCuaToi: 1,
+    admChucVuDanhSach: 1, admGiaoLyLayDuLieu: 1,
+    admKiemTraChiTietBaiLam: 1, admKiemTraChiTietDe: 1, admKiemTraDanhSachBaiLam: 1,
+    admKiemTraDanhSachDe: 1, admKiemTraDanhSachKho: 1, admKiemTraLayDanhSachGanMa: 1,
+    admKiemTraThongKe: 1,
+    admLayDanhSachDB: 1, admLayDanhSachGLV: 1, admLayDanhSachLopGiaoLy: 1,
+    admLayDanhSachSheet: 1, admLayDanhSachTNGiaoLy: 1, admLayDanhSachThongBaoChung: 1,
+    admLayDanhSachYeuCauQuenMKGLV: 1, admLayDuLieuSheet: 1, admLayQuyTongQuan: 1,
+    admLayThongKeOnDinh: 1,
+    admThiDuaDanhSachDeXuat: 1, admThiDuaLichSu: 1, admThiDuaLichSuDeXuat: 1,
+    adminLayDanhSachYeuCauQuenMK: 1,
+    ctttLayBackupCuaToi: 1, ctttLayChoDuyet: 1,
+    glvLayHoSoTN: 1, glvLayLichSuDiemDanh: 1, glvLayTienDo: 1,
+    htLayDanhSachYeuCauThayDoi: 1,
+    khanCapAdminLayMaHienTai: 1,
+    kiemTraDanhSachChoHT: 1, kiemTraLayDeDeLam: 1, kiemTraLichSuCuaToi: 1,
+    layDanhSachThieuNhiLopGLV: 1, layDiemDanhHomNayGLV: 1, layThongBaoChung: 1,
+    layThongTinCaNhanCSDLHT: 1, layTrangThaiBaoTri: 1,
+    quyLayDanhSachChiThang: 1, quyLayDanhSachHTMienThu: 1, quyLayDanhSachTuan: 1,
+    quyLayMucDong: 1, quyLayTonQuyHienTai: 1, quyTrangThaiCaNhanHT: 1,
+    soBoHTLayDanhSach: 1, vanBanLayDanhSach: 1,
+    thiDuaLayBangXepHang: 1, thiDuaLayDanhSachHanhVi: 1, thiDuaLayDiemCuaToi: 1,
+    thiDuaLayDsHTChoAdmin: 1, thongBaoLayNhacViec: 1
+  };
   // Màn hình hiện ngay dữ liệu cũ rồi cập nhật dữ liệu mới (tối đa 24 giờ tuổi)
   var SWR = { getHanhTrinhData: 1, getCTTTData: 1, vanBanLayDanhSach: 1, soBoHTLayDanhSach: 1,
               thiDuaLayBangXepHang: 1, getDanhSachThieuNhi: 1, getToanBoDanhSach: 1 };
   var SWR_MAX_AGE = 24 * 3600 * 1000;
-  // Cấu hình ít đổi: dùng lại trong 5 phút, không gọi server
-  var TTL = { getAppConfigData: 5 * 60 * 1000 };
+  // Dùng lại dữ liệu trong thời gian ngắn, không gọi server. Mọi lượt GHI
+  // vẫn xoá cache nên thao tác sửa luôn thấy dữ liệu mới ngay.
+  var TTL = {
+    getAppConfigData: 5 * 60 * 1000,
+    pollTongHop: 20 * 1000,
+    thongBaoLayNhacViec: 60 * 1000,
+    layThongBaoChung: 60 * 1000,
+    countPendingLeaveRequests: 20 * 1000,
+    quyLayDanhSachTuan: 30 * 1000,
+    quyTrangThaiCaNhanHT: 30 * 1000
+  };
   var CACHE_PREFIX = "xdc:";
   var MAX_ENTRY_CHARS = 400000;
 
-  function isRead(fn) { return READ_RE.test(fn); }
+  function isRead(fn) { return !!READ_FN[fn]; }
 
   // ---------- cache ----------
   var mem = {};

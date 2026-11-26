@@ -5039,12 +5039,18 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     // hiệu thi đua, thông báo nền. Mỗi phần lỗi riêng thì hàm vẽ tương ứng tự
     // gọi lại server (xem: tham số "pre" trong từng hàm load...).
     // ==========================================
+    // Chữ ký của gói đã vẽ từ cache. Khi gói mới từ server giống hệt thì bỏ qua
+    // lần vẽ thứ 2 (trước đây vẽ 2 lần: cache -> server -> cache...), giúp mở app
+    // nhanh hơn và không làm nhấp nháy các thẻ/lịch.
+    var bootDaVeTuCache = null;
+
     function taiDuLieuSauDangNhap() {
       if (!currentUserToken) return;
       // Mở lại app: vẽ ngay dữ liệu lần trước (nếu còn hạn) để không phải nhìn
-      // khung chờ; sau đó vẫn lấy gói mới từ server và vẽ đè lên.
+      // khung chờ; sau đó vẫn lấy gói mới từ server, chỉ vẽ lại nếu có đổi.
       var cu = docBootCache();
-      if (cu) { apDungBootstrap(cu); } else { hienLoaderBootstrap(); }
+      if (cu) { bootDaVeTuCache = JSON.stringify(cu); apDungBootstrap(cu); }
+      else { bootDaVeTuCache = null; hienLoaderBootstrap(); }
       taiGoiGop();
     }
 
@@ -5060,8 +5066,10 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         daVe = true;
         goiCuaToi.cfg = goiChung.cfg;
         goiCuaToi.hanhtrinh = goiChung.hanhtrinh;
-        apDungBootstrap(goiCuaToi);
+        var chuKyMoi = JSON.stringify(goiCuaToi);
+        if (chuKyMoi !== bootDaVeTuCache) apDungBootstrap(goiCuaToi);
         luuBootCache(goiCuaToi);
+        bootDaVeTuCache = chuKyMoi;
       }
       google.script.run
         .withSuccessHandler(function (res) {
@@ -5085,6 +5093,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       google.script.run
         .withSuccessHandler(function (res) {
           if (!res || !res.success) { taiDuLieuDuPhong(); return; }
+          bootDaVeTuCache = JSON.stringify(res);
           apDungBootstrap(res);
           luuBootCache(res);
         })
@@ -5126,6 +5135,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     // Xoá mọi gói đệm (đăng xuất / phiên hết hạn) — tránh máy dùng chung
     // hiện dữ liệu của tài khoản trước.
     function xoaBootCache() {
+      bootDaVeTuCache = null;
       try {
         for (var i = localStorage.length - 1; i >= 0; i--) {
           var k = localStorage.key(i);
@@ -7825,13 +7835,20 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       }
     }
 
-    function approvalXuLyBadge(res) {
-          if (!res || !res.success) return;
-          var coCho = (res.count || 0) > 0;
+    // Nhớ số đơn chờ để duyệt/từ chối có thể cập nhật chấm đỏ ngay, không cần
+    // gọi lại countPendingLeaveRequests sau mỗi lần bấm nút.
+    var approvalSoDonCho = 0;
+    function hienBadgeDon(so) {
+          var coCho = (so || 0) > 0;
           var elNav = document.getElementById("approval-badge-nav");
           var elDesktop = document.getElementById("approval-badge-desktop");
           if (elNav) elNav.style.display = coCho ? "block" : "none";
           if (elDesktop) elDesktop.style.display = coCho ? "block" : "none";
+    }
+    function approvalXuLyBadge(res) {
+          if (!res || !res.success) return;
+          approvalSoDonCho = Math.max(0, Number(res.count) || 0);
+          hienBadgeDon(approvalSoDonCho);
     }
     function capNhatApprovalBadge() {
       if (!currentUserToken || !currentUserIsAdmin) return;
@@ -10880,7 +10897,10 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       if (!(currentUserIsAdmin || currentUserIsSuperAdmin)) return;
       khanCapAdminLamMoi();
       if (khanCapPollTimer) clearInterval(khanCapPollTimer);
-      khanCapPollTimer = setInterval(khanCapAdminLamMoi, 2000);
+      // Mã được hẹn làm mới đúng lúc hết hạn (xem khanCapHenLamMoiTimer), nên
+      // không cần hỏi server mỗi 2 giây. 8 giây vẫn đủ các chỉ số điếm danh
+      // cập nhật mà giảm ~75% lượt gọi khi mở tab "Hiện mã".
+      khanCapPollTimer = setInterval(khanCapAdminLamMoi, 8000);
       if (khanCapDemNguocTimer) clearInterval(khanCapDemNguocTimer);
       // Cập nhật 4 lần/giây: số đếm chuyển đúng thời điểm, không bị trễ nhịp như 1 giây/lần
       khanCapDemNguocTimer = setInterval(khanCapVeSoDemNguoc, 250);
@@ -11526,107 +11546,151 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       }
   }
 
+  // Giữ lại danh sách đang hiện để duyệt/từ chối cập nhật ngay (optimistic),
+  // không phải chờ server rồi tải lại cả danh sách + chấm đỏ như trước.
+  var donPhepDangHien = [];
+
+  // Vẽ danh sách từ dữ liệu có sẵn (không gọi server).
+  function hienThiDonPhep(data) {
+      var container = document.getElementById("approval-container");
+      if (!container) return;
+      data = data || [];
+      if (!data.length) {
+        container.innerHTML = '<div class="card" style="text-align:center;">Chưa có đơn xin phép nào.</div>';
+        return;
+      }
+      var html = "";
+      data.forEach(function(item) {
+        var statusText = "";
+        var btnHtml = "";
+        var borderColor = "";
+
+        // Xử lý hiển thị trạng thái: đang chờ / đã duyệt / đã từ chối
+        if (item.trangThai === "da_duyet") {
+          statusText = `<span style="color:#27ae60; font-weight:bold; font-size:13px;"><i class="fas fa-check-circle"></i> Đã duyệt bởi: ${item.nguoiDuyet}</span>`;
+          borderColor = '#27ae60';
+        } else if (item.trangThai === "tu_choi") {
+          statusText = `<span style="color:#e74c3c; font-weight:bold; font-size:13px;"><i class="fas fa-times-circle"></i> Đã từ chối bởi: ${item.nguoiDuyet}</span>`;
+          borderColor = '#e74c3c';
+        } else {
+          statusText = `<span style="color:#c62828; font-weight:bold; font-size:13px;"><i class="fas fa-clock"></i> Đang chờ duyệt</span>`;
+          borderColor = '#c62828';
+          btnHtml = `<div style="display:flex; gap:8px;">` +
+            `<button onclick="clickApproveLeaveRequest(${item.row})" class="btn-action" style="padding:8px 15px; font-size:13px; margin-top:0; width:auto; display:inline-block; background:#27ae60;">Duyệt Đơn</button>` +
+            `<button onclick="clickRejectLeaveRequest(${item.row})" class="btn-action" style="padding:8px 15px; font-size:13px; margin-top:0; width:auto; display:inline-block; background:#e74c3c;">Từ Chối</button>` +
+            `</div>`;
+        }
+
+        // Xử lý ảnh minh chứng (nếu có)
+        var minhChungHtml = "";
+        if(item.minhChung) {
+          minhChungHtml = `<div style="margin:8px 0;"><a href="${item.minhChung}" target="_blank" style="color:#3498db; text-decoration:none; font-weight:600; font-size:13px;"><i class="fas fa-image"></i> Xem ảnh minh chứng</a></div>`;
+        } else {
+          minhChungHtml = `<div style="margin:8px 0; color:#95a5a6; font-size:12px; font-style:italic;">Không có ảnh đính kèm</div>`;
+        }
+
+        // Xử lý hiển thị ngày vắng lễ (1 ngày hoặc khoảng ngày)
+        var ngayVangHtml = item.tuNgay
+          ? (item.tuNgay === item.denNgay
+              ? `<div style="font-size:13px; color:#d32f2f; margin-bottom:5px;"><i class="fas fa-calendar-day"></i> <strong>Vắng ngày:</strong> ${item.tuNgay}</div>`
+              : `<div style="font-size:13px; color:#d32f2f; margin-bottom:5px;"><i class="fas fa-calendar-week"></i> <strong>Vắng từ:</strong> ${item.tuNgay} <strong>đến</strong> ${item.denNgay}</div>`)
+          : "";
+
+        html += `
+          <div class="card" style="border-left: 5px solid ${borderColor}; margin-bottom:15px; text-align:left; animation: fadeIn 0.4s ease-out both;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-weight:bold; color:#2c3e50; font-size:14px;">${item.hoTen} (${item.maHT})</span>
+              <span style="font-size:11px; color:#7f8c8d;">${item.thoiGian}</span>
+            </div>
+            <div style="font-size:13px; color:#555; margin-bottom:5px;"><strong>Chi đoàn:</strong> ${item.chiDoan}</div>
+            ${ngayVangHtml}
+            <div style="font-size:13px; color:#555; margin-bottom:5px;"><strong>Lý do:</strong> ${item.lyDo}</div>
+            ${minhChungHtml}
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-top:10px;">
+              ${statusText}
+              ${btnHtml}
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+  }
+
   function loadLeaveRequests() {
       var container = document.getElementById("approval-container");
       container.innerHTML = getLogoLoaderHtml("Đang tìm đơn nghỉ lễ..."); 
-      
       google.script.run.withSuccessHandler(function(res) {
-        if(res.success) {
-          if(res.data.length === 0) {
-            container.innerHTML = '<div class="card" style="text-align:center;">Chưa có đơn xin phép nào.</div>';
-            return;
-          }
-          
-          var html = "";
-          res.data.forEach(function(item) {
-            var statusText = "";
-            var btnHtml = "";
-            var borderColor = "";
-            
-            // Xử lý hiển thị trạng thái: đang chờ / đã duyệt / đã từ chối
-            if (item.trangThai === "da_duyet") {
-              statusText = `<span style="color:#27ae60; font-weight:bold; font-size:13px;"><i class="fas fa-check-circle"></i> Đã duyệt bởi: ${item.nguoiDuyet}</span>`;
-              borderColor = '#27ae60';
-            } else if (item.trangThai === "tu_choi") {
-              statusText = `<span style="color:#e74c3c; font-weight:bold; font-size:13px;"><i class="fas fa-times-circle"></i> Đã từ chối bởi: ${item.nguoiDuyet}</span>`;
-              borderColor = '#e74c3c';
-            } else {
-              statusText = `<span style="color:#c62828; font-weight:bold; font-size:13px;"><i class="fas fa-clock"></i> Đang chờ duyệt</span>`;
-              borderColor = '#c62828';
-              btnHtml = `<div style="display:flex; gap:8px;">` +
-                `<button onclick="clickApproveLeaveRequest(${item.row})" class="btn-action" style="padding:8px 15px; font-size:13px; margin-top:0; width:auto; display:inline-block; background:#27ae60;">Duyệt Đơn</button>` +
-                `<button onclick="clickRejectLeaveRequest(${item.row})" class="btn-action" style="padding:8px 15px; font-size:13px; margin-top:0; width:auto; display:inline-block; background:#e74c3c;">Từ Chối</button>` +
-                `</div>`;
-            }
-            
-            // Xử lý ảnh minh chứng (nếu có)
-            var minhChungHtml = "";
-            if(item.minhChung) {
-              minhChungHtml = `<div style="margin:8px 0;"><a href="${item.minhChung}" target="_blank" style="color:#3498db; text-decoration:none; font-weight:600; font-size:13px;"><i class="fas fa-image"></i> Xem ảnh minh chứng</a></div>`;
-            } else {
-              minhChungHtml = `<div style="margin:8px 0; color:#95a5a6; font-size:12px; font-style:italic;">Không có ảnh đính kèm</div>`;
-            }
-
-            // Xử lý hiển thị ngày vắng lễ (1 ngày hoặc khoảng ngày)
-            var ngayVangHtml = item.tuNgay
-              ? (item.tuNgay === item.denNgay
-                  ? `<div style="font-size:13px; color:#d32f2f; margin-bottom:5px;"><i class="fas fa-calendar-day"></i> <strong>Vắng ngày:</strong> ${item.tuNgay}</div>`
-                  : `<div style="font-size:13px; color:#d32f2f; margin-bottom:5px;"><i class="fas fa-calendar-week"></i> <strong>Vắng từ:</strong> ${item.tuNgay} <strong>đến</strong> ${item.denNgay}</div>`)
-              : "";
-            
-            html += `
-              <div class="card" style="border-left: 5px solid ${borderColor}; margin-bottom:15px; text-align:left; animation: fadeIn 0.4s ease-out both;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                  <span style="font-weight:bold; color:#2c3e50; font-size:14px;">${item.hoTen} (${item.maHT})</span>
-                  <span style="font-size:11px; color:#7f8c8d;">${item.thoiGian}</span>
-                </div>
-                <div style="font-size:13px; color:#555; margin-bottom:5px;"><strong>Chi đoàn:</strong> ${item.chiDoan}</div>
-                ${ngayVangHtml}
-                <div style="font-size:13px; color:#555; margin-bottom:5px;"><strong>Lý do:</strong> ${item.lyDo}</div>
-                ${minhChungHtml}
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-top:10px;">
-                  ${statusText}
-                  ${btnHtml}
-                </div>
-              </div>
-            `;
-          });
-          container.innerHTML = html;
+        if (res && res.success) {
+          donPhepDangHien = res.data || [];
+          hienThiDonPhep(donPhepDangHien);
         } else {
-          container.innerHTML = `<div class="card" style="color:red; text-align:center;">Lỗi dữ liệu: ${res.error}</div>`;
+          container.innerHTML = `<div class="card" style="color:red; text-align:center;">Lỗi dữ liệu: ${(res && res.error) || "không tải được đơn"}</div>`;
         }
-        capNhatApprovalBadge(); // Cập nhật lại chấm đỏ ngay sau khi tải danh sách (đảm bảo khớp thực tế)
+        capNhatApprovalBadge();
       }).getLeaveRequests(currentUserToken);
   }
 
-  // 2. HÀM XỬ LÝ CLICK NÚT DUYỆT PHÉP
+  // 2. DUYỆT / TỪ CHỐI: đổi giao diện ngay rồi mới gửi server.
+  // Trước đây mỗi lần bấm tốn 3 round-trip (ghi -> tải danh sách -> đếm chấm
+  // đỏ). Giờ chỉ còn 1; lỗi thì hoàn tác về dữ liệu cũ.
+  var dangXuLyDonPhep = false;
+  function xuLyDonPhep(row, duyet) {
+    if (dangXuLyDonPhep) return;
+    var cu = donPhepDangHien;
+    var coDon = cu.some(function (it) { return String(it.row) === String(row); });
+    if (!coDon) { showToast("Không tìm thấy đơn này, đang tải lại...", "error"); loadLeaveRequests(); return; }
+
+    var moi = cu.map(function (it) {
+      if (String(it.row) !== String(row)) return it;
+      var n = {};
+      for (var k in it) if (Object.prototype.hasOwnProperty.call(it, k)) n[k] = it[k];
+      n.trangThai = duyet ? "da_duyet" : "tu_choi";
+      n.nguoiDuyet = currentUserFullname || "";
+      return n;
+    });
+    var soCu = approvalSoDonCho;
+    dangXuLyDonPhep = true;
+    donPhepDangHien = moi;
+    approvalSoDonCho = Math.max(0, soCu - 1);
+    hienThiDonPhep(moi);
+    hienBadgeDon(approvalSoDonCho);
+
+    function phucHoi() {
+      donPhepDangHien = cu;
+      approvalSoDonCho = soCu;
+      hienThiDonPhep(cu);
+      hienBadgeDon(soCu);
+    }
+    var ten = duyet ? "approveLeaveRequest" : "rejectLeaveRequest";
+    google.script.run
+      .withSuccessHandler(function (res) {
+        dangXuLyDonPhep = false;
+        if (res && res.success) {
+          showToast(duyet ? "Duyệt đơn thành công!" : "Đã từ chối đơn.", "success");
+          if (duyet) fireConfetti();
+        } else {
+          phucHoi();
+          showToast((duyet ? "Duyệt đơn" : "Từ chối đơn") + " thất bại: " + ((res && res.error) || "lỗi máy chủ"), "error");
+        }
+      })
+      .withFailureHandler(function (err) {
+        dangXuLyDonPhep = false;
+        phucHoi();
+        showToast("Lỗi kết nối, đã hoàn tác thay đổi: " + ((err && err.message) || ""), "error");
+      })
+      [ten](row, currentUserToken);
+  }
+
   function clickApproveLeaveRequest(row) {
     appConfirm({ title: 'Duyệt đơn xin phép?', message: 'Xác nhận duyệt phép cho trưởng này?', okText: 'Duyệt', danger: false }, function (ok) {
-      if (!ok) return;
-      google.script.run.withSuccessHandler(function(res) {
-        if(res.success) {
-          showToast("Duyệt đơn thành công!", "success");
-          fireConfetti();
-          loadLeaveRequests(); // Tải lại danh sách sau khi duyệt (đồng thời cập nhật lại chấm đỏ)
-        } else {
-          showToast("Duyệt đơn thất bại: " + res.error, "error");
-        }
-      }).approveLeaveRequest(row, currentUserToken);
+      if (ok) xuLyDonPhep(row, true);
     });
   }
 
   // 2b. HÀM XỬ LÝ CLICK NÚT TỪ CHỐI PHÉP
   function clickRejectLeaveRequest(row) {
     appConfirm({ title: 'Từ chối đơn xin phép?', message: 'Xác nhận từ chối đơn xin phép này?', okText: 'Từ chối', danger: true }, function (ok) {
-      if (!ok) return;
-      google.script.run.withSuccessHandler(function(res) {
-        if(res.success) {
-          showToast("Đã từ chối đơn.", "success");
-          loadLeaveRequests(); // Tải lại danh sách sau khi từ chối (đồng thời cập nhật lại chấm đỏ)
-        } else {
-          showToast("Từ chối đơn thất bại: " + res.error, "error");
-        }
-      }).rejectLeaveRequest(row, currentUserToken);
+      if (ok) xuLyDonPhep(row, false);
     });
   }
 
