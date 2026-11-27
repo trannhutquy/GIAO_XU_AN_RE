@@ -11648,8 +11648,16 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     // P7 BẦU CỬ — luồng cử tri. Ảnh thẻ/chữ ký chỉ nằm trên trình duyệt;
     // payload gửi GAS trong bauCuGuiPhieu() chỉ có {token, luaChon}.
     // ==========================================================================
+    // Chỉ lưu mã kỳ để còn mở lại kết quả sau reload; KHÔNG lưu lựa chọn/phiếu.
+    var BC_KY_CUOI_KEY = "xd_baucu_ky_cuoi";
+    function bauCuKyCuoiDoc() { try { return localStorage.getItem(BC_KY_CUOI_KEY) || ""; } catch (e) { return ""; } }
+    function bauCuKyCuoiLuu(kyId) {
+      if (!kyId) return;
+      try { localStorage.setItem(BC_KY_CUOI_KEY, String(kyId)); } catch (e) {}
+    }
+
     var bauCuState = {
-      ky: null, chucDanh: [], ungVien: [], daBo: false, kyId: null,
+      ky: null, chucDanh: [], ungVien: [], daBo: false, kyId: bauCuKyCuoiDoc(),
       tuMs: 0, denMs: 0, luaChon: [], daQuet: false, daKy: false, timer: null,
       keoDang: false, keoX: 0, keoDau: 0, keoViTri: 0,
       keyboardTimer: null, keyboardDaKichHoat: false
@@ -11697,7 +11705,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
       var chon = [];
       for (var i = 0; i < nhom.length; i++) {
         var checked = nhom[i].querySelector("input[type=radio]:checked");
-        var cacNhan = nhom[i].querySelectorAll(".bau-cu-chon");
+        var cacNhan = nhom[i].querySelectorAll(".bc-chon");
         for (var j = 0; j < cacNhan.length; j++) cacNhan[j].classList.remove("da-chon");
         if (!checked) continue;
         var nhan = checked.parentNode;
@@ -11735,7 +11743,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           if (!uv || uv.chucDanh !== cd) continue;
           var ma = uv.maUngVien || uv.maHT || "";
           var nhan = document.createElement("label");
-          nhan.className = "bau-cu-chon";
+          // bc-chon là class kiểu (CSS); bau-cu-chon là alias hook theo brief/guard.
+          nhan.className = "bc-chon bau-cu-chon";
           var radio = document.createElement("input");
           radio.type = "radio";
           radio.name = "bauCuCd" + i;
@@ -11774,6 +11783,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 
       var ky = bauCuState.ky;
       bauCuState.kyId = ky.id || bauCuState.kyId;
+      bauCuKyCuoiLuu(bauCuState.kyId);
       bauCuState.tuMs = Number(ky.tuMs || 0);
       bauCuState.denMs = Number(ky.denMs || 0);
       bauCuHien("bauCuKyInfo");
@@ -11803,6 +11813,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
 
     function bauCuKhoiTao() {
       if (!currentUserToken) return;
+      // Kỳ đã chốt không còn trong trạng thái: vẫn dùng mã kỳ đã lưu để Xem kết quả.
+      bauCuState.kyId = bauCuState.kyId || bauCuKyCuoiDoc();
       var nutTao = bauCuEl("bauCuCreateBtn");
       if (nutTao) nutTao.style.display = currentUserIsSuperAdmin ? "" : "none";
       google.script.run
@@ -11890,6 +11902,24 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     function bauCuGuiPhieu() {
       var nut = bauCuEl("bauCuGhiPhieu");
       if (!nut || nut.disabled || !bauCuState.daQuet || !bauCuState.daKy || !bauCuState.luaChon.length) return;
+      // Kiểm tra lại khung giờ từ dữ liệu server trước khi gửi; server vẫn là nguồn quyết định.
+      var now = Date.now();
+      var thongBao = "";
+      if (bauCuState.denMs > 0 && now >= bauCuState.denMs) thongBao = "Đã hết thời gian bỏ phiếu";
+      else if (bauCuState.tuMs > 0 && now < bauCuState.tuMs) thongBao = "Chưa mở";
+      if (thongBao) {
+        nut.disabled = true;
+        bauCuDungDem();
+        var mo = bauCuEl("bauCuKyModal"), xacNhan = bauCuEl("bauCuConfirmModal");
+        if (mo) mo.classList.remove("open");
+        if (xacNhan) xacNhan.classList.remove("open");
+        bauCuAn("bauCuDanhSach");
+        bauCuAn("bauCuTiepTuc");
+        var demHetGio = bauCuEl("bauCuCountdown");
+        if (demHetGio) demHetGio.textContent = thongBao;
+        try { showToast(thongBao, "error"); } catch (e) {}
+        return;
+      }
       var token = currentUserToken;
       var luaChon = bauCuState.luaChon;
       nut.disabled = true;
@@ -11953,7 +11983,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         var fill = document.createElement("i");
         var max = 0;
         (row.chiTiet || []).forEach(function (ct) { if (ct.soPhieu > max) max = ct.soPhieu; });
-        fill.style.width = (max > 0 && row.nguoiThang ? Math.round(100 * max / Math.max(1, row.tongPhieu)) : 0) + "%";
+        // Bằng phiếu vẫn có số phiếu của từng ứng viên: hiện tỉ lệ max/tongPhieu.
+        fill.style.width = (max > 0 ? Math.min(100, Math.round(100 * max / Math.max(1, row.tongPhieu))) : 0) + "%";
         thanh.appendChild(fill);
         var meta = document.createElement("div");
         meta.className = "bc-muted";
@@ -11966,7 +11997,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     }
 
     function bauCuXemKetQua() {
-      if (!bauCuState.kyId) { bauCuHienThongBaoKetQua("Kết quả chưa được công bố"); return; }
+      var kyId = bauCuState.kyId || bauCuKyCuoiDoc();
+      if (!kyId) { bauCuHienThongBaoKetQua("Kết quả chưa được công bố"); return; }
       google.script.run
         .withSuccessHandler(function (res) {
           if (!res || res.success === false) {
@@ -11976,7 +12008,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           bauCuVeKetQua(res);
         })
         .withFailureHandler(function () { bauCuHienThongBaoKetQua("Kết quả chưa được công bố"); })
-        .bauCuKetQua(currentUserToken, bauCuState.kyId);
+        .bauCuKetQua(currentUserToken, kyId);
     }
 
     (function bauCuGanSuKien() {
@@ -12915,14 +12947,14 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   body.dark-mode .bc-btn-outline { background: #1a1b1f; color: #ffb4a8; border-color: #ffb4a8; }
   .bc-btn:disabled { background: #546272; color: #fff; border-color: transparent; cursor: not-allowed; }
   .bc-btn-full { width: 100%; }
-  .bc-chon {
+  .bc-chon, .bau-cu-chon {
     display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 10px;
     border: 1px solid var(--xd-line); border-radius: var(--xd-radius-sm);
     background: var(--xd-surface); color: #2c3e50; font-size: 12.5px; cursor: pointer;
   }
-  body.dark-mode .bc-chon { background: #1a1b1f; color: #e1e3e6; border-color: #3a3b42; }
-  .bc-chon.da-chon { border-color: var(--xd-accent-strong); background: #fdecea; color: #8e1b1b; }
-  body.dark-mode .bc-chon.da-chon { background: #3a1c1c; color: #ffb4a8; border-color: #ffb4a8; }
+  body.dark-mode .bc-chon, body.dark-mode .bau-cu-chon { background: #1a1b1f; color: #e1e3e6; border-color: #3a3b42; }
+  .bc-chon.da-chon, .bau-cu-chon.da-chon { border-color: var(--xd-accent-strong); background: #fdecea; color: #8e1b1b; }
+  body.dark-mode .bc-chon.da-chon, body.dark-mode .bau-cu-chon.da-chon { background: #3a1c1c; color: #ffb4a8; border-color: #ffb4a8; }
   .bc-nhom { margin-bottom: 12px; }
   .bc-nhom-tieu-de { font-size: 12.5px; font-weight: 700; margin-bottom: 6px; }
   .bc-nhom-danh-sach { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; }
@@ -17125,7 +17157,8 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
   // P7 BẦU CỬ — tab quản trị (tạo kỳ / chốt kỳ). Chỉ gọi 6 hàm public mới.
   // Không tự công bố kết quả khi hết giờ: chỉ nút chốt của quản trị tối cao.
   // ==========================================================================
-  var bauCuAdminState = { danhSachHT: [], ky: [] };
+  // ungVienDaChon: khóa "chucDanh|maHT" -> true, giữ lựa chọn qua các lần render lại.
+  var bauCuAdminState = { danhSachHT: [], ky: [], ungVienDaChon: {} };
 
   function bauCuGioNgan(ms) {
     if (!ms) return "";
@@ -17139,6 +17172,14 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     if (!wrap) return;
     var dsChucDanh = [];
     document.querySelectorAll("#admViewBauCu input.bc-chucdanh:checked").forEach(function (cb) { dsChucDanh.push(cb.value); });
+    // Đồng bộ các chức danh đang hiện trước khi xoá DOM; các chức danh đang ẩn
+    // vẫn giữ lựa chọn trong map và được khôi phục khi tick lại.
+    Array.prototype.forEach.call(wrap.querySelectorAll("input.bc-ungvien"), function (cb) {
+      var cd = cb.getAttribute("data-chucdanh") || "";
+      var key = cd + "|" + cb.value;
+      if (cd && cb.value && cb.checked) bauCuAdminState.ungVienDaChon[key] = true;
+      else delete bauCuAdminState.ungVienDaChon[key];
+    });
     wrap.innerHTML = "";
     if (!dsChucDanh.length) {
       wrap.innerHTML = '<span class="bc-ky-meta">Chọn chức danh để hiện ứng viên từ danh sách HT.</span>';
@@ -17161,8 +17202,9 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         if (!ma) continue;
         var nhan = document.createElement("label");
         nhan.className = "bc-ungvien";
+        var daChon = bauCuAdminState.ungVienDaChon[dsChucDanh[c] + "|" + ma] ? " checked" : "";
         nhan.innerHTML = '<input type="checkbox" class="bc-ungvien" value="' + escapeHtml(ma) +
-          '" data-chucdanh="' + escapeHtml(dsChucDanh[c]) + '" data-ten="' + escapeHtml(ten) + '"> <span>' +
+          '" data-chucdanh="' + escapeHtml(dsChucDanh[c]) + '" data-ten="' + escapeHtml(ten) + '"' + daChon + '> <span>' +
           escapeHtml(ten) + ' · ' + escapeHtml(ma) + '</span>';
         wrap.appendChild(nhan);
       }
@@ -17259,6 +17301,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
           return;
         }
         try { showToast("Đã chốt kỳ bầu cử — kết quả đã được công bố.", "success"); } catch (e) {}
+        bauCuKyCuoiLuu(kyId);
         bauCuAdminTai();
         if (document.getElementById("bau-cu-page").classList.contains("active")) bauCuKhoiTao();
       })
