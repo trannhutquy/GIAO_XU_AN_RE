@@ -558,13 +558,15 @@
     @keyframes xdPillSpin { to { transform: rotate(360deg); } }
 
     /* MÀN HÌNH ĐĂNG NHẬP */
-    #login-screen { display: flex; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(135deg, #c62828 0%, #2979ff 100%); }
+    /* P6.1: nền đỏ Xứ Đoàn cố định — bỏ gradient đỏ→xanh (mẫu số, lệch nhận diện).
+       Không dùng var(--xd-accent): tuỳ biến màu nhấn chỉ áp dụng cho laptop. */
+    #login-screen { display: flex; justify-content: center; align-items: center; height: 100vh; background: #d32f2f; }
     .login-box { 
       background: white; 
       padding: 40px; 
-      border-radius: 28px; 
-      box-shadow: 0 25px 60px rgba(0,0,0,0.16), 0 8px 20px rgba(0,0,0,0.06); 
-      border: 1px solid rgba(0,0,0,0.03);
+      border-radius: 16px; 
+      box-shadow: 0 12px 32px rgba(0,0,0,0.10); 
+      border: 1px solid rgba(0,0,0,0.06);
       width: 92%; 
       max-width: 680px; 
       display: flex;
@@ -623,7 +625,7 @@
       padding: 15px 16px; 
       margin: 10px 0; 
       border: 1.5px solid #e8e9ec; 
-      border-radius: 16px; 
+      border-radius: 10px; 
       box-sizing: border-box; 
       font-size: 16px; 
       font-family: inherit;
@@ -634,7 +636,6 @@
       border-color: #d32f2f; 
       background: #ffffff;
       box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.12);
-      transform: translateY(-2px);
     }
     
     .btn-action { 
@@ -2007,6 +2008,10 @@
       #thidua-page > h2, #kiemtra-page > h2, #khancap-page > h2, #diemdanhbuoi-page > h2 {
         font-size: 19px; margin-bottom: 6px;
       }
+      /* P6.1: lời chào trên thanh laptop dẫn dắt (22px), tiêu đề trang khối nội bộ
+         20px — thấp hơn trước (24px mặc định của h2) để không lấn át lời chào.
+         Rule ID ở trên vẫn thắng trên 7 cửa sổ nổi nên giữ nguyên 19px. */
+      .page > h2 { font-size: 20px; }
       #thieunhi-page.active, #report.active, #approval-page.active, #quy-page.active, #thidua-page.active, #kiemtra-page.active, #khancap-page.active, #diemdanhqr-page.active, #diemdanhbuoi-page.active {
         display: block !important;
         animation: desktopModalPopIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
@@ -2093,7 +2098,7 @@
       }
       #welcome-text { flex: 1; min-width: 0; }
       #welcome-text h2 {
-        margin: 0 0 4px; font-size: 18px; font-weight: 800; color: #2c3e50;
+        margin: 0 0 4px; font-size: 22px; font-weight: 800; color: #2c3e50;
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       }
       body.dark-mode #welcome-text h2 { color: #eef1f6; }
@@ -2703,6 +2708,27 @@
     body.dark-mode .cttt-pending-title { color: #e1e3e6; }
     body.dark-mode .cttt-lv-tag { background: #16264a; color: #8ab4ff; }
     body.dark-mode .cttt-lv-head { color: #8ab4ff; }
+
+    /* P6.1: thân thiện với bàn phím / đầu ngón tay / người nhạy chuyển động. */
+    a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible,
+    select:focus-visible, [tabindex]:focus-visible {
+      outline: 3px solid var(--xd-accent, #d32f2f);
+      outline-offset: 2px;
+    }
+    /* Link "Quên mật khẩu?" có vùng bấm đủ lớn nhưng không làm dời bố cục. */
+    #login-forgot-wrap a {
+      display: inline-flex; align-items: center; min-height: 44px;
+      padding: 0 10px; margin: -14px -10px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: .01ms !important; scroll-behavior: auto !important; }
+      /* Ẩn splash ngay (không đợi animationend) nhưng vẫn để JS thêm intro-done. */
+      #splash-screen, #session-restore,
+      #splash-screen .intro-logo, #session-restore .intro-logo { animation: none !important; }
+      #splash-screen.intro-run { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+      .login-box { animation: none !important; }
+      /* Cố ý giữ spinner #session-check-pill: đó là tín hiệu trạng thái có chức năng. */
+    }
   </style>
 <script id="xd-avatar">
 // ===== ẢNH ĐẠI DIỆN: dùng ảnh của chính người đó; chưa có hoặc tải lỗi thì dùng logo Xứ Đoàn =====
@@ -3139,7 +3165,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
         </div>
       </div>
       <div class="login-right-col">
-        <h2 class="login-right-title">THÔNG TIN ĐĂNG NHẬP</h2>
+        <h2 class="login-right-title">Đăng nhập</h2>
         <p id="login-subtitle" style="font-size: 13px; color: #666; margin: 0 0 14px 0;">Hệ thống Huynh Trưởng</p>
         <div style="display:flex; gap:8px; margin-bottom:14px;">
           <div id="login-tab-ht" class="kt-tab-btn kt-tab-active" onclick="setLoginMode('ht')" style="flex:1; text-align:center; padding:10px; border-radius:8px; cursor:pointer; font-weight:bold; font-size:12.5px;">Huynh Trưởng</div>
@@ -3392,7 +3418,7 @@ body.dark-mode .lock-notice { background:rgba(229,57,53,.14); border-color:rgba(
     <div id="desktop-welcome" class="desktop-only">
       <img id="welcome-avatar" src="icons/icon-512.png" alt="" decoding="async">
       <div id="welcome-text">
-        <h2><span id="welcome-greeting"></span><span id="welcome-name"></span> <span>👋</span></h2>
+        <h2><span id="welcome-greeting"></span><span id="welcome-name"></span></h2>
         <div id="welcome-meta">
           <span id="welcome-unit"></span>
           <span class="welcome-dot">•</span>
