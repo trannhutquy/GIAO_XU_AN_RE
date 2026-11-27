@@ -44,7 +44,12 @@
     quyLayMucDong: 1, quyLayTonQuyHienTai: 1, quyTrangThaiCaNhanHT: 1,
     soBoHTLayDanhSach: 1, vanBanLayDanhSach: 1,
     thiDuaLayBangXepHang: 1, thiDuaLayDanhSachHanhVi: 1, thiDuaLayDiemCuaToi: 1,
-    thiDuaLayDsHTChoAdmin: 1, thongBaoLayNhacViec: 1
+    thiDuaLayDsHTChoAdmin: 1, thongBaoLayNhacViec: 1,
+    // P7 bầu cử: 3 hàm đọc này luôn lấy bản mới — cố ý KHÔNG đưa vào SWR/TTL
+    // vì trạng thái kỳ và kết quả phải tươi. READ_FN chỉ để gộp (dedup) các
+    // lời gọi trùng đang bay. 3 hàm ghi (taoKy/boPhieu/chotKy) không có ở đây
+    // nên vẫn đi qua `fn` mặc định của doPost như mọi lệnh GHI khác.
+    bauCuLayTrangThai: 1, bauCuDanhSachKy: 1, bauCuKetQua: 1
   };
   // Màn hình hiện ngay dữ liệu cũ rồi cập nhật dữ liệu mới (tối đa 24 giờ tuổi)
   var SWR = { getHanhTrinhData: 1, getCTTTData: 1, vanBanLayDanhSach: 1, soBoHTLayDanhSach: 1,

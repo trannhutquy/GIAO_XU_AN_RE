@@ -1,6 +1,6 @@
 // Service worker: má»Ÿ app Tá»¨C THÃŒ tá»« bá»™ nhá»› mÃ¡y, táº£i báº£n má»›i á»Ÿ ná»n, bÃ¡o khi cÃ³ báº£n má»›i,
 // vÃ  nháº­n THÃ”NG BÃO Äáº¨Y (Firebase Cloud Messaging) ká»ƒ cáº£ khi app Ä‘ang Ä‘Ã³ng.
-var VERSION = "v81";
+var VERSION = "v82";
 var SHELL = "shell-" + VERSION;
 var STATIC = "static-" + VERSION;
 // P5.3: bỏ 3 ảnh banner (~300 KB) khỏi danh sách cài sẵn — chúng nằm dưới màn
